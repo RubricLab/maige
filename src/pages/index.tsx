@@ -87,7 +87,7 @@ const Home: NextPage = () => {
           >
             Neat Studio
           </Link>
-          . Please don't destroy the world with this.
+          . Please don&apos;t destroy the world with this.
         </span>
       </footer>
     </div>
