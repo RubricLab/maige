@@ -8,8 +8,6 @@ type Label = {
   name: string;
 };
 
-const ISSUE_TYPES = ["bug", "feature", "question"];
-const PRIORITY_LEVELS = ["low", "medium", "high"];
 const MAX_BODY_LENGTH = 2000;
 
 // Validate the GitHub webhook signature
