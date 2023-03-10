@@ -1,6 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import Link from "next/link";
+import wizardHatLogo from "../../public/logo.png";
 
 const title = "Maige";
 const description = "Let GPT label your issues.";
@@ -8,7 +10,7 @@ const linkPreview = "/logo.png";
 
 const Home: NextPage = () => {
   return (
-    <>
+    <div className="bg-black">
       <Head>
         <title>Maige</title>
 
@@ -52,19 +54,43 @@ const Home: NextPage = () => {
           href="/apple-touch-icon.png"
         />
       </Head>
-      <main className="flex h-screen w-screen flex-col items-center justify-center space-y-6 bg-black">
-        <h1 className="text-8xl font-bold tracking-tight text-white">Maige</h1>
-        <h2 className="text-3xl font-semibold tracking-tight text-white/80">
-          Let GPT label your issues.
-        </h2>
-        <p className="pb-8 italic text-white/60">Magically.</p>
-        <Link href="https://github.com/apps/maige-bot">
-          <button className="rounded-md border-gray-900 bg-green-600 px-6 py-3 font-medium text-white">
-            Install with GitHub
-          </button>
-        </Link>
+      <header className="absolute top-0 z-10 flex w-screen items-center justify-start p-2">
+        <Image
+          src={wizardHatLogo}
+          alt="Wizard hat logo"
+          className="h-12 w-12 cursor-wait rounded-full object-cover"
+        />
+        <div />
+      </header>
+      <main className="relative flex h-screen w-screen flex-col items-center">
+        <div className="flex grow flex-col items-center justify-center space-y-4">
+          <h1 className="bg-gradient-to-l from-red-50 to-indigo-900 bg-clip-text text-8xl font-bold leading-normal tracking-tight text-transparent">
+            Maige
+          </h1>
+          <h2 className="text-3xl font-medium tracking-tight text-white/70">
+            Let GPT label your issues.
+          </h2>
+          <p className="pb-8 italic text-white/60">Magically.</p>
+          <Link href="https://github.com/apps/maige-bot">
+            <button className="rounded-md border-gray-900 bg-green-700 px-6 py-3 font-medium text-white blur-sm transition-all duration-500 hover:scale-105 hover:bg-green-600 hover:blur-none">
+              Install with GitHub
+            </button>
+          </Link>
+        </div>
       </main>
-    </>
+      <footer className="absolute bottom-0 flex h-10 w-screen items-center justify-center">
+        <span className="text-xs text-white/40">
+          By{" "}
+          <Link
+            className="font-medium text-white/60"
+            href="https://studio.neat.run"
+          >
+            Neat Studio
+          </Link>
+          . Please don't destroy the world with this.
+        </span>
+      </footer>
+    </div>
   );
 };
 
