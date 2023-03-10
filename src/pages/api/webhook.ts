@@ -117,7 +117,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Truncate body if it's too long
   const bodySample =
-    body.length > MAX_BODY_LENGTH
+    body?.length > MAX_BODY_LENGTH
       ? body.slice(0, MAX_BODY_LENGTH) + "..."
       : body;
 
