@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next/types";
+import type { NextApiRequest, NextApiResponse } from "next/types";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
