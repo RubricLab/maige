@@ -75,6 +75,48 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
+  // Get GitHub app instance access token
+  const app = new App({
+    appId: process.env.GITHUB_APP_ID || "",
+    privateKey: process.env.GITHUB_PRIVATE_KEY || "",
+  });
+
+  const octokit = await app.getInstallationOctokit(instanceId);
+
+  // List labels
+  const labelsRes: {
+    repository: {
+      labels: {
+        nodes: Label[];
+      };
+    };
+  } = await octokit.graphql(
+    `
+    query Labels($name: String!, $owner: String!) { 
+      repository(name: $name, owner: $owner) {
+        labels(first: 50) {
+          nodes {
+            name
+            id
+          }
+        }
+      }
+    }
+  `,
+    {
+      name,
+      owner,
+    }
+  );
+
+  if (!labelsRes?.repository?.labels?.nodes) {
+    return res.status(500).send({
+      message: "Could not get labels",
+    });
+  }
+
+  const labels: Label[] = labelsRes.repository.labels.nodes;
+
   // Truncate body if it's too long
   const bodySample =
     body.length > MAX_BODY_LENGTH
@@ -84,7 +126,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const prompt = `
   You are tasked with labelling a GitHub issue based on its title and body.
   The repository is called ${name} owned by ${owner}.
-  Would this issue be low, medium, or high priority? Is this issue a bug, feature request, or question?
+  The possible labels are: ${labels
+    .map((l) => l.name)
+    .join(", ")}. Please choose a maximum of two labels.
+  Preferably, the first label should be a type of issue (bug, feature, or question), and the second label should be a priority level (low, medium, or high).
   
   Title: ${title}
   Body: "${bodySample}"
@@ -131,76 +176,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  // Extract issue type and priority from GPT answer
-  const issueType = answer.split(",")[0].trim();
-  const priority = answer.split(",")[1].trim();
+  // Extract labels from GPT answer
+  const gptLabels = answer
+    .split(",")
+    .map((l: string) => l.trim().toLowerCase());
 
-  if (!ISSUE_TYPES.includes(issueType) || !PRIORITY_LEVELS.includes(priority)) {
-    return res.status(500).send({
-      message: `GPT answered with an unknown issue type or priority: ${issueType}, ${priority}`,
-    });
-  }
-
-  // Get GitHub app instance access token
-  const app = new App({
-    appId: process.env.GITHUB_APP_ID || "",
-    privateKey: process.env.GITHUB_PRIVATE_KEY || "",
-  });
-
-  const octokit = await app.getInstallationOctokit(instanceId);
-
-  // Search for an appropriate label
-  const labels: {
-    repository: {
-      labels: {
-        nodes: Label[];
-      };
-    };
-  } = await octokit.graphql(
-    `
-    query Labels($name: String!, $owner: String!) { 
-      repository(name: $name, owner: $owner) {
-        labels(first: 50) {
-          nodes {
-            name
-            id
-          }
-        }
-      }
-    }
-  `,
-    {
-      name,
-      owner,
-      issueType,
-    }
-  );
-
-  if (!labels?.repository?.labels?.nodes) {
-    return res.status(500).send({
-      message: "Could not get labels",
-    });
-  }
-
-  // Find the label IDs for the issue type and priority
-  const issueTypeLabel = labels.repository.labels.nodes.find((label: Label) =>
-    label.name.toLowerCase().includes(issueType)
-  );
-  const issuePriorityLabel = labels.repository.labels.nodes.find(
-    (label: Label) => label.name.toLowerCase().includes(priority)
-  );
-
-  if (!issueTypeLabel || !issuePriorityLabel) {
-    return res.status(500).send({
-      message: "Could not find appropriate labels",
-    });
-  }
+  const labelIds = labels
+    .filter((l: Label) => {
+      return (
+        l.name.toLowerCase().includes(gptLabels[0]) ||
+        l.name.toLowerCase().includes(gptLabels[1])
+      );
+    })
+    .map((l: Label) => l?.id);
 
   const labelResult = await octokit.graphql(
     `
-    mutation AddLabels($issueId: ID!, $issueTypeId: ID!, $issuePriorityId: ID!) {
+    mutation AddLabels($issueId: ID!, $labelIds: [ID!]!) {
       addLabelsToLabelable(input: {
-        labelIds: [$issueTypeId, $issuePriorityId], labelableId: $issueId
+        labelIds: $labelIds, labelableId: $issueId
       }) {
         clientMutationId
       }
@@ -208,8 +202,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     `,
     {
       issueId,
-      issueTypeId: issueTypeLabel?.id,
-      issuePriorityId: issuePriorityLabel?.id,
+      labelIds,
     }
   );
 
