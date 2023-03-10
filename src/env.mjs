@@ -17,7 +17,11 @@ const server = z.object({
   //   // VERCEL_URL doesn't include `https` so it cant be validated as a URL
   //   process.env.VERCEL ? z.string().min(1) : z.string().url(),
   // ),
-  // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
+  GITHUB_WEBHOOK_SECRET: z.string().min(1),
+  GITHUB_CLIENT_SECRET: z.string().min(1),
+  GITHUB_PRIVATE_KEY: z.string().min(1),
+  GITHUB_APP_ID: z.string().min(1),
+  OPENAI_API_KEY: z.string().min(1),
 });
 
 /**
@@ -36,6 +40,11 @@ const client = z.object({
  */
 const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
+  GITHUB_WEBHOOK_SECRET: process.env.GITHUB_WEBHOOK_SECRET,
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+  GITHUB_PRIVATE_KEY: process.env.GITHUB_PRIVATE_KEY,
+  GITHUB_APP_ID: process.env.GITHUB_APP_ID,
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   // NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   // NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,

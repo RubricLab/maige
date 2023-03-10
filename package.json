@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@octokit/app": "^13.1.2",
     "next": "^13.2.1",
     "next-auth": "^4.19.0",
     "react": "18.2.0",
@@ -26,6 +27,7 @@
     "autoprefixer": "^10.4.7",
     "eslint": "^8.34.0",
     "eslint-config-next": "^13.2.1",
+    "openai": "^3.2.1",
     "postcss": "^8.4.14",
     "prettier": "^2.8.1",
     "prettier-plugin-tailwindcss": "^0.2.1",
