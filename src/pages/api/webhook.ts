@@ -127,7 +127,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   The possible labels are: ${labels
     .map((l) => l.name)
     .join(", ")}. Please choose a maximum of two labels.
-  Preferably, the first label should be a type of issue (bug, feature, or question), and the second label should be a priority level (low, medium, or high).
+  Preferably, the first label should be a type of issue (bug, feature request, or question), and the second label should be a priority level (low, medium, or high).
   
   Title: ${title}
   Body: "${bodySample}"
