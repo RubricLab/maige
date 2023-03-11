@@ -22,6 +22,9 @@ const server = z.object({
   GITHUB_PRIVATE_KEY: z.string().min(1),
   GITHUB_APP_ID: z.string().min(1),
   OPENAI_API_KEY: z.string().min(1),
+  DATABASE_URL: z.string().min(1),
+  STRIPE_SECRET_KEY: z.string().min(1),
+  STRIPE_PUBLIC_KEY: z.string().min(1),
 });
 
 /**
@@ -45,6 +48,9 @@ const processEnv = {
   GITHUB_PRIVATE_KEY: process.env.GITHUB_PRIVATE_KEY,
   GITHUB_APP_ID: process.env.GITHUB_APP_ID,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  DATABASE_URL: process.env.DATABASE_URL,
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
   // NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   // NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
