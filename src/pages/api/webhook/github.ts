@@ -2,10 +2,18 @@ import type { NextApiRequest, NextApiResponse } from "next/types";
 import { CreateChatCompletionRequest } from "openai";
 import { createHmac, timingSafeEqual } from "crypto";
 import { App } from "@octokit/app";
+import prisma from "../../../lib/prisma";
 
 type Label = {
   id: string;
   name: string;
+};
+
+type Repository = {
+  id: string;
+  name: string;
+  full_name: string;
+  private: boolean;
 };
 
 const MAX_BODY_LENGTH = 2000;
@@ -50,6 +58,67 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
+  const { action } = req.body;
+
+  // Add a new customer or repos to the database
+  if (["added", "removed"].includes(action)) {
+    const {
+      installation: {
+        account: { login },
+      },
+      repositories_added: addedRepos,
+      repositories_removed: removedRepos,
+    } = req.body;
+
+    const customer = await prisma.customer.upsert({
+      where: {
+        name: login,
+      },
+      create: {
+        name: login,
+      },
+      update: {},
+      select: {
+        id: true,
+        stripeCustomerId: true,
+        projects: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    // Add new repos to the database
+    const newRepos = addedRepos.filter((repo: Repository) => {
+      return !customer.projects.some((project) => project.name === repo.name);
+    });
+
+    const createProjects = prisma.project.createMany({
+      data: newRepos.map((repo: Repository) => ({
+        name: repo.name,
+        customerId: customer.id,
+      })),
+      skipDuplicates: true,
+    });
+
+    // Delete removed repos from the database
+    const deleteProjects = prisma.project.deleteMany({
+      where: {
+        customerId: customer.id,
+        name: {
+          in: removedRepos.map((repo: Repository) => repo.name),
+        },
+      },
+    });
+
+    await prisma.$transaction([createProjects, deleteProjects]);
+
+    return res.status(200).send({
+      message: `Updated repos for ${login}`,
+    });
+  }
+
   if (!req.body?.issue || !req.body?.repository) {
     return res.status(400).send({
       message: "Missing body or details",
@@ -58,7 +127,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Extract issue details
   const {
-    action,
     issue: { node_id: issueId, title, body },
     repository: {
       name,
