@@ -24,7 +24,6 @@ const server = z.object({
   OPENAI_API_KEY: z.string().min(1),
   DATABASE_URL: z.string().min(1),
   STRIPE_SECRET_KEY: z.string().min(1),
-  STRIPE_PUBLIC_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
 });
 
@@ -51,7 +50,6 @@ const processEnv = {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   DATABASE_URL: process.env.DATABASE_URL,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-  STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   // NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   // NEXTAUTH_URL: process.env.NEXTAUTH_URL,
