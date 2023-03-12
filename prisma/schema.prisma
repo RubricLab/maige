@@ -17,7 +17,7 @@ model Customer {
   projects Project[]
 
   usage          Int      @default(0)
-  usageLimit     Int      @default(1000)
+  usageLimit     Int      @default(10)
   usageUpdatedAt DateTime @default(now())
 
   subscribedAt DateTime?
