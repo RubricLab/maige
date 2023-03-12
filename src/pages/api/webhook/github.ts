@@ -60,8 +60,50 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { action } = req.body;
 
-  // Add a new customer or repos to the database
-  if (["added", "removed"].includes(action)) {
+  // Update a customer in the database
+  if (action === "created") {
+    const {
+      installation: {
+        account: { login },
+      },
+      repositories,
+    } = req.body;
+
+    await prisma.customer.create({
+      data: {
+        name: login,
+        projects: {
+          create: repositories.map((repo: Repository) => ({
+            name: repo.name,
+          })),
+        },
+      },
+    });
+
+    return res.status(200).send({
+      message: `Added customer ${login}`,
+    });
+  } else if (action === "deleted") {
+    const {
+      installation: {
+        account: { login },
+      },
+    } = req.body;
+
+    try {
+      await prisma.customer.delete({
+        where: {
+          name: login,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    return res.status(200).send({
+      message: `Deleted customer ${login}`,
+    });
+  } else if (["added", "removed"].includes(action)) {
     const {
       installation: {
         account: { login },
@@ -88,6 +130,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       },
     });
+
+    if (!customer?.id) {
+      return res.status(500).send({
+        message: `Could not find or create customer ${login}`,
+      });
+    }
 
     // Add new repos to the database
     const newRepos = addedRepos.filter((repo: Repository) => {
@@ -277,6 +325,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       message: "Could not add labels",
     });
   }
+
+  // Increment usage count
+  await prisma.customer.update({
+    where: {
+      name: owner,
+    },
+    data: {
+      usage: {
+        increment: 1,
+      },
+    },
+  });
 
   return res.status(200).send({
     message: "Webhook received. Labels added.",

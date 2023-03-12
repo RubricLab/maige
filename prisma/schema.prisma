@@ -12,6 +12,7 @@ model Customer {
   id               String  @id @default(cuid())
   name             String  @unique
   stripeCustomerId String? @unique
+  email            String?
 
   projects Project[]
 
@@ -28,7 +29,7 @@ model Project {
   name String
 
   customerId String
-  customer   Customer @relation(fields: [customerId], references: [id])
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
