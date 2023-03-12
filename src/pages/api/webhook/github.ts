@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next/types";
 import { CreateChatCompletionRequest } from "openai";
 import { createHmac, timingSafeEqual } from "crypto";
 import { App } from "@octokit/app";
-import prisma from "../../../lib/prisma";
+import prisma from "~/lib/prisma";
 
 type Label = {
   id: string;
@@ -169,9 +169,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  if (!req.body?.issue || !req.body?.repository) {
-    return res.status(400).send({
-      message: "Missing body or details",
+  if (action !== "opened" || !req.body?.issue) {
+    return res.status(200).send({
+      message: "Webhook received",
     });
   }
 
@@ -184,12 +184,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     },
     installation: { id: instanceId },
   } = req.body;
-
-  if (!["opened"].includes(action)) {
-    return res.status(200).send({
-      message: "Webhook received",
-    });
-  }
 
   // Get GitHub app instance access token
   const app = new App({
