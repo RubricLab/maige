@@ -39,7 +39,7 @@ const validateSignature = (req: NextApiRequest): boolean => {
  */
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
-    return res.status(405).send({
+    return res.setHeader("Allow", ["POST"]).status(405).send({
       message: "Only POST requests are accepted.",
     });
   }
