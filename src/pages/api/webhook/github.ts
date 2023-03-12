@@ -139,7 +139,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Add new repos to the database
     const newRepos = addedRepos.filter((repo: Repository) => {
-      return !customer.projects.some((project) => project.name === repo.name);
+      return !customer.projects.some(
+        (project: { name: string }) => project.name === repo.name
+      );
     });
 
     const createProjects = prisma.project.createMany({
