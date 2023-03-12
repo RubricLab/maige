@@ -185,7 +185,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     installation: { id: instanceId },
   } = req.body;
 
-  if (!["opened", "edited"].includes(action)) {
+  if (!["opened"].includes(action)) {
     return res.status(200).send({
       message: "Webhook received",
     });
