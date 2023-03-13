@@ -40,12 +40,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   switch (eventType) {
     case "checkout.session.completed":
-      // TODO: pass customer ID (from DB) to the checkout session somehow
-      const { client_reference_id } = object as any;
+      const { client_reference_id: customerId } = object as any;
+
+      if (!customerId) {
+        return res.status(400).send({
+          message: "Stripe checkout session missing customer ID in webhook",
+        });
+      }
 
       await prisma.customer.update({
         where: {
-          id: client_reference_id,
+          id: customerId,
         },
         data: {
           stripeCustomerId: customer,
