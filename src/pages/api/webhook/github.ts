@@ -236,17 +236,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const prompt = `
   You are tasked with labelling a GitHub issue based on its title and body.
   The repository is called ${name} owned by ${owner}.
-  The possible labels are: ${labels
-    .map((l) => l.name)
-    .join(", ")}. Please choose a maximum of three labels.
-  The first label should be a type of issue eg. bug, feature request, or question.
-  The second label should be a priority level eg. low, medium, or high.
-  The third label, if any, should be the area of the codebase that the issue relates to.
+  The possible labels are: ${labels.map((l) => l.name).join(", ")}.
+  Please choose up to three labels.
+  The first label should be a type of issue (bug, feature request, or question).
+  The second label should be a priority level (low, medium, or high).
+  The third label, if available, should be the feature affected by the issue.
   
   Title: ${title}
   Body: "${bodySample}"
 
-  Please answer in the format \`type, priority, category\`, with no explanation. For example, "bug, medium, UI".
+  Please answer in the format \`type, priority, category\`, with no explanation. For example: "bug, medium, UI".
   `;
 
   // Assemble OpenAI request
