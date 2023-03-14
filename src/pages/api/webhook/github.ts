@@ -239,13 +239,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   The possible labels are: ${labels.map((l) => l.name).join(", ")}.
   Please choose up to three labels.
   The first label should be a type of issue (bug, feature request, or question).
-  The second label should identify low-priority issues, for example, "low" or "medium priority". Do not use "high priority" or "urgent".
-  The third label, if available, should be the feature affected by the issue.
+  The second label should identify low-priority issues, for example, low or medium priority. Do not use high priority, urgent, etc.
+  The third label, if available, should be a category describing the issue, eg. frontend, API, dashboard.
   
   Title: ${title}
   Body: "${bodySample}"
 
-  Please answer in the format \`type, priority, category\`, with no explanation. For example: "bug, medium, UI".
+  Please answer in the format \`type, priority, category\`, with no explanation. For example: "bug, medium, backend".
   `;
 
   // Assemble OpenAI request
@@ -288,14 +288,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // Extract labels from GPT answer
-  const gptLabels = answer
+  const gptLabels: string[] = answer
     .split(",")
     .map((l: string) => l.trim().toLowerCase());
 
-  const labelIds = labels
-    .filter((l: Label) => {
-      return gptLabels.includes(l.name.toLowerCase());
-    })
+  const labelIds: string[] = labels
+    .filter((l: Label) => gptLabels.includes(l.name.toLowerCase()))
     .map((l: Label) => l?.id);
 
   const labelResult = await octokit.graphql(
