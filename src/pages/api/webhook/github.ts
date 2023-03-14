@@ -239,7 +239,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   The possible labels are: ${labels.map((l) => l.name).join(", ")}.
   Please choose up to three labels.
   The first label should be a type of issue (bug, feature request, or question).
-  The second label should be a priority level (low, medium, or high).
+  The second label should identify low-priority issues, for example, "low" or "medium priority". Do not use "high priority" or "urgent".
   The third label, if available, should be the feature affected by the issue.
   
   Title: ${title}
