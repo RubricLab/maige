@@ -33,7 +33,7 @@ const validateSignature = (req: NextApiRequest): boolean => {
 };
 
 /**
- * GET /api/webhook
+ * POST /api/webhook
  *
  * This is the webhook that GitHub will call when an issue is created or updated.
  */
@@ -238,13 +238,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   The repository is called ${name} owned by ${owner}.
   The possible labels are: ${labels
     .map((l) => l.name)
-    .join(", ")}. Please choose a maximum of two labels.
-  Preferably, the first label should be a type of issue (bug, feature request, or question), and the second label should be a priority level (low, medium, or high).
+    .join(", ")}. Please choose a maximum of three labels.
+  The first label should be a type of issue eg. bug, feature request, or question.
+  The second label should be a priority level eg. low, medium, or high.
+  The third label, if any, should be the area of the codebase that the issue relates to.
   
   Title: ${title}
   Body: "${bodySample}"
 
-  Please answer in the format \`type, priority\`, with no explanation. For example, "bug, high".
+  Please answer in the format \`type, priority, category\`, with no explanation. For example, "bug, medium, UI".
   `;
 
   // Assemble OpenAI request
@@ -293,10 +295,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const labelIds = labels
     .filter((l: Label) => {
-      return (
-        l.name.toLowerCase().includes(gptLabels[0]) ||
-        l.name.toLowerCase().includes(gptLabels[1])
-      );
+      return gptLabels.includes(l.name.toLowerCase());
     })
     .map((l: Label) => l?.id);
 
