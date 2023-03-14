@@ -12,7 +12,8 @@ function WaitlistTemplate({ link }: Props) {
       <Tailwind>
         <h1>Thanks for signing up for Maige!</h1>
         <p className="italic">
-          We're onboarding teams gradually to improve the core prompt as we go.
+          We&apos;re onboarding teams gradually to improve the core prompt as we
+          go.
         </p>
         <p>To get access sooner, connect your payment details:</p>
         {link && (
