@@ -2,23 +2,28 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import wizardHatLogo from "../../public/logo.png";
 
 const title = "Maige";
 const description = "Let GPT label your issues.";
 const linkPreview = "/logo.png";
 
+const isValidEmail = (email: string): boolean => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
 const Home: NextPage = () => {
   const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("Join the waitlist:");
 
   const submitEmail = useCallback(async () => {
-    if (!email || isSubmitting) return;
+    if (!canSubmit) return;
 
-    setIsSubmitting(true);
+    setMessage("Submitting...");
+    setLoading(true);
 
     const res = await fetch("/api/email", {
       method: "POST",
@@ -36,9 +41,12 @@ const Home: NextPage = () => {
       setMessage("Something went wrong. Please try again later.");
     }
 
-    setIsSubmitting(false);
+    setLoading(false);
     setEmail("");
-    setIsSubmitted(true);
+  }, [email, canSubmit]);
+
+  useEffect(() => {
+    setCanSubmit(isValidEmail(email));
   }, [email]);
 
   return (
@@ -96,7 +104,7 @@ const Home: NextPage = () => {
       </header>
       <main className="relative flex h-screen w-screen flex-col items-center">
         <div className="flex grow flex-col items-center justify-center space-y-4">
-          <h1 className="bg-gradient-to-l from-red-50 to-indigo-900 bg-clip-text text-8xl font-bold leading-normal tracking-tight text-transparent">
+          <h1 className="bg-gradient-to-l from-red-200 to-indigo-800 bg-clip-text text-8xl font-bold leading-normal tracking-tight text-transparent">
             Maige
           </h1>
           <h2 className="text-3xl font-medium tracking-tight text-white/70">
@@ -104,40 +112,35 @@ const Home: NextPage = () => {
           </h2>
           <p className="pb-8 italic text-white/60">Automagically.</p>
           <p className="text-white/80">{message}</p>
-          <div className="w-56 space-y-4">
+          <div className="w-72 space-y-4">
             <input
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-gray-700 bg-gray-900 p-2 px-3 text-white transition-colors hover:border-gray-600 focus:outline-none focus:ring-4 focus:ring-green-600/60 active:border-gray-600"
+              className="w-full rounded-md border border-gray-700 bg-gray-900 p-2 px-3 text-center text-white transition-colors hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-600/60 active:border-gray-600"
               placeholder="me@startup.so"
-              disabled={isSubmitted || isSubmitting}
+              disabled={loading}
             />
             <button
               onClick={submitEmail}
-              disabled={!email || isSubmitted || isSubmitting}
-              className="w-full rounded-md border-gray-900 bg-green-700 p-2 font-medium text-white transition-all enabled:hover:bg-green-600 disabled:opacity-80"
+              disabled={!canSubmit || loading}
+              className="w-full rounded-md border-gray-900 bg-green-700 p-2 font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80"
             >
               Submit
             </button>
           </div>
-          {/* <Link href="https://github.com/apps/maige-bot">
-            <button className="rounded-md border-gray-900 bg-green-700 px-6 py-3 font-medium text-white blur-sm transition-all duration-500 hover:scale-105 hover:bg-green-600 hover:blur-none">
-              Install with GitHub
-            </button>
-          </Link> */}
         </div>
       </main>
       <footer className="absolute bottom-0 flex h-10 w-screen items-center justify-center">
         <span className="text-xs text-white/40">
-          By{" "}
+          From{" "}
           <Link
-            className="font-medium text-white/60"
+            className="font-medium text-white/60 transition-opacity hover:text-white/80"
             href="https://studio.neat.run"
           >
             Neat Studio
           </Link>
-          . Please don&apos;t destroy the world with this.
+          . Please do good.
         </span>
       </footer>
     </div>
