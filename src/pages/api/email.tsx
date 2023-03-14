@@ -7,7 +7,7 @@ import { createPaymentLink } from "./stripe/generate-payment-link";
 const resend = new Resend(process.env.RESEND_KEY);
 const FROM_EMAIL = "hi@maige.app";
 const REPLY_TO_EMAIL = "ted@neat.run";
-const BASE_PRICE_ID = "price_1Mkwr7JD5KS2kmKy7qk0t6Ra";
+
 const WAITLIST_SUBJECT = "You've joined the Maige waitlist";
 
 /**
@@ -36,11 +36,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    const paymentLink = await createPaymentLink(
-      BASE_PRICE_ID,
-      email,
-      customerId
-    );
+    const paymentLink = await createPaymentLink(email, customerId);
 
     await resend.sendEmail({
       from: FROM_EMAIL,

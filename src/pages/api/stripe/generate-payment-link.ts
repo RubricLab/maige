@@ -1,6 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { stripe } from "~/lib/stripe";
 
+const TIERS = {
+  base: {
+    priceId: process.env.STRIPE_BASE_PRICE_ID || "",
+  },
+};
+
+type Tier = keyof typeof TIERS;
+
 /**
  * Generate a Stripe payment URL for a customer.
  */
@@ -11,16 +19,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  const { priceId, email, customerId } = req.body as any;
+  const { tier, email, customerId } = req.body as any;
 
-  if (!priceId || !email || !customerId) {
+  if (!tier || !email || !customerId) {
     return res.status(400).send({
       message: "Missing required parameters",
     });
   }
 
   try {
-    const url = await createPaymentLink(priceId, email, customerId);
+    const url = await createPaymentLink(email, customerId, tier);
 
     return res.status(200).send({
       url,
@@ -36,9 +44,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
  * To re-use payment links in other places eg. welcome emails
  */
 export const createPaymentLink = async (
-  priceId: string,
   email: string,
-  customerId: string
+  customerId: string,
+  tier: Tier = "base"
 ) => {
   const stripeSession = await stripe.checkout.sessions.create({
     client_reference_id: customerId,
@@ -56,7 +64,7 @@ export const createPaymentLink = async (
         : "http://localhost:3000",
     line_items: [
       {
-        price: priceId,
+        price: TIERS[tier].priceId,
       },
     ],
     automatic_tax: {
