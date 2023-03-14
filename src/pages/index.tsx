@@ -13,19 +13,28 @@ const Home: NextPage = () => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [message, setMessage] = useState("Join the waitlist:");
 
   const submitEmail = useCallback(async () => {
     if (!email || isSubmitting) return;
 
     setIsSubmitting(true);
 
-    await fetch("/api/email", {
+    const res = await fetch("/api/email", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ email }),
     });
+
+    if (res.status === 202) {
+      setMessage("You're already on the list! Check your email for details.");
+    } else if (res.status === 201) {
+      setMessage("Thanks! We'll be in touch soon.");
+    } else {
+      setMessage("Something went wrong. Please try again later.");
+    }
 
     setIsSubmitting(false);
     setEmail("");
@@ -93,12 +102,8 @@ const Home: NextPage = () => {
           <h2 className="text-3xl font-medium tracking-tight text-white/70">
             Let GPT label your issues.
           </h2>
-          <p className="pb-8 italic text-white/60">Maigically.</p>
-          {isSubmitted ? (
-            <p className="text-green-600">Thanks! We&apos;ll be in touch.</p>
-          ) : (
-            <p className="text-white/80">Join the waitlist:</p>
-          )}
+          <p className="pb-8 italic text-white/60">Automagically.</p>
+          <p className="text-white/80">{message}</p>
           <div className="w-56 space-y-4">
             <input
               type="text"

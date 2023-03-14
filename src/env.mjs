@@ -25,6 +25,7 @@ const server = z.object({
   DATABASE_URL: z.string().min(1),
   STRIPE_SECRET_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
+  RESEND_KEY: z.string().min(1),
 });
 
 /**
@@ -51,6 +52,7 @@ const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+  RESEND_KEY: process.env.RESEND_KEY,
   // NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   // NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
