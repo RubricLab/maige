@@ -2,12 +2,13 @@ import { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "~/lib/prisma";
 import WaitlistTemplate from "~/components/email/Waitlist";
 import { createPaymentLink } from "./stripe/generate-payment-link";
-import { sendEmail } from "~/lib/resend";
+import { Resend } from "resend";
 
 const FROM_EMAIL = "hi@maige.app";
 const REPLY_TO_EMAIL = "ted@neat.run";
-
 const WAITLIST_SUBJECT = "You've joined the Maige waitlist";
+
+const resend = new Resend(process.env.RESEND_KEY);
 
 /**
  * Add an email to the mailing list.
@@ -37,7 +38,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const paymentLink = await createPaymentLink(email, customerId);
 
-    await sendEmail({
+    await resend.sendEmail({
       from: FROM_EMAIL,
       reply_to: REPLY_TO_EMAIL,
       to: email,

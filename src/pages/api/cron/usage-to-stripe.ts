@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "~/lib/prisma";
-import { sendEmail } from "~/lib/resend";
 import { stripe } from "~/lib/stripe";
+import { Resend } from "resend";
 
 const CRON_KEY = "9D7042C6-CEE2-454A-8E4F-65BD8976DA7F";
+const resend = new Resend(process.env.RESEND_KEY);
 
 /**
  * GET /api/cron/usage-to-stripe
@@ -36,12 +37,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { stripeCustomerId, usage, usageLimit, email } = customer;
 
     if (!stripeCustomerId) {
-      await sendEmail({
+      await resend.sendEmail({
         from: "usage@maige.app",
         to: "ted@neat.run", // TODO: use email from customer
         subject: "Maige usage limit",
         // TODO: add payment link
-        text: `Hi there, ${customer.name}. We see that you'er at ${usage} issues out of the limit of ${usageLimit}. Please update your payment in Stripe to continue.`,
+        text: `Hi there, ${customer.name}. We see that you've used ${usage} issues out of the limit of ${usageLimit}. Please update your payment in Stripe to continue.`,
       });
       continue;
     }
