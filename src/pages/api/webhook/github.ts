@@ -204,7 +204,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     `
     query Labels($name: String!, $owner: String!) { 
       repository(name: $name, owner: $owner) {
-        labels(first: 50) {
+        labels(first: 100) {
           nodes {
             name
             id
