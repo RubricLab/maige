@@ -280,6 +280,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { choices } = await completionRes.json();
   const answer = choices[0].message.content;
 
+  console.log(`GPT's answer: ${answer}`);
+
   if (!answer.includes(",")) {
     return res.status(500).send({
       message: `GPT answered in an unknown format: ${answer}`,
