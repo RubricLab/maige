@@ -3,21 +3,19 @@ import prisma from "~/lib/prisma";
 import { sendEmail } from "~/lib/resend";
 import { stripe } from "~/lib/stripe";
 
-// TODO: import this from .env in Vercel.json. Hardcoded for now.
 const CRON_KEY = "9D7042C6-CEE2-454A-8E4F-65BD8976DA7F";
 
+/**
+ * GET /api/cron/usage-to-stripe
+ */
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== "POST") {
+  if (req.method !== "GET") {
     return res.status(405).send({
-      message: "Only POST requests are accepted.",
+      message: "Only GET requests are accepted.",
     });
   }
 
-  console.log("Running cron job...");
-
   if (req.query.key !== CRON_KEY) {
-    console.log("Bad cron key");
-
     return res.status(403).send({
       message: "Bad cron key.",
     });
@@ -35,15 +33,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   for (const customer of activeCustomers) {
-    const { stripeCustomerId, usage, usageLimit } = customer;
+    const { stripeCustomerId, usage, usageLimit, email } = customer;
 
     if (!stripeCustomerId) {
-      // TODO: send email to trial user if usage is over 10
       await sendEmail({
-        from: "alerts@maige.app",
-        to: "ted@neat.run",
-        subject: `Maige trial user over ${usageLimit}`,
-        text: `Maige trial user ${customer.name} is over ${usageLimit} at ${usage}. Updating in Stripe.`,
+        from: "usage@maige.app",
+        to: "ted@neat.run", // TODO: use email from customer
+        subject: "Maige usage limit",
+        // TODO: add payment link
+        text: `Hi there, ${customer.name}. We see that you'er at ${usage} issues out of the limit of ${usageLimit}. Please update your payment in Stripe to continue.`,
       });
       continue;
     }
