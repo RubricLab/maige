@@ -6,22 +6,26 @@ type Props = {
   link?: string;
 };
 
-function WaitlistTemplate({ link }: Props) {
+function UsageTemplate({ link }: Props) {
   return (
     <div>
       <Tailwind>
-        <h1>Thanks for signing up for Maige!</h1>
-        <p className="italic">
-          We&apos;re onboarding teams gradually to improve the core prompt as we
-          go.
+        <h1>Thanks for using Maige!</h1>
+        <p className="italic">We hope you like it.</p>
+        <p>
+          Accessing text-generation APIs can be expensive, so we ask you to add
+          a payment method at this point.
         </p>
-        <p>To get access sooner, connect your payment details:</p>
+        <p>
+          Usage will remain free up to 10 issues per month. Past that, you'll
+          get 10 issues per dollar.
+        </p>
         {link && (
           <Button
             className="w-full rounded-md bg-green-600 p-2 px-4 font-medium text-white"
             href={link}
           >
-            Skip the line
+            Get started
           </Button>
         )}
         <p>Best,</p>
@@ -31,4 +35,4 @@ function WaitlistTemplate({ link }: Props) {
   );
 }
 
-export default WaitlistTemplate;
+export default UsageTemplate;

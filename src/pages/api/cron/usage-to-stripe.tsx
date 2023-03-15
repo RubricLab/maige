@@ -3,6 +3,7 @@ import prisma from "~/lib/prisma";
 import { stripe } from "~/lib/stripe";
 import { Resend } from "resend";
 import { createPaymentLink, TIERS } from "../stripe/generate-payment-link";
+import UsageTemplate from "~/components/email/UsageAlert";
 
 const CRON_KEY = "9D7042C6-CEE2-454A-8E4F-65BD8976DA7F";
 const resend = new Resend(process.env.RESEND_KEY);
@@ -52,9 +53,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       await resend.sendEmail({
         from: "Maige<usage@maige.app>",
+        reply_to: "Ted<ted@neat.run>",
         to: "ted@neat.run", // TODO: use email from customer
         subject: "Upgrade your usage limit",
-        text: `Hi there. We see that you've used ${usage} issues out of the limit of ${usageLimit}. Please update your payment in Stripe to continue:\n ${paymentLink}`,
+        react: <UsageTemplate link={paymentLink} />,
       });
       continue;
     }
