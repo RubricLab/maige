@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "~/lib/prisma";
-import { Resend } from "resend";
 import WaitlistTemplate from "~/components/email/Waitlist";
 import { createPaymentLink } from "./stripe/generate-payment-link";
+import { sendEmail } from "~/lib/resend";
 
-const resend = new Resend(process.env.RESEND_KEY);
 const FROM_EMAIL = "hi@maige.app";
 const REPLY_TO_EMAIL = "ted@neat.run";
 
@@ -38,7 +37,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const paymentLink = await createPaymentLink(email, customerId);
 
-    await resend.sendEmail({
+    await sendEmail({
       from: FROM_EMAIL,
       reply_to: REPLY_TO_EMAIL,
       to: email,

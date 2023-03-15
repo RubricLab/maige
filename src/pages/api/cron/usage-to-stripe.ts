@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "~/lib/prisma";
+import { sendEmail } from "~/lib/resend";
 import { stripe } from "~/lib/stripe";
 
 // TODO: import this from .env in Vercel.json. Hardcoded for now.
@@ -30,10 +31,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   for (const customer of activeCustomers) {
-    const { stripeCustomerId, usage } = customer;
+    const { stripeCustomerId, usage, usageLimit } = customer;
 
     if (!stripeCustomerId) {
       // TODO: send email to trial user if usage is over 10
+      await sendEmail({
+        from: "alerts@maige.app",
+        to: "ted@neat.run",
+        subject: `Maige trial user over ${usageLimit}`,
+        text: `Maige trial user ${customer.name} is over ${usageLimit} at ${usage}. Updating in Stripe.`,
+      });
       continue;
     }
 
