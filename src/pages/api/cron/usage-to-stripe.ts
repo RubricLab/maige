@@ -32,7 +32,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         gte: new Date(now - oneDay),
       },
       usage: {
-        gt: TIERS.base.usageLimit, // TODO: check if greater than usageLimit
+        gt: TIERS.base.usageLimit,
       },
     },
     select: {
