@@ -122,7 +122,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       update: {},
       select: {
         id: true,
-        stripeCustomerId: true,
         projects: {
           select: {
             name: true,

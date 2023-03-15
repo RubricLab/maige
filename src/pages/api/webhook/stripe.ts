@@ -36,7 +36,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     data: { object },
   } = event;
 
-  const { customer } = object as any;
+  const { subscription } = object as any;
 
   switch (eventType) {
     case "checkout.session.completed":
@@ -53,7 +53,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           id: customerId,
         },
         data: {
-          stripeCustomerId: customer,
+          stripeSubscriptionId: subscription,
         },
       });
 
@@ -61,13 +61,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "customer.subscription.deleted":
       await prisma.customer.delete({
         where: {
-          stripeCustomerId: customer,
+          stripeSubscriptionId: subscription,
         },
       });
 
       break;
     case "customer.subscription.updated":
-      console.log("customerSubscriptionUpdated", object);
+      await prisma.customer.update({
+        where: {
+          id: customerId,
+        },
+        data: {
+          stripeSubscriptionId: subscription,
+        },
+      });
 
       break;
     default:

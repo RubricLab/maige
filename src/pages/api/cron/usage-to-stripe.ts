@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "~/lib/prisma";
 import { stripe } from "~/lib/stripe";
 import { Resend } from "resend";
-import { TIERS } from "../stripe/generate-payment-link";
+import { createPaymentLink, TIERS } from "../stripe/generate-payment-link";
 
 const CRON_KEY = "9D7042C6-CEE2-454A-8E4F-65BD8976DA7F";
 const resend = new Resend(process.env.RESEND_KEY);
@@ -36,7 +36,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
     },
     select: {
-      stripeCustomerId: true,
+      id: true,
+      stripeSubscriptionId: true,
       usage: true,
       usageLimit: true,
       email: true,
@@ -44,28 +45,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   for (const customer of activeCustomers) {
-    const { stripeCustomerId, usage, usageLimit, email } = customer;
+    const { id, stripeSubscriptionId, usage, usageLimit, email } = customer;
 
-    // TODO: invert this condition
-    if (stripeCustomerId) {
+    if (!stripeSubscriptionId) {
+      const paymentLink = await createPaymentLink(email || "", id);
+
       await resend.sendEmail({
-        from: "usage@maige.app",
+        from: "Maige<usage@maige.app>",
         to: "ted@neat.run", // TODO: use email from customer
-        subject: "Maige usage limit",
-        // TODO: add payment link
-        text: `Hi there. We see that you've used ${usage} issues out of the limit of ${usageLimit}. Please update your payment in Stripe to continue.`,
+        subject: "Upgrade your usage limit",
+        text: `Hi there. We see that you've used ${usage} issues out of the limit of ${usageLimit}. Please update your payment in Stripe to continue:\n ${paymentLink}`,
       });
       continue;
     }
 
-    await stripe.subscriptionItems.createUsageRecord(
-      "si_NVzE7g7DQ9hzEQ", // hardcoded to my subscription
-      {
-        quantity: usage,
-        timestamp: Math.floor(new Date().getTime() / 1000),
-        action: "set",
-      }
-    );
+    await stripe.subscriptionItems.createUsageRecord(stripeSubscriptionId, {
+      quantity: usage,
+      timestamp: Math.floor(new Date().getTime() / 1000),
+      action: "set",
+    });
   }
 
   return res.status(200).send({

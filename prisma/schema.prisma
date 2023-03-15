@@ -9,10 +9,10 @@ generator client {
 }
 
 model Customer {
-  id               String  @id @default(cuid())
-  name             String  @unique
-  stripeCustomerId String? @unique
-  email            String?
+  id                   String  @id @default(cuid())
+  name                 String  @unique
+  stripeSubscriptionId String? @unique
+  email                String?
 
   projects Project[]
 
