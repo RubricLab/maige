@@ -13,7 +13,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
+  console.log("Running cron job...");
+
   if (req.query.key !== CRON_KEY) {
+    console.log("Bad cron key");
+
     return res.status(403).send({
       message: "Bad cron key.",
     });
