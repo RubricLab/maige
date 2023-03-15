@@ -36,7 +36,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     data: { object },
   } = event;
 
-  const { subscription } = object as any;
+  const {
+    items: { data },
+  } = object as any;
+
+  const subscriptionItem = data.find(
+    (item: any) => item.object === "subscription_item"
+  );
+
+  if (!subscriptionItem) {
+    return res.status(400).send({
+      message: "Could not find Stripe subscription item",
+    });
+  }
 
   switch (eventType) {
     case "checkout.session.completed":
@@ -53,7 +65,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           id: customerId,
         },
         data: {
-          stripeSubscriptionId: subscription,
+          stripeSubscriptionId: subscriptionItem.id,
         },
       });
 
@@ -61,7 +73,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "customer.subscription.deleted":
       await prisma.customer.delete({
         where: {
-          stripeSubscriptionId: subscription,
+          stripeSubscriptionId: subscriptionItem.id,
         },
       });
 
@@ -72,7 +84,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           id: customerId,
         },
         data: {
-          stripeSubscriptionId: subscription,
+          stripeSubscriptionId: subscriptionItem.id,
         },
       });
 

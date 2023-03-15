@@ -49,15 +49,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { id, stripeSubscriptionId, usage, usageLimit, email } = customer;
 
     if (!stripeSubscriptionId) {
-      const paymentLink = await createPaymentLink(email || "", id);
+      if (usage > usageLimit) {
+        const paymentLink = await createPaymentLink(email || "", id);
 
-      await resend.sendEmail({
-        from: "Maige<usage@maige.app>",
-        reply_to: "Ted<ted@neat.run>",
-        to: "ted@neat.run", // TODO: use email from customer
-        subject: "Upgrade your usage limit",
-        react: <UsageTemplate link={paymentLink} />,
-      });
+        await resend.sendEmail({
+          from: "Maige<usage@maige.app>",
+          reply_to: "Ted<ted@neat.run>",
+          to: "ted@neat.run", // TODO: use email from customer
+          subject: "Upgrade your usage limit",
+          react: <UsageTemplate link={paymentLink} />,
+        });
+      }
+
       continue;
     }
 
