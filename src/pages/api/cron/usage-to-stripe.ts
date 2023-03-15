@@ -30,19 +30,29 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       usageUpdatedAt: {
         gte: new Date(now - oneDay),
       },
+      usage: {
+        gt: 0,
+      },
+    },
+    select: {
+      stripeCustomerId: true,
+      usage: true,
+      usageLimit: true,
+      email: true,
     },
   });
 
   for (const customer of activeCustomers) {
     const { stripeCustomerId, usage, usageLimit, email } = customer;
 
-    if (!stripeCustomerId) {
+    // TODO: invert this condition
+    if (stripeCustomerId) {
       await resend.sendEmail({
         from: "usage@maige.app",
         to: "ted@neat.run", // TODO: use email from customer
         subject: "Maige usage limit",
         // TODO: add payment link
-        text: `Hi there, ${customer.name}. We see that you've used ${usage} issues out of the limit of ${usageLimit}. Please update your payment in Stripe to continue.`,
+        text: `Hi there. We see that you've used ${usage} issues out of the limit of ${usageLimit}. Please update your payment in Stripe to continue.`,
       });
       continue;
     }

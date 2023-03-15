@@ -327,6 +327,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       usage: {
         increment: 1,
       },
+      usageUpdatedAt: new Date(),
     },
   });
 
