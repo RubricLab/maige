@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { stripe } from "~/lib/stripe";
 
-const TIERS = {
+export const TIERS = {
   base: {
+    usageLimit: 10,
     priceId: process.env.STRIPE_BASE_PRICE_ID || "",
   },
 };
