@@ -17,8 +17,8 @@ function UsageTemplate({ link }: Props) {
           a payment method at this point.
         </p>
         <p>
-          Usage will remain free up to 10 issues per month. Past that, you'll
-          get 10 issues per dollar.
+          Usage will remain free up to 10 issues per month. Past that,
+          you&apos;ll get 10 issues per dollar.
         </p>
         {link && (
           <Button
