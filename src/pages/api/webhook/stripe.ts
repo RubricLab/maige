@@ -51,7 +51,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   switch (eventType) {
-    case "checkout.session.completed":
+    case "customer.subscription.created":
       const { client_reference_id: customerId } = object as any;
 
       if (!customerId) {
