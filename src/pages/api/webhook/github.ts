@@ -314,6 +314,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   );
 
   if (!labelResult) {
+    console.error("Could not add labels: ", labelResult);
     return res.status(500).send({
       message: "Could not add labels",
     });
