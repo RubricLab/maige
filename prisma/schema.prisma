@@ -11,8 +11,9 @@ generator client {
 model Customer {
   id                   String  @id @default(cuid())
   name                 String  @unique
-  stripeSubscriptionId String? @unique
   email                String?
+  stripeSubscriptionId String? @unique
+  stripeCustomerId     String? @unique
 
   projects Project[]
 

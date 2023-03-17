@@ -54,7 +54,6 @@ export const createPaymentLink = async (
     customer_email: email,
     mode: "subscription",
     payment_method_types: ["card"],
-    billing_address_collection: "required",
     success_url:
       process.env.VERCEL === "1"
         ? "https://maige.app"

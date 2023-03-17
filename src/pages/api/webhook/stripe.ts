@@ -36,61 +36,71 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     data: { object },
   } = event;
 
-  const {
-    items: { data },
-  } = object as any;
+  const { customer } = object as any;
 
-  const subscriptionItem = data.find(
-    (item: any) => item.object === "subscription_item"
-  );
+  if (eventType === "checkout.session.completed") {
+    const { client_reference_id: customerId } = object as any;
 
-  if (!subscriptionItem) {
-    return res.status(400).send({
-      message: "Could not find Stripe subscription item",
+    if (!customerId) {
+      return res.status(400).send({
+        message: "Stripe checkout session missing customer ID in webhook",
+      });
+    }
+
+    await prisma.customer.update({
+      where: {
+        id: customerId,
+      },
+      data: {
+        stripeCustomerId: customer,
+      },
     });
-  }
+  } else if (eventType === "customer.subscription.created") {
+    const subscriptionItem = (object as any).items.data.find(
+      (item: any) => item.object === "subscription_item"
+    );
 
-  switch (eventType) {
-    case "customer.subscription.created":
-      const { client_reference_id: customerId } = object as any;
-
-      if (!customerId) {
-        return res.status(400).send({
-          message: "Stripe checkout session missing customer ID in webhook",
-        });
-      }
-
-      await prisma.customer.update({
-        where: {
-          id: customerId,
-        },
-        data: {
-          stripeSubscriptionId: subscriptionItem.id,
-        },
+    if (!subscriptionItem) {
+      return res.status(400).send({
+        message: "Could not find Stripe subscription item",
       });
+    }
 
-      break;
-    case "customer.subscription.deleted":
-      await prisma.customer.delete({
-        where: {
-          stripeSubscriptionId: subscriptionItem.id,
-        },
+    await prisma.customer.update({
+      where: {
+        stripeCustomerId: customer,
+      },
+      data: {
+        stripeSubscriptionId: subscriptionItem.id,
+      },
+    });
+  } else if (eventType === "customer.subscription.deleted") {
+    await prisma.customer.delete({
+      where: {
+        stripeCustomerId: customer,
+      },
+    });
+  } else if (eventType === "customer.subscription.updated") {
+    const subscriptionItem = (object as any).items.data.find(
+      (item: any) => item.object === "subscription_item"
+    );
+
+    if (!subscriptionItem) {
+      return res.status(400).send({
+        message: "Could not find Stripe subscription item",
       });
+    }
 
-      break;
-    case "customer.subscription.updated":
-      await prisma.customer.update({
-        where: {
-          id: customerId,
-        },
-        data: {
-          stripeSubscriptionId: subscriptionItem.id,
-        },
-      });
-
-      break;
-    default:
-      console.log(`Unhandled Stripe webhook event type: ${eventType}`);
+    await prisma.customer.update({
+      where: {
+        stripeCustomerId: customer,
+      },
+      data: {
+        stripeSubscriptionId: subscriptionItem.id,
+      },
+    });
+  } else {
+    console.log(`Unhandled Stripe webhook event type: ${eventType}`);
   }
 
   return res.status(200).send({
