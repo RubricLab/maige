@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/usage-to-stripe?key=9D7042C6-CEE2-454A-8E4F-65BD8976DA7F",
-      "schedule": "56 21 * * *"
+      "schedule": "18 20 * * *"
     }
   ]
 }
