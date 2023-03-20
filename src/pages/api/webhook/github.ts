@@ -180,10 +180,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  if (req.body?.comment && !req.body?.comment?.body?.includes("/label")) {
-    return res.status(202).send({
-      message: "Webhook received",
-    });
+  // Issue comment validations
+  if (req.body?.comment) {
+    if (!req.body.comment.body?.includes("/label")) {
+      return res.status(202).send({
+        message: "Non-label comment received",
+      });
+    }
+
+    console.log("Issue comment role: ", req.body.comment.author_association);
+    if (req.body.comment.author_association === "NONE") {
+      console.log("Comment from non-collaborator received");
+      return res.status(202).send({
+        message: "Comment from non-collaborator received",
+      });
+    }
   }
 
   /**
