@@ -100,7 +100,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       console.log(error);
     }
 
-    return res.status(200).send({
+    return res.status(201).send({
       message: `Deleted customer ${login}`,
     });
   } else if (["added", "removed"].includes(action)) {
@@ -163,13 +163,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     await prisma.$transaction([createProjects, deleteProjects]);
 
-    return res.status(200).send({
+    return res.status(201).send({
       message: `Updated repos for ${login}`,
     });
   }
 
   if (action !== "opened" || !req.body?.issue) {
-    return res.status(200).send({
+    return res.status(202).send({
       message: "Webhook received",
     });
   }
@@ -294,7 +294,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     .map((l: string) => l.trim().toLowerCase());
 
   const labelIds: string[] = labels
-    .filter((l: Label) => gptLabels.includes(l.name.toLowerCase()))
+    .filter((l: Label) =>
+      gptLabels.some((gptLabel: string) =>
+        l.name.toLowerCase().includes(gptLabel)
+      )
+    )
     .map((l: Label) => l?.id);
 
   const labelResult = await octokit.graphql(
