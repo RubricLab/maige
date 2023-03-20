@@ -64,11 +64,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       continue;
     }
 
-    await stripe.subscriptionItems.createUsageRecord(stripeSubscriptionId, {
-      quantity: usage,
-      timestamp: Math.floor(new Date().getTime() / 1000),
-      action: "set",
-    });
+    const stripeUsageResult = await stripe.subscriptionItems.createUsageRecord(
+      stripeSubscriptionId,
+      {
+        quantity: usage,
+        timestamp: Math.floor(new Date().getTime() / 1000),
+        action: "set",
+      }
+    );
+
+    console.log("Stripe usage updated: ", stripeUsageResult);
   }
 
   return res.status(200).send({
