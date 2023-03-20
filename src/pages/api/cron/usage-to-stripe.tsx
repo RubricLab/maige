@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "~/lib/prisma";
 import { stripe } from "~/lib/stripe";
 import { Resend } from "resend";
-import { createPaymentLink, TIERS } from "../stripe/generate-payment-link";
+import { createPaymentLink } from "../stripe/generate-payment-link";
 import UsageTemplate from "~/components/email/UsageAlert";
 
 const CRON_KEY = "9D7042C6-CEE2-454A-8E4F-65BD8976DA7F";
@@ -33,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         gte: new Date(now - oneDay),
       },
       usage: {
-        gt: TIERS.base.usageLimit,
+        gt: 0,
       },
     },
     select: {
