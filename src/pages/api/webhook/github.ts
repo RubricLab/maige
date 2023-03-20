@@ -60,121 +60,136 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { action } = req.body;
 
-  // Update a customer in the database
-  if (action === "created") {
+  /**
+   * Installation-related events. Sync repos/user to database.
+   */
+  if (req.body?.installation?.account?.login) {
     const {
       installation: {
         account: { login },
       },
-      repositories,
     } = req.body;
 
-    await prisma.customer.create({
-      data: {
-        name: login,
-        projects: {
-          create: repositories.map((repo: Repository) => ({
-            name: repo.name,
-          })),
+    if (action === "created") {
+      // installed GitHub App
+
+      const { repositories } = req.body;
+
+      await prisma.customer.create({
+        data: {
+          name: login,
+          projects: {
+            create: repositories.map((repo: Repository) => ({
+              name: repo.name,
+            })),
+          },
         },
-      },
-    });
+      });
 
-    return res.status(200).send({
-      message: `Added customer ${login}`,
-    });
-  } else if (action === "deleted") {
-    const {
-      installation: {
-        account: { login },
-      },
-    } = req.body;
+      return res.status(200).send({
+        message: `Added customer ${login}`,
+      });
+    } else if (action === "deleted") {
+      // Uninstalled GitHub App
 
-    try {
-      await prisma.customer.delete({
+      try {
+        await prisma.customer.delete({
+          where: {
+            name: login,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
+      return res.status(201).send({
+        message: `Deleted customer ${login}`,
+      });
+    } else if (["added", "removed"].includes(action)) {
+      // Added or removed repos from GitHub App
+
+      const {
+        repositories_added: addedRepos,
+        repositories_removed: removedRepos,
+      } = req.body;
+
+      const customer = await prisma.customer.upsert({
         where: {
           name: login,
         },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-
-    return res.status(201).send({
-      message: `Deleted customer ${login}`,
-    });
-  } else if (["added", "removed"].includes(action)) {
-    const {
-      installation: {
-        account: { login },
-      },
-      repositories_added: addedRepos,
-      repositories_removed: removedRepos,
-    } = req.body;
-
-    const customer = await prisma.customer.upsert({
-      where: {
-        name: login,
-      },
-      create: {
-        name: login,
-      },
-      update: {},
-      select: {
-        id: true,
-        projects: {
-          select: {
-            name: true,
+        create: {
+          name: login,
+        },
+        update: {},
+        select: {
+          id: true,
+          projects: {
+            select: {
+              name: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    if (!customer?.id) {
-      return res.status(500).send({
-        message: `Could not find or create customer ${login}`,
+      if (!customer?.id) {
+        return res.status(500).send({
+          message: `Could not find or create customer ${login}`,
+        });
+      }
+
+      const newRepos = addedRepos.filter((repo: Repository) => {
+        return !customer.projects.some(
+          (project: { name: string }) => project.name === repo.name
+        );
+      });
+
+      const createProjects = prisma.project.createMany({
+        data: newRepos.map((repo: Repository) => ({
+          name: repo.name,
+          customerId: customer.id,
+        })),
+        skipDuplicates: true,
+      });
+
+      const deleteProjects = prisma.project.deleteMany({
+        where: {
+          customerId: customer.id,
+          name: {
+            in: removedRepos.map((repo: Repository) => repo.name),
+          },
+        },
+      });
+
+      // Sync repos to database in a single transaction
+      await prisma.$transaction([createProjects, deleteProjects]);
+
+      return res.status(201).send({
+        message: `Updated repos for ${login}`,
       });
     }
-
-    // Add new repos to the database
-    const newRepos = addedRepos.filter((repo: Repository) => {
-      return !customer.projects.some(
-        (project: { name: string }) => project.name === repo.name
-      );
-    });
-
-    const createProjects = prisma.project.createMany({
-      data: newRepos.map((repo: Repository) => ({
-        name: repo.name,
-        customerId: customer.id,
-      })),
-      skipDuplicates: true,
-    });
-
-    // Delete removed repos from the database
-    const deleteProjects = prisma.project.deleteMany({
-      where: {
-        customerId: customer.id,
-        name: {
-          in: removedRepos.map((repo: Repository) => repo.name),
-        },
-      },
-    });
-
-    await prisma.$transaction([createProjects, deleteProjects]);
-
-    return res.status(201).send({
-      message: `Updated repos for ${login}`,
-    });
   }
 
-  if (action !== "opened" || !req.body?.issue) {
+  if (
+    !(
+      (action === "opened" && req.body?.issue) ||
+      (action === "created" && req.body?.comment)
+    )
+  ) {
     return res.status(202).send({
       message: "Webhook received",
     });
   }
 
-  // Extract issue details
+  if (req.body?.comment && !req.body?.comment?.body?.includes("/label")) {
+    return res.status(202).send({
+      message: "Webhook received",
+    });
+  }
+
+  /**
+   * Issue-related events. Label issues.
+   */
+
   const {
     issue: { node_id: issueId, title, body },
     repository: {
@@ -238,7 +253,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   The possible labels are: ${labels.map((l) => l.name).join(", ")}.
   Please choose up to three labels.
   The first label should be a type of issue (bug, feature request, or question).
-  The second label should identify low-priority issues, for example, low or medium priority. Do not use high priority, urgent, etc.
+  The second label, if applicable, should identify low-priority issues, for example, low or medium priority. Do not use high priority, urgent, etc.
   The third label, if available, should be a category describing the issue, eg. frontend, API, dashboard.
   
   Title: ${title}
