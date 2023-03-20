@@ -75,11 +75,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
   } else if (eventType === "customer.subscription.deleted") {
-    await prisma.customer.delete({
-      where: {
-        stripeCustomerId: customer,
-      },
-    });
+    try {
+      await prisma.customer.delete({
+        where: {
+          stripeCustomerId: customer,
+        },
+      });
+    } catch {
+      return res.status(200).send({
+        message: "No customer to delete in DB",
+      });
+    }
   } else if (eventType === "customer.subscription.updated") {
     const subscriptionItem = (object as any).items.data.find(
       (item: any) => item.object === "subscription_item"
@@ -91,14 +97,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
-    await prisma.customer.update({
-      where: {
-        stripeCustomerId: customer,
-      },
-      data: {
-        stripeSubscriptionId: subscriptionItem.id,
-      },
-    });
+    try {
+      await prisma.customer.update({
+        where: {
+          stripeCustomerId: customer,
+        },
+        data: {
+          stripeSubscriptionId: subscriptionItem.id,
+        },
+      });
+    } catch (error) {
+      console.log("Customer update error:", error);
+
+      return res.status(200).send({
+        message: "No customer to update in DB",
+      });
+    }
   } else {
     console.log(`Unhandled Stripe webhook event type: ${eventType}`);
   }
