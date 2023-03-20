@@ -64,16 +64,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       continue;
     }
 
-    const stripeUsageResult = await stripe.subscriptionItems.createUsageRecord(
-      stripeSubscriptionId,
-      {
-        quantity: usage,
-        timestamp: Math.floor(new Date().getTime() / 1000),
-        action: "set",
-      }
-    );
+    try {
+      const stripeUsageResult =
+        await stripe.subscriptionItems.createUsageRecord(stripeSubscriptionId, {
+          quantity: usage,
+          timestamp: Math.floor(new Date().getTime() / 1000),
+          action: "set",
+        });
 
-    console.log("Stripe usage updated: ", stripeUsageResult);
+      if (stripeUsageResult) {
+        // TODO: collect + batch-update these for efficiency
+        await prisma.customer.update({
+          where: { id },
+          data: {
+            usage: 0,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error updating Stripe usage: ", error);
+    }
   }
 
   return res.status(200).send({
