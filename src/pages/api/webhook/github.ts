@@ -175,7 +175,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       (action === "created" && req.body?.comment)
     )
   ) {
-    console.log("Irrelevant event received: ", action);
+    console.log(
+      "Irrelevant event received. Is issue: ",
+      req.body?.issue?.title
+    );
+
     return res.status(202).send({
       message: "Webhook received",
     });
