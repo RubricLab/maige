@@ -176,8 +176,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     )
   ) {
     console.log(
-      "Irrelevant event received. Is issue: ",
-      req.body?.issue?.title
+      "Irrelevant event. Issue: ",
+      req.body?.repository?.full_name || "not issue"
     );
 
     return res.status(202).send({
