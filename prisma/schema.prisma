@@ -21,8 +21,8 @@ model Customer {
   usageLimit     Int      @default(10)
   usageUpdatedAt DateTime @default(now())
 
-  subscribedAt DateTime?
-  createdAt    DateTime  @default(now())
+  usageWarned Boolean  @default(false)
+  createdAt   DateTime @default(now())
 }
 
 model Project {

@@ -3,6 +3,7 @@ import { CreateChatCompletionRequest } from "openai";
 import { createHmac, timingSafeEqual } from "crypto";
 import { App } from "@octokit/app";
 import prisma from "~/lib/prisma";
+import { createPaymentLink } from "../stripe/generate-payment-link";
 
 type Label = {
   id: string;
@@ -71,7 +72,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     } = req.body;
 
     if (action === "created") {
-      // installed GitHub App
+      // Installed GitHub App
 
       const { repositories } = req.body;
 
@@ -180,21 +181,29 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  // Issue comment validations
-  if (req.body?.comment) {
-    if (!req.body.comment.body?.includes("/label")) {
-      return res.status(202).send({
-        message: "Non-label comment received",
-      });
-    }
+  const customer = await prisma.customer.findUnique({
+    where: {
+      name: req.body?.repository?.owner?.login,
+    },
+    select: {
+      id: true,
+      usage: true,
+      usageLimit: true,
+      usageWarned: true,
+    },
+  });
 
-    console.log("Issue comment role: ", req.body.comment.author_association);
-    if (req.body.comment.author_association === "NONE") {
-      return res.status(202).send({
-        message: "Comment from non-collaborator received",
-      });
-    }
+  if (!customer) {
+    console.warn(
+      "Could not find customer: ",
+      req.body?.repository?.owner?.login
+    );
+    return res.status(500).send({
+      message: "Could not find customer",
+    });
   }
+
+  const { id: customerId, usage, usageLimit, usageWarned } = customer;
 
   /**
    * Issue-related events. Label issues.
@@ -203,6 +212,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     issue: { node_id: issueId, title, body },
     repository: {
+      node_id: repoId,
       name,
       owner: { login: owner },
     },
@@ -216,6 +226,49 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   const octokit = await app.getInstallationOctokit(instanceId);
+
+  // Above usage. Warn user and return.
+  if (usage > usageLimit) {
+    if (!usageWarned) {
+      try {
+        await openUsageIssue(octokit, customerId, repoId);
+        await prisma.customer.update({
+          where: {
+            id: customerId,
+          },
+          data: {
+            usageWarned: true,
+          },
+        });
+        console.log("Usage issue opened: ", owner, name);
+      } catch (error) {
+        console.warn("Could not open usage issue for", owner, name);
+        return res.status(500).send({
+          message: "Could not open usage issue",
+        });
+      }
+    }
+
+    console.warn("Usage limit exceeded:", owner, name);
+    return res.status(402).send({
+      message: "Please add payment info to continue.",
+    });
+  }
+
+  // Issue comment validations
+  if (req.body?.comment) {
+    if (!req.body.comment.body?.includes("/label")) {
+      return res.status(202).send({
+        message: "Non-label comment received",
+      });
+    }
+
+    if (req.body.comment.author_association === "NONE") {
+      return res.status(202).send({
+        message: "Comment from non-collaborator received",
+      });
+    }
+  }
 
   // List labels
   const labelsRes: {
@@ -364,3 +417,34 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     message: "Webhook received. Labels added.",
   });
 };
+
+export async function openUsageIssue(
+  octokit: any,
+  customerId: string,
+  repoId: string
+) {
+  const paymentLink = await createPaymentLink(customerId, "base");
+  const warningIssue = await octokit.graphql(
+    `
+      mutation($repoId: ID!, $title: String!, $body: String!) {
+        createIssue(input: { repositoryId: $repoId, title: $title, body: $body }) {
+          issue { id }
+        }
+      }
+      `,
+    {
+      repoId,
+      title: "Maige Usage",
+      body:
+        "Thanks for trying [Maige](https://maige.app).\n\n" +
+        "Running GPT-based services is pricey. At this point, we ask you to add payment info to continue using Maige.\n\n" +
+        `[Add payment info](${paymentLink})\n\n` +
+        "Feel free to close this issue.",
+    }
+  );
+
+  if (!warningIssue) {
+    console.warn("Failed to open usage issue: ", warningIssue);
+    throw new Error("Failed to open usage issue.");
+  }
+}
