@@ -58,11 +58,11 @@ export const createPaymentLink = async (
     payment_method_types: ["card"],
     success_url:
       process.env.VERCEL === "1"
-        ? "https://maige.app"
+        ? "https://maige.app/success"
         : "http://localhost:3000",
     cancel_url:
       process.env.VERCEL === "1"
-        ? "https://maige.app"
+        ? "https://maige.app/success"
         : "http://localhost:3000",
     line_items: [
       {
