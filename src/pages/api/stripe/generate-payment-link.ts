@@ -51,7 +51,9 @@ export const createPaymentLink = async (
 ) => {
   const stripeSession = await stripe.checkout.sessions.create({
     client_reference_id: customerId,
-    customer_email: email,
+    ...(email && {
+      customer_email: email,
+    }),
     mode: "subscription",
     payment_method_types: ["card"],
     success_url:
