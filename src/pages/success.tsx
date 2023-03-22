@@ -68,7 +68,7 @@ const Home: NextPage = () => {
             Success! 🎉
           </h1>
           <h2 className="text-3xl font-medium tracking-tight text-white/80">
-            You're in.
+            You&apos;re in.
           </h2>
         </div>
       </main>
