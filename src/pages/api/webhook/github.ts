@@ -175,12 +175,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       (action === "created" && req.body?.comment)
     )
   ) {
-    console.log(
-      "Irrelevant event. Issue: ",
-      req.body?.repository?.full_name,
-      req.body?.issue?.title
-    );
-
     return res.status(202).send({
       message: "Webhook received",
     });
@@ -196,7 +190,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     console.log("Issue comment role: ", req.body.comment.author_association);
     if (req.body.comment.author_association === "NONE") {
-      console.log("Comment from non-collaborator received");
       return res.status(202).send({
         message: "Comment from non-collaborator received",
       });
@@ -268,12 +261,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   You are tasked with labelling a GitHub issue based on its title and body.
   The repository is called ${name} by ${owner}.
   The possible labels are: ${labels.map((l) => l.name).join(", ")}.
-  Please choose only one label that represents the type of issue, eg. bug, feature request, or question.
+  Please choose one that represents the type of issue, eg. bug, feature request, or question.
+  Please choose a second label that represents the code area affected.
   
   Here is the title of the issue: "${title}"
   Here is the body of the issue: "${bodySample}"
 
-  Please give a one-word answer with only the name of the label, without explanation. For example: "bug".
+  Please answer in the format "type, category" with only the names of the labels, without explanation. For example: "bug, frontend".
   `;
 
   // Assemble OpenAI request
@@ -311,12 +305,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   console.log(`GPT's answer: ${answer}`);
 
-  if (!answer.includes(",")) {
-    return res.status(500).send({
-      message: `GPT answered in an unknown format: ${answer}`,
-    });
-  }
-
   // Extract labels from GPT answer
   const gptLabels: string[] = answer
     .split(",")
@@ -330,6 +318,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     )
     .map((l: Label) => l?.id);
 
+  if (labelIds.length === 0) {
+    return res.status(500).send({
+      message: `Could not find labels: ${labelIds}`,
+    });
+  }
+
   const labelResult = await octokit.graphql(
     `
     mutation AddLabels($issueId: ID!, $labelIds: [ID!]!) {
@@ -342,7 +336,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     `,
     {
       issueId,
-      labelIds,
+      labelIds: [labelIds[0]],
     }
   );
 
