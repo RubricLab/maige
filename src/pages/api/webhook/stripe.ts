@@ -53,6 +53,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
       data: {
         stripeCustomerId: customer,
+        usageLimit: 1000,
       },
     });
   } else if (eventType === "customer.subscription.created") {
