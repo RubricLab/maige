@@ -60,8 +60,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         // TODO: collect + batch-update these for efficiency
         await prisma.customer.update({
           where: { id: customerId },
+          // TODO: track total usage for paying users.
           data: {
             usage: 0,
+            usageUpdatedAt: new Date(),
           },
         });
       }
