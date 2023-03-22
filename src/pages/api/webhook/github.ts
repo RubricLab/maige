@@ -363,13 +363,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     .split(",")
     .map((l: string) => l.trim().toLowerCase());
 
-  const labelIds: string[] = labels
-    .filter((l: Label) =>
-      gptLabels.some((gptLabel: string) =>
-        l.name.toLowerCase().includes(gptLabel)
-      )
-    )
-    .map((l: Label) => l?.id);
+  const labelIds: string[] = gptLabels.reduce(
+    (acc: string[], g: string) =>
+      labels.some((l: Label) => l.name.toLowerCase().includes(g))
+        ? [
+            ...acc,
+            labels.find((l: Label) => l.name.toLowerCase().includes(g))!.id,
+          ]
+        : acc,
+    []
+  );
 
   if (labelIds.length === 0) {
     return res.status(500).send({
