@@ -1,12 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import prisma from "~/lib/prisma";
 import { stripe } from "~/lib/stripe";
-import { Resend } from "resend";
-import { createPaymentLink } from "../stripe/generate-payment-link";
-import UsageTemplate from "~/components/email/UsageAlert";
 
 const CRON_KEY = "9D7042C6-CEE2-454A-8E4F-65BD8976DA7F";
-const resend = new Resend(process.env.RESEND_KEY);
 
 /**
  * GET /api/cron/usage-to-stripe
@@ -41,26 +37,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       stripeSubscriptionId: true,
       usage: true,
       usageLimit: true,
-      email: true,
     },
   });
 
   for (const customer of activeCustomers) {
-    const { id, stripeSubscriptionId, usage, usageLimit, email } = customer;
+    const { id: customerId, stripeSubscriptionId, usage } = customer;
 
+    // Only applies to paying users
     if (!stripeSubscriptionId) {
-      if (usage > usageLimit) {
-        const paymentLink = await createPaymentLink(email || "", id);
-
-        await resend.sendEmail({
-          from: "Maige<usage@maige.app>",
-          reply_to: "Ted<ted@neat.run>",
-          to: "ted@neat.run", // TODO: use email from customer
-          subject: "Upgrade your usage limit",
-          react: <UsageTemplate link={paymentLink} />,
-        });
-      }
-
       continue;
     }
 
@@ -75,7 +59,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       if (stripeUsageResult) {
         // TODO: collect + batch-update these for efficiency
         await prisma.customer.update({
-          where: { id },
+          where: { id: customerId },
           data: {
             usage: 0,
           },
