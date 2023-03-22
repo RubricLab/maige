@@ -4,11 +4,9 @@ import WaitlistTemplate from "~/components/email/Waitlist";
 import { createPaymentLink } from "./stripe/generate-payment-link";
 import { Resend } from "resend";
 
-const FROM_EMAIL = "hi@maige.app";
-const REPLY_TO_EMAIL = "ted@neat.run";
-const WAITLIST_SUBJECT = "You've joined the Maige waitlist";
-
 const resend = new Resend(process.env.RESEND_KEY);
+const DEFAULT_REPLY_TO = "Ted<ted@neat.run>";
+const DEFAULT_FROM = "Maige<ted@maige.app>";
 
 /**
  * Add an email to the mailing list.
@@ -36,15 +34,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    const paymentLink = await createPaymentLink(email, customerId);
+    const paymentLink = await createPaymentLink(customerId, "base", email);
 
-    await resend.sendEmail({
-      from: FROM_EMAIL,
-      reply_to: REPLY_TO_EMAIL,
-      to: email,
-      subject: WAITLIST_SUBJECT,
-      react: <WaitlistTemplate link={paymentLink} />,
-    });
+    await sendEmail(
+      email,
+      "You've joined the Maige waitlist",
+      <WaitlistTemplate link={paymentLink} />
+    );
   } catch (error: any) {
     if (error.code === "P2002") {
       return res.status(202).send({
@@ -61,3 +57,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     message: "Email added to list.",
   });
 };
+
+/**
+ * Send an email
+ */
+export async function sendEmail(
+  email: string,
+  subject: string,
+  react: React.ReactElement
+) {
+  await resend.sendEmail({
+    to: email,
+    from: DEFAULT_FROM,
+    reply_to: DEFAULT_REPLY_TO,
+    subject,
+    react,
+  });
+}

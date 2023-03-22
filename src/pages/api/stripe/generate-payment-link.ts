@@ -22,14 +22,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { tier, email, customerId } = req.body as any;
 
-  if (!tier || !email || !customerId) {
+  if (!tier || !customerId) {
     return res.status(400).send({
       message: "Missing required parameters",
     });
   }
 
   try {
-    const url = await createPaymentLink(email, customerId, tier);
+    const url = await createPaymentLink(customerId, tier, email);
 
     return res.status(200).send({
       url,
@@ -45,9 +45,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
  * To re-use payment links in other places eg. welcome emails
  */
 export const createPaymentLink = async (
-  email: string,
   customerId: string,
-  tier: Tier = "base"
+  tier: Tier = "base",
+  email: string = ""
 ) => {
   const stripeSession = await stripe.checkout.sessions.create({
     client_reference_id: customerId,
