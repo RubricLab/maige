@@ -107,28 +107,30 @@ const Home: NextPage = () => {
           <h1 className="bg-gradient-to-l from-red-200 to-indigo-800 bg-clip-text text-8xl font-bold leading-normal tracking-tight text-transparent">
             Maige
           </h1>
-          <h2 className="text-3xl font-medium tracking-tight text-white/70">
+          <h2 className="pb-8 text-3xl font-medium tracking-tight text-white/80">
             Let GPT label your issues.
           </h2>
-          <p className="pb-8 italic text-white/60">Automagically.</p>
           <p className="text-white/80">{message}</p>
           <div className="w-72 space-y-4">
             <input
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-gray-700 bg-gray-900 p-2 px-3 text-center text-white transition-colors hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-600/60 active:border-gray-600"
+              className="w-full rounded-md border border-white/20 bg-gray-900 p-2 px-3 text-center text-white transition-colors hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-600/60 active:border-gray-600"
               placeholder="me@startup.so"
               disabled={loading}
             />
             <button
               onClick={submitEmail}
               disabled={!canSubmit || loading}
-              className="w-full rounded-md border-gray-900 bg-green-700 p-2 font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80"
+              className="w-full rounded-md bg-green-700 p-2 font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80"
             >
               Submit
             </button>
           </div>
+          <p className="text-sm text-white/60">
+            First 10 issues free. Then 10 issues/$.
+          </p>
         </div>
       </main>
       <footer className="absolute bottom-0 flex h-10 w-screen items-center justify-center">
