@@ -85,7 +85,7 @@ const Home: NextPage = () => {
                 className="h-full w-auto rounded-md object-cover ring-4 ring-green-700 ring-opacity-50"
               />
               <p className="text-sm text-white/60">
-                That's it. That's all it does for now.
+                That&apos;s it. That&apos;s all it does for now.
               </p>
             </div>
             <Link href="https://github.com/apps/maige-bot" target="_blank">
