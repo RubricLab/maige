@@ -314,7 +314,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   You are tasked with labelling a GitHub issue based on its title and body.
   The repository is called ${name} by ${owner}.
   The possible labels are: ${labels.map((l) => l.name).join(", ")}.
-  Please choose one that represents the type of issue, eg. bug, feature request, or question.
+  Please choose one that represents the type of issue, examples: bug, feature request, or question.
   Please choose a second label that represents the code area affected.
   
   Here is the title of the issue: "${title}"
