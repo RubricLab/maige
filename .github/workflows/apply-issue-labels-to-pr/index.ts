@@ -32,7 +32,7 @@ async function applyLabelFromLinkedIssueToPR(pr, token) {
   const data = await graphql(query, {
     owner: pr.base.repo.owner.login,
     repo: pr.base.repo.name,
-    pr_number: pr.number,
+    prNumber: pr.number,
   });
 
   const linkedIssues =
