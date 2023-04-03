@@ -1,9 +1,7 @@
 name: Apply labels from linked issue to PR
-
 on:
   pull_request:
     types: [opened, synchronize]
-
 jobs:
   label_on_pr:
     runs-on: ubuntu-latest
@@ -21,43 +19,7 @@ jobs:
       run: |
         npm install @octokit/core
       
-   - name: Apply labels from linked issue to PR
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        const { Octokit } = require("@octokit/core");
-        const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-
-        async function applyLabelFromLinkedIssueToPR(pr, octokit) {
-          const linkedIssue = await octokit.request('GET /repos/{owner}/{repo}/issues/{issue_number}', {
-            owner: pr.base.repo.owner.login,
-            repo: pr.base.repo.name,
-            issue_number: pr.head.ref
-          });
-
-          if (!linkedIssue) {
-            console.log("No issue linked.");
-            return;
-          }
-
-          const linkedIssueLabels = linkedIssue.labels.map(label => label.name);
-
-          if (linkedIssueLabels.length === 0) {
-            console.log("No labels found on the linked issue.");
-            return;
-          }
-
-          await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/labels', {
-            owner: pr.base.repo.owner.login,
-            repo: pr.base.repo.name,
-            issue_number: pr.number,
-            labels: linkedIssueLabels
-          });
-
-          console.log(`Applied labels: ${linkedIssueLabels.join(', ')} to PR#${pr.number} from linked issue`);
-        }
-
-        (async () => {
-          const pr = ${{ toJson(github.event.pull_request) }};          
-          await applyLabelFromLinkedIssueToPR(pr, octokit);
-        })();
+  - name: Apply labels from linked issue to PR
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    run: "`const { Octokit } = require('@octokit/core'); const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN }); async function applyLabelFromLinkedIssueToPR(pr, octokit) { const linkedIssue = await octokit.request('GET /repos/{owner}/{repo}/issues/{issue_number}', { owner: pr.base.repo.owner.login, repo: pr.base.repo.name, issue_number: pr.head.ref }); if (!linkedIssue) { console.log('No issue linked.'); return; } const linkedIssueLabels = linkedIssue.labels.map(label => label.name); if (linkedIssueLabels.length === 0) { console.log('No labels found on the linked issue.'); return; } await octokit.request('POST /repos/{owner}/{repo}/issues/{issue_number}/labels', { owner: pr.base.repo.owner.login, repo: pr.base.repo.name, issue_number: pr.number, labels: linkedIssueLabels }); console.log('Applied labels:', linkedIssueLabels.join(', '), 'to PR#' + pr.number + ' from linked issue'); } (async () => { const pr = ${{ toJson(github.event.pull_request) }}; await applyLabelFromLinkedIssueToPR(pr, octokit); })();`"
