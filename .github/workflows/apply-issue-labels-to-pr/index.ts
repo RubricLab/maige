@@ -1,7 +1,15 @@
 const { Octokit } = require("@octokit/core");
-const { graphql } = require("@octokit/graphql");
+const { graphql: graphqlApi } = require("@octokit/graphql");
 
-async function applyLabelFromLinkedIssueToPR(pr, octokit) {
+async function applyLabelFromLinkedIssueToPR(pr, token) {
+  const graphql = graphqlApi.defaults({
+    headers: {
+      authorization: `token ${token}`,
+    },
+  });
+
+  const octokit = new Octokit({ auth: token });
+
   const query = `
     query GetLinkedIssues($owner: String!, $repo: String!, $prNumber: Int!) {
       repository(owner: $owner, name: $repo) {
@@ -25,9 +33,6 @@ async function applyLabelFromLinkedIssueToPR(pr, octokit) {
     owner: pr.base.repo.owner.login,
     repo: pr.base.repo.name,
     pr_number: pr.number,
-    headers: {
-      authorization: `token ${octokit.auth.token}`,
-    },
   });
 
   const linkedIssues =
@@ -72,7 +77,6 @@ async function applyLabelFromLinkedIssueToPR(pr, octokit) {
 
   const token = process.env.GITHUB_TOKEN;
   const prData = JSON.parse(process.env.PR_DATA);
-  const octokit = new Octokit({ auth: token });
 
-  await applyLabelFromLinkedIssueToPR(prData, octokit);
+  await applyLabelFromLinkedIssueToPR(prData, token);
 })();
