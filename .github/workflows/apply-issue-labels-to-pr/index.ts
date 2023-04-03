@@ -1,8 +1,8 @@
-const { Octokit } = require("@octokit/core");
-const { graphql, gql } = require("@octokit/graphql");
+import Octokit from "@octokit/core";
+import { graphql } from "@octokit/graphql";
 
 async function applyLabelFromLinkedIssueToPR(pr, octokit) {
-  const query = gql`
+  const query = `
     query GetLinkedIssues($owner: String!, $repo: String!, $prNumber: Int!) {
       repository(owner: $owner, name: $repo) {
         pullRequest(number: $prNumber) {
