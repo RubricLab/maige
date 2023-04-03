@@ -25,4 +25,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_DATA: ${{ toJson(github.event.pull_request) }}
-        run: node ./.github/actions/sync-issue-labels-to-pr/index.js
+        run: node ./.github/workflows/sync-issue-labels-to-pr/index.js
