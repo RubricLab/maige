@@ -17,9 +17,13 @@ jobs:
         with:
           node-version: 16
 
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
       - name: Install dependencies
         run: |
-          pnpm install @octokit/core @octokit/graphql
+          bun install @octokit/core @octokit/graphql
 
       - name: Apply labels from linked issue to PR
         env:
