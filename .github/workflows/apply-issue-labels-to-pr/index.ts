@@ -1,5 +1,5 @@
-import Octokit from "@octokit/core";
-import { graphql } from "@octokit/graphql";
+const { Octokit } = require("@octokit/core");
+const { graphql } = require("@octokit/graphql");
 
 async function applyLabelFromLinkedIssueToPR(pr, octokit) {
   const query = `
