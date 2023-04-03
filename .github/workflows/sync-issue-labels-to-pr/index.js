@@ -15,6 +15,8 @@ async function applyLabelFromLinkedIssueToPR(pr, octokit) {
     }
   );
 
+  console.log("Timeline items: ", timelineItems);
+
   const linkedIssues = timelineItems.data.filter(
     (item) =>
       item.event === "cross-referenced" && item.source && item.source.issue
