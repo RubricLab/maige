@@ -1,5 +1,3 @@
-// .github/actions/label_pr_from_issue/index.js
-
 const { Octokit } = require("@octokit/core");
 const { graphql, gql } = require("@octokit/graphql");
 
