@@ -57,6 +57,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
   } else if (eventType === "customer.subscription.created") {
+    /**
+     * Customer created
+     */
     const subscriptionItem = (object as any).items.data.find(
       (item: any) => item.object === "subscription_item"
     );
@@ -76,6 +79,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
   } else if (eventType === "customer.subscription.deleted") {
+    /**
+     * Customer deleted
+     */
     try {
       await prisma.customer.delete({
         where: {
@@ -88,6 +94,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
   } else if (eventType === "customer.subscription.updated") {
+    /**
+     * Customer updated
+     */
     const subscriptionItem = (object as any).items.data.find(
       (item: any) => item.object === "subscription_item"
     );
