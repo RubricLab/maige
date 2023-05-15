@@ -4,6 +4,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { App } from "@octokit/app";
 import prisma from "~/lib/prisma";
 import { createPaymentLink } from "../stripe/generate-payment-link";
+import { PrismaClient } from "@prisma/client";
 
 type Label = {
   id: string;
@@ -304,6 +305,115 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const labels: Label[] = labelsRes.repository.labels.nodes;
 
+  /**
+   * Label all unlabelled issues
+   */
+  if (req.body.comment?.body?.includes("/label-all")) {
+    console.log("Labelling all unlabelled issues");
+
+    // GraphQL query to get all open issues. Filtering by unlabelled was not possible.
+    const openIssues = (await octokit.graphql(
+      `
+      query UnlabelledIssues($name: String!, $owner: String!) {
+        repository(name: $name, owner: $owner) {
+          issues(first: 100, states: [OPEN]) {
+            nodes {
+              title
+              body
+              id
+              labels(first: 1) {
+                totalCount
+              }
+            }
+          }
+        }
+      }
+      `,
+      {
+        name: name,
+        owner: owner,
+      }
+    )) as any;
+
+    if (!openIssues?.repository?.issues?.nodes) {
+      console.log("Could not get open issues");
+      return res.status(401).send({
+        message: "Could not get open issues",
+      });
+    }
+
+    const unlabelledIssues = openIssues.repository.issues.nodes.filter(
+      (issue: any) => issue.labels.totalCount === 0
+    );
+
+    try {
+      for (const issue of unlabelledIssues) {
+        const labelIdsToApply = await getLabelsFromGPT({
+          title: issue.title,
+          body: issue.body,
+          labels: labels,
+          owner: owner,
+          name: name,
+        });
+
+        await labelIssue(octokit, labelIdsToApply, issue.id);
+        await incrementUsage(prisma, owner);
+      }
+    } catch (error: any) {
+      console.log("Could not label issue:", error.message);
+      return res.status(500).send({
+        message: error.message || "Could not label issue",
+      });
+    }
+
+    return res.status(200).send({
+      message: "Labels added to all old issues.",
+    });
+  }
+
+  /**
+   * Label one issue
+   */
+  try {
+    const labelIdsToApply = await getLabelsFromGPT({
+      title,
+      body,
+      labels,
+      owner,
+      name,
+    });
+
+    await labelIssue(octokit, labelIdsToApply, issueId);
+    await incrementUsage(prisma, owner);
+  } catch (error: any) {
+    console.warn("Could not label issue:", error.message);
+    return res.status(500).send({
+      message: error.message || "Could not label issue",
+    });
+  }
+
+  console.log("Webhook received. Labels added.");
+  return res.status(200).send({
+    message: "Webhook received. Labels added.",
+  });
+};
+
+/**
+ * Ask GPT for labels by title, body, and possible labels
+ */
+export async function getLabelsFromGPT({
+  title,
+  body,
+  owner,
+  name,
+  labels,
+}: {
+  title: string;
+  body: string;
+  owner: string;
+  name: string;
+  labels: Label[];
+}): Promise<string[]> {
   // Truncate body if it's too long
   const bodySample =
     body?.length > MAX_BODY_LENGTH
@@ -348,15 +458,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   );
 
   if (!completionRes.ok) {
-    return res.status(500).send({
-      message: `OpenAI API error: ${completionRes.status}`,
-    });
+    throw new Error(`OpenAI API error: ${completionRes.status}`);
   }
 
   const { choices } = await completionRes.json();
   const answer = choices[0].message.content;
-
-  console.log(`GPT's answer: ${answer}`);
 
   // Extract labels from GPT answer
   const gptLabels: string[] = answer
@@ -374,12 +480,34 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     []
   );
 
-  if (labelIds.length === 0) {
-    return res.status(500).send({
-      message: `Could not find labels: ${labelIds}`,
-    });
-  }
+  return labelIds;
+}
 
+/**
+ * Increment usage count for a customer
+ */
+export async function incrementUsage(prisma: PrismaClient, owner: string) {
+  await prisma.customer.update({
+    where: {
+      name: owner,
+    },
+    data: {
+      usage: {
+        increment: 1,
+      },
+      usageUpdatedAt: new Date(),
+    },
+  });
+}
+
+/**
+ * Label an issue
+ */
+export async function labelIssue(
+  octokit: any,
+  labelIds: string[],
+  issueId: number
+) {
   const labelResult = await octokit.graphql(
     `
     mutation AddLabels($issueId: ID!, $labelIds: [ID!]!) {
@@ -397,30 +525,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   );
 
   if (!labelResult) {
-    console.error("Could not add labels: ", labelResult);
-    return res.status(500).send({
-      message: "Could not add labels",
-    });
+    throw new Error("Could not add labels");
   }
+}
 
-  // Increment usage count
-  await prisma.customer.update({
-    where: {
-      name: owner,
-    },
-    data: {
-      usage: {
-        increment: 1,
-      },
-      usageUpdatedAt: new Date(),
-    },
-  });
-
-  return res.status(200).send({
-    message: "Webhook received. Labels added.",
-  });
-};
-
+/**
+ * Open issue to prompt user to add payment info
+ */
 export async function openUsageIssue(
   octokit: any,
   customerId: string,
