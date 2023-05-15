@@ -227,7 +227,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const octokit = await app.getInstallationOctokit(instanceId);
 
-  // Above usage. Warn user and return.
+  // Above usage. Warn user and continue (for now).
   if (usage > usageLimit) {
     if (!usageWarned) {
       try {
@@ -249,10 +249,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    console.warn("Usage limit exceeded:", owner, name);
-    return res.status(402).send({
-      message: "Please add payment info to continue.",
-    });
+    // console.warn("Usage limit exceeded:", owner, name);
+    // return res.status(402).send({
+    //   message: "Please add payment info to continue.",
+    // });
   }
 
   // Issue comment validations
@@ -297,7 +297,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   );
 
   if (!labelsRes?.repository?.labels?.nodes) {
-    return res.status(500).send({
+    return res.status(401).send({
       message: "Could not get labels",
     });
   }
