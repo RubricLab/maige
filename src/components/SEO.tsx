@@ -3,7 +3,7 @@ import React from "react";
 
 const DEFAULT_TITLE = "Maige";
 const DEFAULT_DESCRIPTION = "Let GPT label your issues.";
-const DEFAULT_LINK_PREVIEW = "/logo.png";
+const DEFAULT_LINK_PREVIEW = "https://maige.app/preview.png";
 
 function SEO({
   title = DEFAULT_TITLE,
