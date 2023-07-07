@@ -9,6 +9,7 @@ import { PrismaClient } from "@prisma/client";
 type Label = {
   id: string;
   name: string;
+  description: string;
 };
 
 type Repository = {
@@ -171,6 +172,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
+  /**
+   * Issue-related events. We care about new issues and comments.
+   */
   if (
     !(
       (action === "opened" && req.body?.issue) ||
@@ -207,7 +211,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { id: customerId, usage, usageLimit, usageWarned } = customer;
 
   /**
-   * Issue-related events. Label issues.
+   * Relevant issue events. Label issues.
    */
 
   const {
@@ -256,7 +260,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // });
   }
 
-  // Issue comment validations
+  /**
+   * Label one old issue, triggered by a comment "/label" or "/label-all"
+   */
   if (req.body?.comment) {
     if (!req.body.comment.body?.includes("/label")) {
       return res.status(202).send({
@@ -274,6 +280,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   // List labels
   const labelsRes: {
     repository: {
+      description?: string;
       labels: {
         nodes: Label[];
       };
@@ -282,10 +289,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     `
     query Labels($name: String!, $owner: String!) { 
       repository(name: $name, owner: $owner) {
+        description
         labels(first: 100) {
           nodes {
-            name
             id
+            name
+            description
           }
         }
       }
@@ -304,6 +313,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const labels: Label[] = labelsRes.repository.labels.nodes;
+  const repoDescription = labelsRes.repository.description;
 
   /**
    * Label all unlabelled issues
@@ -351,9 +361,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const labelIdsToApply = await getLabelsFromGPT({
           title: issue.title,
           body: issue.body,
-          labels: labels,
-          owner: owner,
-          name: name,
+          labels,
+          owner,
+          name,
+          repoDescription,
         });
 
         await labelIssue(octokit, labelIdsToApply, issue.id);
@@ -381,6 +392,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       labels,
       owner,
       name,
+      repoDescription,
     });
 
     await labelIssue(octokit, labelIdsToApply, issueId);
@@ -407,12 +419,14 @@ export async function getLabelsFromGPT({
   owner,
   name,
   labels,
+  repoDescription,
 }: {
   title: string;
   body: string;
   owner: string;
   name: string;
   labels: Label[];
+  repoDescription?: string;
 }): Promise<string[]> {
   // Truncate body if it's too long
   const bodySample =
@@ -421,17 +435,26 @@ export async function getLabelsFromGPT({
       : body;
 
   const prompt = `
-  You are tasked with labelling a GitHub issue based on its title and body.
-  The repository is called ${name} by ${owner}.
-  The possible labels are: ${labels.map((l) => l.name).join(", ")}.
-  Please choose one that represents the type of issue, examples: bug, feature request, or question.
-  Please choose a second label that represents the code area affected.
-  
-  Here is the title of the issue: "${title}"
-  Here is the body of the issue: "${bodySample}"
+You are tasked with labelling a GitHub issue based on its title and body.
+The repository is ${name} by ${owner}${
+    repoDescription ? `, described as follows: ${repoDescription}` : ""
+  }
+The possible labels are as follows:
+${labels
+  .map((l: Label) => `- ${l.name}${l.description ? `: ${l.description}` : ""}`)
+  .join("\n")}
 
-  Please answer in the format "type, category" with only the names of the labels, without explanation. For example: "bug, frontend".
-  `;
+Please choose 1-2 of these labels.
+The first is for the type of issue, examples: bug, feature request, or question.
+The second label represents the code area affected, if available and applicable.
+
+Here is the title of the issue: "${title}"
+Here is the body of the issue: "${bodySample}"
+
+Please answer in the format "type, category" with only the names of the labels, without explanation.
+Example: bug, frontend
+Example: feature request, devOps
+`;
 
   // Assemble OpenAI request
   const payload: CreateChatCompletionRequest = {
@@ -462,12 +485,17 @@ export async function getLabelsFromGPT({
   }
 
   const { choices } = await completionRes.json();
-  const answer = choices[0].message.content;
+  const answer = choices?.[0]?.message?.content;
+
+  if (!answer || answer?.length === 0) {
+    throw new Error("OpenAI API error: no answer");
+  }
 
   // Extract labels from GPT answer
   const gptLabels: string[] = answer
     .split(",")
-    .map((l: string) => l.trim().toLowerCase());
+    // Remove quotes, whitespace, and lowercase
+    .map((l: string) => l.trim().toLowerCase().replace(/['"]+/g, ""));
 
   const labelIds: string[] = gptLabels.reduce(
     (acc: string[], g: string) =>
@@ -520,7 +548,7 @@ export async function labelIssue(
     `,
     {
       issueId,
-      labelIds: [labelIds[0]],
+      labelIds: labelIds && labelIds.length > 0 ? labelIds : [],
     }
   );
 
