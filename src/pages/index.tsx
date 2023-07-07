@@ -9,6 +9,7 @@ import demoSrc from "/public/assets/demo.png";
 import Neat from "~/components/logos/Neat";
 import Cal from "~/components/logos/Cal";
 import Precedent from "~/components/logos/Precedent";
+import Inlang from "~/components/logos/Inlang";
 
 const isValidEmail = (email: string): boolean => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -103,10 +104,11 @@ const Home: NextPage = () => {
           </div>
           <div className="flex flex-col items-center gap-2 py-8">
             <p className="text-sm text-white/60">Used by</p>
-            <div className="flex flex-row items-center justify-center space-x-6 text-white/60">
+            <div className="flex flex-row items-center justify-center space-x-7 text-white/60">
               <Cal className="h-5" />
               <Neat className="h-5" />
               <Precedent className="h-7" />
+              <Inlang className="h-6" />
             </div>
           </div>
         </div>

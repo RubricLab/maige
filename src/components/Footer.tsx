@@ -9,6 +9,7 @@ function Footer() {
         <Link
           className="font-medium text-white/60 transition-opacity hover:text-white/80"
           href="https://studio.neat.run"
+          target="_blank"
         >
           Neat Studio
         </Link>
