@@ -228,9 +228,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const octokit = await app.getInstallationOctokit(instanceId);
 
-  // Above usage. Warn user and continue (for now).
+  // Above usage. Warn user twice but continue (for now).
   if (usage > usageLimit) {
-    if (!usageWarned) {
+    if (!usageWarned || usage == usageLimit + 10) {
       try {
         await openUsageIssue(octokit, customerId, repoId);
         await prisma.customer.update({
