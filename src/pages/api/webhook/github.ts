@@ -446,7 +446,7 @@ ${labels
 
 Please choose 1-2 of these labels.
 The first is for the type of issue, examples: bug, feature request, or question.
-The second label represents the code area affected, if available and applicable.
+The second label represents the code area affected, if available and applicable. Avoid "needs design" or other prescriptive labels.
 
 Here is the title of the issue: "${title}"
 Here is the body of the issue: "${bodySample}"
