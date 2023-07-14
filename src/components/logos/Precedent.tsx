@@ -6,7 +6,7 @@ function Precedent({ className }: { className?: string }) {
       <div className={`${className} flex items-center justify-center gap-2`}>
         <img
           src="/assets/logos/precedent.png"
-          className="max-h-full opacity-70 invert"
+          className="max-h-full opacity-70 invert group-hover:opacity-100"
         />
         <p className="text-2xl">Precedent</p>
       </div>

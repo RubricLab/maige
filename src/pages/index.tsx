@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
 import Footer from "~/components/Footer";
 import Header from "~/components/Header";
 import SEO from "~/components/SEO";
@@ -9,48 +8,10 @@ import demoSrc from "/public/assets/demo.png";
 import Neat from "~/components/logos/Neat";
 import Cal from "~/components/logos/Cal";
 import Precedent from "~/components/logos/Precedent";
-import Inlang from "~/components/logos/Inlang";
-
-const isValidEmail = (email: string): boolean => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
+import Trigger from "~/components/logos/Trigger";
+import Highlight from "~/components/logos/Highlight";
 
 const Home: NextPage = () => {
-  const [email, setEmail] = useState("");
-  const [canSubmit, setCanSubmit] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("Join the waitlist:");
-
-  const submitEmail = useCallback(async () => {
-    if (!canSubmit) return;
-
-    setMessage("Submitting...");
-    setLoading(true);
-
-    const res = await fetch("/api/email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    if (res.status === 202) {
-      setMessage("You're already on the list! Check your email for details.");
-    } else if (res.status === 201) {
-      setMessage("Thanks! We'll be in touch soon.");
-    } else {
-      setMessage("Something went wrong. Please try again later.");
-    }
-
-    setLoading(false);
-    setEmail("");
-  }, [email, canSubmit]);
-
-  useEffect(() => {
-    setCanSubmit(isValidEmail(email));
-  }, [email]);
-
   return (
     <div className="bg-black">
       <SEO />
@@ -105,10 +66,11 @@ const Home: NextPage = () => {
           <div className="flex flex-col items-center gap-2 py-8">
             <p className="text-sm text-white/60">Used by</p>
             <div className="flex flex-row items-center justify-center space-x-7 text-white/60">
-              <Cal className="h-5" />
-              <Neat className="h-5" />
-              <Precedent className="h-7" />
-              <Inlang className="h-6" />
+              <Highlight className="h-6 hover:text-white" />
+              <Precedent className="group h-6 hover:text-white" />
+              <Cal className="h-5 hover:text-white" />
+              <Neat className="h-5 hover:text-white" />
+              <Trigger className="h-6 hover:text-white" />
             </div>
           </div>
         </div>

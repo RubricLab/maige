@@ -5,15 +5,14 @@ function Footer() {
   return (
     <footer className="absolute bottom-0 flex h-10 w-screen items-center justify-center">
       <span className="text-xs text-white/40">
-        From{" "}
+        Built by{" "}
         <Link
           className="font-medium text-white/60 transition-opacity hover:text-white/80"
-          href="https://studio.neat.run"
+          href="https://github.com/tedspare"
           target="_blank"
         >
-          Neat Studio
+          Ted Spare
         </Link>
-        . Please do good.
       </span>
     </footer>
   );
