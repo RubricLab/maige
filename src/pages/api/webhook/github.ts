@@ -523,6 +523,9 @@ export async function incrementUsage(prisma: PrismaClient, owner: string) {
       usage: {
         increment: 1,
       },
+      totalUsage: {
+        increment: 1,
+      },
       usageUpdatedAt: new Date(),
     },
   });
