@@ -18,6 +18,7 @@ model Customer {
   projects Project[]
 
   usage          Int      @default(0)
+  totalUsage     Int      @default(0)
   usageLimit     Int      @default(10)
   usageUpdatedAt DateTime @default(now())
 
