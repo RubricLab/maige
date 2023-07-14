@@ -7,7 +7,7 @@ const CRON_KEY = "9D7042C6-CEE2-454A-8E4F-65BD8976DA7F";
 /**
  * GET /api/cron/usage-to-stripe
  */
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "GET") {
     return res.status(405).send({
       message: "Only GET requests are accepted.",
@@ -75,3 +75,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     message: "Cron request received",
   });
 };
+
+export default handle;

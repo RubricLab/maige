@@ -11,7 +11,7 @@ const DEFAULT_FROM = "Maige<ted@maige.app>";
 /**
  * Add an email to the mailing list.
  */
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
     return res.setHeader("Allow", ["POST"]).status(405).send({
       message: "Only POST requests are accepted.",
@@ -29,7 +29,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { id: customerId } = await prisma.customer.create({
       data: {
-        email,
         name: email,
       },
     });
@@ -74,3 +73,5 @@ export async function sendEmail(
     react,
   });
 }
+
+export default handle;

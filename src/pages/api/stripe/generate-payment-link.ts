@@ -13,7 +13,7 @@ type Tier = keyof typeof TIERS;
 /**
  * Generate a Stripe payment URL for a customer.
  */
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
     return res.setHeader("Allow", ["POST"]).status(405).send({
       message: "Only POST requests are accepted.",
@@ -40,6 +40,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 };
+
+export default handle;
 
 /**
  * To re-use payment links in other places eg. welcome emails

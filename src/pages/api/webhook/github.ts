@@ -40,7 +40,7 @@ const validateSignature = (req: NextApiRequest): boolean => {
  *
  * This is the webhook that GitHub will call when an issue is created or updated.
  */
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
     return res.setHeader("Allow", ["POST"]).status(405).send({
       message: "Only POST requests are accepted.",
@@ -593,3 +593,5 @@ export async function openUsageIssue(
     throw new Error("Failed to open usage issue.");
   }
 }
+
+export default handle;

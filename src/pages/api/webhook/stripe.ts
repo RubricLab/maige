@@ -11,7 +11,7 @@ export const config = {
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   const sig = req.headers["stripe-signature"] || "";
   const buf = await buffer(req);
 
@@ -131,3 +131,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     message: "Stripe webhook received",
   });
 };
+
+export default handle;
