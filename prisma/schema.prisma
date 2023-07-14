@@ -18,7 +18,7 @@ model Customer {
 
   usage          Int      @default(0)
   totalUsage     Int      @default(0)
-  usageLimit     Int      @default(10)
+  usageLimit     Int      @default(20)
   usageUpdatedAt DateTime @default(now())
 
   usageWarned Boolean  @default(false)
