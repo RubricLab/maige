@@ -247,7 +247,8 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         });
         console.log("Usage issue opened: ", owner, name);
       } catch (error) {
-        console.warn("Could not open usage issue for", owner, name);
+        console.warn("Could not open usage issue for: ", owner, name);
+        console.error(error);
         return res.status(500).send({
           message: "Could not open usage issue",
         });
