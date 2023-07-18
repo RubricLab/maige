@@ -3,7 +3,7 @@ import { stripe } from "~/lib/stripe";
 
 export const TIERS = {
   base: {
-    usageLimit: 10,
+    usageLimit: 20,
     priceId: process.env.STRIPE_BASE_PRICE_ID || "",
   },
 };
@@ -51,37 +51,41 @@ export const createPaymentLink = async (
   tier: Tier = "base",
   email: string = ""
 ) => {
-  const stripeSession = await stripe.checkout.sessions.create({
-    client_reference_id: customerId,
-    ...(email && {
-      customer_email: email,
-    }),
-    mode: "subscription",
-    payment_method_types: ["card"],
-    success_url:
-      process.env.VERCEL === "1"
-        ? "https://maige.app/success"
-        : "http://localhost:3000",
-    cancel_url:
-      process.env.VERCEL === "1"
-        ? "https://maige.app/success"
-        : "http://localhost:3000",
-    line_items: [
-      {
-        price: TIERS[tier].priceId,
+  try {
+    const stripeSession = await stripe.checkout.sessions.create({
+      client_reference_id: customerId,
+      ...(email && {
+        customer_email: email,
+      }),
+      mode: "subscription",
+      payment_method_types: ["card"],
+      success_url:
+        process.env.VERCEL === "1"
+          ? "https://maige.app/success"
+          : "http://localhost:3000",
+      cancel_url:
+        process.env.VERCEL === "1"
+          ? "https://maige.app/success"
+          : "http://localhost:3000",
+      line_items: [
+        {
+          price: TIERS[tier].priceId,
+        },
+      ],
+      automatic_tax: {
+        enabled: true,
       },
-    ],
-    automatic_tax: {
-      enabled: true,
-    },
-    tax_id_collection: {
-      enabled: true,
-    },
-  });
+      tax_id_collection: {
+        enabled: true,
+      },
+    });
 
-  if (!stripeSession?.url) {
-    throw new Error("Failed to create Stripe session");
+    if (!stripeSession?.url) {
+      throw new Error("Failed to create Stripe session");
+    }
+
+    return stripeSession.url;
+  } catch (err) {
+    console.warn("Error creating payment link: ", err);
   }
-
-  return stripeSession.url;
 };
