@@ -12,8 +12,8 @@ const Highlight = ({ className = "" }: { className?: string }) => {
         <title>Logo of Highlight.io</title>
         <circle cx="16" cy="17" r="16" fill="currentColor" />
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M11 10C9.89543 10 9 10.8954 9 12V22C9 23.1046 9.89543 24 11 24H17L12 10H11ZM15 10L20 24H21C22.1046 24 23 23.1046 23 22V12C23 10.8954 22.1046 10 21 10H15Z"
           fill="black"
         />
