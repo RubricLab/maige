@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { STRIPE } from "~/lib/constants";
 import { stripe } from "~/lib/stripe";
 
 export const TIERS = {
@@ -88,6 +89,6 @@ export const createPaymentLink = async (
     return stripeSession.url;
   } catch (err) {
     console.warn("Error creating payment link: ", err);
-    return;
+    return STRIPE.PAYMENT_LINK;
   }
 };
