@@ -590,7 +590,7 @@ export async function openUsageIssue(
   );
 
   if (!warningIssue) {
-    console.warn("Failed to open usage issue: ", warningIssue);
+    console.warn("Failed to open usage issue");
     throw new Error("Failed to open usage issue.");
   }
 }

@@ -50,7 +50,7 @@ export const createPaymentLink = async (
   customerId: string,
   tier: Tier = "base",
   email: string = ""
-) => {
+): Promise<string | void> => {
   try {
     const stripeSession = await stripe.checkout.sessions.create({
       client_reference_id: customerId,
@@ -70,6 +70,7 @@ export const createPaymentLink = async (
       line_items: [
         {
           price: TIERS[tier].priceId,
+          quantity: 1,
         },
       ],
       automatic_tax: {
@@ -87,5 +88,6 @@ export const createPaymentLink = async (
     return stripeSession.url;
   } catch (err) {
     console.warn("Error creating payment link: ", err);
+    return;
   }
 };

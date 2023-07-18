@@ -5,7 +5,7 @@ import { createPaymentLink } from "./stripe/generate-payment-link";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_KEY);
-const DEFAULT_REPLY_TO = "Ted<ted@neat.run>";
+const DEFAULT_REPLY_TO = "Ted<ted@rubriclab.com>";
 const DEFAULT_FROM = "Maige<ted@maige.app>";
 
 /**
@@ -34,6 +34,13 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const paymentLink = await createPaymentLink(customerId, "base", email);
+
+    if (!paymentLink) {
+      console.warn("Failed to create payment link.");
+      return res.status(500).send({
+        message: "Failed to create payment link.",
+      });
+    }
 
     await sendEmail(
       email,
