@@ -447,14 +447,17 @@ ${labels
 
 Please choose 1-2 of these labels.
 The first is for the type of issue, examples: bug, feature request, or question.
-The second label represents the code area affected, if available and applicable. Avoid "needs design" or other prescriptive labels.
+The second label represents the code area affected, if you're confident.
 
 Here is the title of the issue: "${title}"
 Here is the body of the issue: "${bodySample}"
 
 Please answer in the format "type, category" with only the names of the labels, without explanation.
-Example: bug, frontend
-Example: feature request, devOps
+Examples:
+"The dashboard is broken" -> bug, frontend
+"Could you add oauth?" -> feature request
+"Why do we use GitHub Actions?" -> question, devOps
+
 `;
 
   // Assemble OpenAI request
