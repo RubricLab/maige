@@ -48,15 +48,30 @@ const Home: NextPage = () => {
               </Link>
               <p className="text-xs text-white/60">Free to try.</p>
             </div>
-            <div className="flex flex-col items-center space-y-2 text-white/80">
+            <div className="flex flex-col items-center space-y-2 text-white/60">
               <p className="text-sm">
                 New issues will be labelled automatically.
               </p>
               <p className="text-sm">
-                Comment <code>/label</code> to label an old issue.
+                Comment{" "}
+                <span className="font-medium text-white">
+                  "Maige label this"
+                </span>{" "}
+                to label an existing issue.
               </p>
               <p className="text-sm">
-                Comment <code>/label-all</code> to label all old issues.
+                Comment{" "}
+                <span className="font-medium text-white">
+                  "Maige label all"
+                </span>{" "}
+                to label all old issues.
+              </p>
+              <p className="text-sm">
+                Comment{" "}
+                <span className="font-medium text-white">
+                  "Maige [instructions]"
+                </span>{" "}
+                to add custom instructions.
               </p>
             </div>
           </div>

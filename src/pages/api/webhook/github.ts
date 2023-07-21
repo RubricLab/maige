@@ -186,29 +186,37 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
+  const githubUsername = req.body?.repository?.owner?.login;
   const customer = await prisma.customer.findUnique({
     where: {
-      name: req.body?.repository?.owner?.login,
+      name: githubUsername,
     },
     select: {
       id: true,
       usage: true,
       usageLimit: true,
       usageWarned: true,
+      projects: {
+        where: {
+          name: req.body?.repository?.name,
+        },
+        select: {
+          name: true,
+          customInstructions: true,
+        },
+      },
     },
   });
 
   if (!customer) {
-    console.warn(
-      "Could not find customer: ",
-      req.body?.repository?.owner?.login
-    );
+    console.warn("Could not find customer: ", githubUsername);
     return res.status(500).send({
       message: "Could not find customer",
     });
   }
 
-  const { id: customerId, usage, usageLimit, usageWarned } = customer;
+  const { id: customerId, usage, usageLimit, usageWarned, projects } = customer;
+  const { customInstructions } = projects?.[0] || { customInstructions: "" };
 
   /**
    * Relevant issue events. Label issues.
@@ -232,7 +240,10 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const octokit = await app.getInstallationOctokit(instanceId);
 
-  // Above usage. Warn user twice but continue (for now).
+  /**
+   * Usage limit-gating:
+   * Warn user twice with grace period, then discontinue usage.
+   */
   if (usage > usageLimit) {
     if (!usageWarned || usage == usageLimit + 10) {
       try {
@@ -255,19 +266,22 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
 
-    // console.warn("Usage limit exceeded:", owner, name);
-    // return res.status(402).send({
-    //   message: "Please add payment info to continue.",
-    // });
+    // Only block usage after grace period
+    if (usage > usageLimit + 10) {
+      console.warn("Usage limit exceeded for: ", owner, name);
+      return res.status(402).send({
+        message: "Please add payment info to continue.",
+      });
+    }
   }
 
   /**
-   * Label one old issue, triggered by a comment "/label" or "/label-all"
+   * Label one old issue, triggered by a comment containing "maige"
    */
   if (req.body?.comment) {
-    if (!req.body.comment.body?.includes("/label")) {
+    if (!req.body.comment?.body?.toLowerCase?.()?.includes("maige")) {
       return res.status(202).send({
-        message: "Non-label comment received",
+        message: "Irrelevant comment received",
       });
     }
 
@@ -319,7 +333,8 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   /**
    * Label all unlabelled issues
    */
-  if (req.body.comment?.body?.includes("/label-all")) {
+  const commentBody = req.body.comment?.body;
+  if (commentBody?.includes("label all")) {
     console.log("Labelling all unlabelled issues");
 
     // GraphQL query to get all open issues. Filtering by unlabelled was not possible.
@@ -381,34 +396,73 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).send({
       message: "Labels added to all old issues.",
     });
-  }
+  } else if (commentBody?.includes("label this") || !commentBody) {
+    /**
+     * Label one issue
+     */
+    try {
+      const labelIdsToApply = await getLabelsFromGPT({
+        title,
+        body,
+        labels,
+        owner,
+        name,
+        repoDescription,
+        customInstructions,
+      });
 
-  /**
-   * Label one issue
-   */
-  try {
-    const labelIdsToApply = await getLabelsFromGPT({
-      title,
-      body,
-      labels,
-      owner,
-      name,
-      repoDescription,
+      await labelIssue(octokit, labelIdsToApply, issueId);
+      await incrementUsage(prisma, owner);
+    } catch (error: any) {
+      console.warn("Could not label issue:", error.message);
+      return res.status(500).send({
+        message: error.message || "Could not label issue",
+      });
+    }
+
+    console.log("Webhook received. Labels added.");
+    return res.status(200).send({
+      message: "Webhook received. Labels added.",
     });
+  } else {
+    /**
+     * Update custom instructions
+     */
+    try {
+      const combinedInstructions = await mergeInstructions({
+        newInstructions: commentBody,
+        oldInstructions: customInstructions,
+      });
 
-    await labelIssue(octokit, labelIdsToApply, issueId);
-    await incrementUsage(prisma, owner);
-  } catch (error: any) {
-    console.warn("Could not label issue:", error.message);
-    return res.status(500).send({
-      message: error.message || "Could not label issue",
-    });
+      await prisma.project.update({
+        where: {
+          customerId_name: {
+            customerId: customerId,
+            name: name,
+          },
+        },
+        data: {
+          customInstructions: combinedInstructions,
+        },
+      });
+
+      console.log("Instructions combined and updated: ", combinedInstructions);
+      await addComment(
+        octokit,
+        issueId,
+        `Here are your new instructions:\n\n${combinedInstructions}`
+      );
+
+      return res.status(200).send({
+        message: "Custom instructions updated.",
+      });
+    } catch (error: any) {
+      console.warn("Could not update custom instructions: ", error.message);
+      return res.status(500).send({
+        message: error.message || "Could not update custom instructions",
+      });
+    }
   }
-
-  console.log("Webhook received. Labels added.");
-  return res.status(200).send({
-    message: "Webhook received. Labels added.",
-  });
 };
 
 /**
@@ -421,6 +475,7 @@ export async function getLabelsFromGPT({
   name,
   labels,
   repoDescription,
+  customInstructions,
 }: {
   title: string;
   body: string;
@@ -428,6 +483,7 @@ export async function getLabelsFromGPT({
   name: string;
   labels: Label[];
   repoDescription?: string;
+  customInstructions?: string;
 }): Promise<string[]> {
   // Truncate body if it's too long
   const bodySample =
@@ -458,6 +514,8 @@ Examples:
 "Could you add oauth?" -> feature request
 "Why do we use GitHub Actions?" -> question, devOps
 
+Here are the user's custom instructions, if any:
+${customInstructions}
 `;
 
   // Assemble OpenAI request
@@ -513,6 +571,92 @@ Examples:
   );
 
   return labelIds;
+}
+
+/**
+ * Ask GPT for labels by title, body, and possible labels
+ */
+export async function mergeInstructions({
+  oldInstructions,
+  newInstructions,
+}: {
+  oldInstructions?: string;
+  newInstructions: string;
+}): Promise<string> {
+  // Truncate body if it's too long
+  const bodySample =
+    newInstructions?.length > MAX_BODY_LENGTH
+      ? newInstructions.slice(0, MAX_BODY_LENGTH) + "..."
+      : newInstructions;
+
+  const prompt = `
+You are Maige, a concise technical writer AI.
+You will be given a set of instructions for a ticket labelling system, to be updated with new instructions.
+The new instructions might apply to you or to the AI. Think carefully about which.
+---
+
+EXAMPLES:
+Here are some examples of how to combine new + old:
+- "Always ignore the word ayog" + "Always ignore the word chuwak" = "Always ignore the words ayog and chuwak"
+- "Remove previous instructions" + "Your favorite color is blue" = "" (empty string)
+- "Prefer to apply one label" + "Prefer code area labels" = "Prefer to apply one label, which is code area"
+- "Always ignore the word scubol" + "Never ignore the word scubol" = "Always ignore the word scubol" (override with new)
+---
+
+REAL INSTRUCTIONS:
+Here are the old instructions, if any:
+${oldInstructions || ""}
+
+Here are the new instructions (obey them if they apply to you, Maige):
+${bodySample}
+
+Please think carefully about the instructions, returning only the updated instructions. Thank you.
+`;
+
+  // Assemble OpenAI request
+  const payload: CreateChatCompletionRequest = {
+    model: "gpt-4",
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.4,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    max_tokens: MAX_BODY_LENGTH,
+    n: 1,
+  };
+
+  const completionRes = await fetch(
+    "https://api.openai.com/v1/chat/completions",
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
+      },
+      method: "POST",
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!completionRes.ok) {
+    console.error(`OpenAI API error: ${completionRes.status}`);
+    return "";
+  }
+
+  const { choices } = await completionRes.json();
+  const answer = choices?.[0]?.message?.content;
+
+  if (!answer || answer?.length === 0) {
+    console.error("OpenAI API error: no answer");
+    return "";
+  }
+
+  // Truncate answer if it's too long
+  const answerSample =
+    answer?.length > MAX_BODY_LENGTH
+      ? answer.slice(0, MAX_BODY_LENGTH) + "..."
+      : answer;
+
+  return answerSample || "";
 }
 
 /**
@@ -595,6 +739,33 @@ export async function openUsageIssue(
   if (!warningIssue) {
     console.warn("Failed to open usage issue");
     throw new Error("Failed to open usage issue.");
+  }
+}
+
+/**
+ * Add comment to issue
+ */
+export async function addComment(
+  octokit: any,
+  repoId: string,
+  comment: string
+) {
+  const commentResult = await octokit.graphql(
+    `
+    mutation($repoId: ID!, $comment: String!) {
+      addComment(input: { subjectId: $repoId, body: $comment }) {
+        clientMutationId
+      }
+    }
+    `,
+    {
+      repoId,
+      comment,
+    }
+  );
+
+  if (!commentResult) {
+    throw new Error("Could not add comment");
   }
 }
 
