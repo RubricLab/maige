@@ -507,6 +507,9 @@ The repository is ${name} by ${owner}${
     repoDescription ? `, described as follows: ${repoDescription}` : ""
   }
 
+Here are the user's custom instructions, if any. Please follow them:
+${customInstructions}
+
 The possible labels are as follows:
 ${labels
   .map((l: Label) => `- ${l.name}${l.description ? `: ${l.description}` : ""}`)
@@ -531,7 +534,7 @@ Examples:
 "Could you add oauth?" -> feature request
 "Why do we use GitHub Actions?" -> question, devOps
 
-Here are the user's custom instructions, if any:
+Remember to try to obey the user's instructions:
 ${customInstructions}
 `;
 
