@@ -186,10 +186,21 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  const githubUsername = req.body?.repository?.owner?.login;
+  const {
+    issue: { node_id: issueId, title, body, labels: existingLabels },
+    repository: {
+      node_id: repoId,
+      name,
+      owner: { login: owner },
+    },
+    installation: { id: instanceId },
+  } = req.body;
+
+  const existingLabelNames = existingLabels?.map((l: Label) => l.name);
+
   const customer = await prisma.customer.findUnique({
     where: {
-      name: githubUsername,
+      name: owner || undefined,
     },
     select: {
       id: true,
@@ -209,7 +220,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   if (!customer) {
-    console.warn("Could not find customer: ", githubUsername);
+    console.warn("Could not find customer: ", owner);
     return res.status(500).send({
       message: "Could not find customer",
     });
@@ -221,16 +232,6 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   /**
    * Relevant issue events. Label issues.
    */
-
-  const {
-    issue: { node_id: issueId, title, body },
-    repository: {
-      node_id: repoId,
-      name,
-      owner: { login: owner },
-    },
-    installation: { id: instanceId },
-  } = req.body;
 
   // Get GitHub app instance access token
   const app = new App({
@@ -381,6 +382,8 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
           owner,
           name,
           repoDescription,
+          existingLabelNames,
+          customInstructions,
         });
 
         await labelIssue(octokit, labelIdsToApply, issue.id);
@@ -408,6 +411,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         owner,
         name,
         repoDescription,
+        existingLabelNames,
         customInstructions,
       });
 
@@ -432,6 +436,8 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
       const combinedInstructions = await mergeInstructions({
         newInstructions: commentBody,
         oldInstructions: customInstructions,
+        issueBody: body,
+        issueLabels: existingLabelNames,
       });
 
       await prisma.project.update({
@@ -446,11 +452,13 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
+      // TODO: remove this after monitoring
       console.log("Instructions combined and updated: ", combinedInstructions);
+
       await addComment(
         octokit,
         issueId,
-        `Here are your new instructions:\n\n${combinedInstructions}`
+        `Here are your new instructions:\n\n> ${combinedInstructions}\n\nFeel free to provide feedback.`
       );
 
       return res.status(200).send({
@@ -475,6 +483,7 @@ export async function getLabelsFromGPT({
   name,
   labels,
   repoDescription,
+  existingLabelNames,
   customInstructions,
 }: {
   title: string;
@@ -483,6 +492,7 @@ export async function getLabelsFromGPT({
   name: string;
   labels: Label[];
   repoDescription?: string;
+  existingLabelNames?: string[];
   customInstructions?: string;
 }): Promise<string[]> {
   // Truncate body if it's too long
@@ -496,19 +506,26 @@ You are tasked with labelling a GitHub issue based on its title and body.
 The repository is ${name} by ${owner}${
     repoDescription ? `, described as follows: ${repoDescription}` : ""
   }
+
 The possible labels are as follows:
 ${labels
   .map((l: Label) => `- ${l.name}${l.description ? `: ${l.description}` : ""}`)
   .join("\n")}
 
-Please choose 1-2 of these labels.
-The first is for the type of issue, examples: bug, feature request, or question.
-The second label represents the code area affected, if you're confident.
+Please choose 1-3 of these labels.
+The first is always the type of issue, examples: bug, feature request, or question.
 
 Here is the title of the issue: "${title}"
 Here is the body of the issue: "${bodySample}"
+${
+  existingLabelNames
+    ? `Here are the issue's existing labels: "${existingLabelNames?.join(
+        ", "
+      )}}"`
+    : ""
+}
 
-Please answer in the format "type, category" with only the names of the labels, without explanation.
+Please answer in the format "label1, label2" with only the names of the labels, without explanation.
 Examples:
 "The dashboard is broken" -> bug, frontend
 "Could you add oauth?" -> feature request
@@ -579,45 +596,60 @@ ${customInstructions}
 export async function mergeInstructions({
   oldInstructions,
   newInstructions,
+  issueBody,
+  issueLabels,
 }: {
   oldInstructions?: string;
   newInstructions: string;
+  issueBody: string;
+  issueLabels: string[];
 }): Promise<string> {
   // Truncate body if it's too long
-  const bodySample =
+  const newInstructionsSample =
     newInstructions?.length > MAX_BODY_LENGTH
       ? newInstructions.slice(0, MAX_BODY_LENGTH) + "..."
       : newInstructions;
 
+  const issueBodySample =
+    issueBody?.length > MAX_BODY_LENGTH
+      ? issueBody.slice(0, MAX_BODY_LENGTH) + "..."
+      : issueBody;
+
   const prompt = `
 You are Maige, a concise technical writer AI.
-You will be given a set of instructions for a ticket labelling system, to be updated with new instructions.
-The new instructions might apply to you or to the AI. Think carefully about which.
+You will be given feedback to incorporate in a set of rules for a ticket-labelling system.
+The feedback might apply to you or to that system. Think carefully about which.
 ---
 
 EXAMPLES:
 Here are some examples of how to combine new + old:
 - "Always ignore the word ayog" + "Always ignore the word chuwak" = "Always ignore the words ayog and chuwak"
-- "Remove previous instructions" + "Your favorite color is blue" = "" (empty string)
+- "Remove previous rules" + "Your favorite color is blue" = "" (empty string)
 - "Prefer to apply one label" + "Prefer code area labels" = "Prefer to apply one label, which is code area"
-- "Always ignore the word scubol" + "Never ignore the word scubol" = "Always ignore the word scubol" (override with new)
+- "Ignore the word scubol" + "Never ignore the word scubol" = "Ignore the word scubol" (override with new)
 ---
 
-REAL INSTRUCTIONS:
-Here are the old instructions, if any:
+CONTEXT:
+The new info might contain feedback on a specific ticket (below). If so, consider generalizing to incorporate the feedback.
+Here are the ticket's labels: "${issueLabels?.join?.(", ") || ""}"
+Here is the body of the ticket: "${issueBodySample || ""}"
+---
+
+READY?
+Here are the old rules, if any. Preserve them unless the new info contradicts them:
 ${oldInstructions || ""}
 
-Here are the new instructions (obey them if they apply to you, Maige):
-${bodySample}
+Here is the new info:
+${newInstructionsSample || ""}
 
-Please think carefully about the instructions, returning only the updated instructions. Thank you.
+Please think carefully, returning only the updated rules. Thank you.
 `;
 
   // Assemble OpenAI request
   const payload: CreateChatCompletionRequest = {
     model: "gpt-4",
     messages: [{ role: "user", content: prompt }],
-    temperature: 0.4,
+    temperature: 0.3,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
