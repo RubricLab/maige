@@ -517,6 +517,7 @@ ${labels
 
 Please choose 1-3 of these labels.
 The first is always the type of issue, examples: bug, feature request, or question.
+The second can usually be the code area if confident, examples: frontend, auth, devOps.
 
 Here is the title of the issue: "${title}"
 Here is the body of the issue: "${bodySample}"
@@ -542,7 +543,7 @@ ${customInstructions}
   const payload: CreateChatCompletionRequest = {
     model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: prompt }],
-    temperature: 0.4,
+    temperature: 0.6,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
