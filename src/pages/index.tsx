@@ -55,21 +55,21 @@ const Home: NextPage = () => {
               <p className="text-sm">
                 Comment{" "}
                 <span className="font-medium text-white">
-                  "Maige label this"
+                  &quot;Maige label this&quot;
                 </span>{" "}
                 to label an existing issue.
               </p>
               <p className="text-sm">
                 Comment{" "}
                 <span className="font-medium text-white">
-                  "Maige label all"
+                  &quot;Maige label all&quot;
                 </span>{" "}
                 to label all old issues.
               </p>
               <p className="text-sm">
                 Comment{" "}
                 <span className="font-medium text-white">
-                  "Maige [instructions]"
+                  &quot;Maige [instructions]&quot;
                 </span>{" "}
                 to add custom instructions.
               </p>
