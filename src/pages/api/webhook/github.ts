@@ -89,6 +89,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
+      console.log(`Added customer ${login}`);
       return res.status(200).send({
         message: `Added customer ${login}`,
       });
@@ -105,6 +106,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         console.warn(error);
       }
 
+      console.warn(`Deleted customer ${login}`);
       return res.status(201).send({
         message: `Deleted customer ${login}`,
       });
@@ -281,12 +283,14 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
    */
   if (req.body?.comment) {
     if (!req.body.comment?.body?.toLowerCase?.()?.includes("maige")) {
+      console.log("Irrelevant comment received");
       return res.status(202).send({
         message: "Irrelevant comment received",
       });
     }
 
     if (req.body.comment.author_association === "NONE") {
+      console.log("Comment from non-collaborator received");
       return res.status(202).send({
         message: "Comment from non-collaborator received",
       });
@@ -396,6 +400,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
+    console.log("Labels added to all old issues.");
     return res.status(200).send({
       message: "Labels added to all old issues.",
     });
@@ -452,15 +457,13 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      // TODO: remove this after monitoring
-      console.log("Instructions combined and updated: ", combinedInstructions);
-
       await addComment(
         octokit,
         issueId,
         `Here are your new instructions:\n\n> ${combinedInstructions}\n\nFeel free to provide feedback.`
       );
 
+      console.log("Custom instructions updated.");
       return res.status(200).send({
         message: "Custom instructions updated.",
       });
