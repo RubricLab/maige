@@ -3,7 +3,16 @@ import React from "react";
 
 function Footer() {
   return (
-    <footer className="absolute bottom-0 flex h-10 w-screen items-center justify-center">
+    <footer className="absolute bottom-0 flex h-10 w-screen gap-1 items-center justify-center">
+      <span className="text-xs text-white/40">
+        <Link
+          className="font-medium text-white/60 transition-opacity hover:text-white/80"
+          href="https://github.com/tedspare/maige"
+          target="_blank"
+        >
+        Open source
+        </Link>.
+      </span>
       <span className="text-xs text-white/40">
         Built by{" "}
         <Link
@@ -12,7 +21,7 @@ function Footer() {
           target="_blank"
         >
           Ted Spare
-        </Link>
+        </Link>.
       </span>
     </footer>
   );
