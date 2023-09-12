@@ -1,4 +1,4 @@
-# Maige
+# [Maige](https://maige.app)
 
 Label your GitHub issues with AI.
 
