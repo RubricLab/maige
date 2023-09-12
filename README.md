@@ -1,4 +1,6 @@
-# [Maige](https://maige.app)
+# Maige
+
+Visit [Maige.app](https://maige.app) to get started.
 
 Label your GitHub issues with AI.
 
