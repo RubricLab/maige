@@ -7,7 +7,6 @@ import { z } from "zod";
 const server = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]),
   GITHUB_WEBHOOK_SECRET: z.string().min(1),
-  GITHUB_CLIENT_SECRET: z.string().min(1),
   GITHUB_PRIVATE_KEY: z.string().min(1),
   GITHUB_APP_ID: z.string().min(1),
   OPENAI_API_KEY: z.string().min(1),
@@ -32,7 +31,6 @@ const client = z.object({});
 const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   GITHUB_WEBHOOK_SECRET: process.env.GITHUB_WEBHOOK_SECRET,
-  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
   GITHUB_PRIVATE_KEY: process.env.GITHUB_PRIVATE_KEY,
   GITHUB_APP_ID: process.env.GITHUB_APP_ID,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY,
