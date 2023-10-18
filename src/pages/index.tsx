@@ -1,14 +1,15 @@
 import { type NextPage } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import Footer from "~/components/Footer";
-import Header from "~/components/Header";
+import { Footer } from "~/components/Footer";
+import { Header } from "~/components/Header";
 import SEO from "~/components/SEO";
 import demoSrc from "/public/assets/demo.png";
 import Cal from "~/components/logos/Cal";
 import Precedent from "~/components/logos/Precedent";
 import Trigger from "~/components/logos/Trigger";
 import Highlight from "~/components/logos/Highlight";
+import { isDev } from "~/lib/utils";
 
 const Home: NextPage = () => {
   return (
@@ -38,8 +39,7 @@ const Home: NextPage = () => {
             </div>
             <div className="flex flex-col items-center space-y-1">
               <Link
-                href="https://github.com/apps/maige-bot"
-                target="_blank"
+                href={`https://github.com/apps/${isDev ? "dev-" : ""}maige-bot`}
                 rel="noopener noreferrer"
               >
                 <button className="w-72 rounded-md bg-green-700 p-3 text-xl font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80">

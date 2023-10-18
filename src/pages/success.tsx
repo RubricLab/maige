@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
-import Footer from "~/components/Footer";
-import Header from "~/components/Header";
+import { Footer } from "~/components/Footer";
+import { Header } from "~/components/Header";
 import SEO from "~/components/SEO";
 
 const Home: NextPage = () => {

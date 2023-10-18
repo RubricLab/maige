@@ -1,18 +1,19 @@
 import React from "react";
 import wizardHatLogo from "../../public/logo.png";
 import Image from "next/image";
+import Link from "next/link";
 
-function Header() {
+export const Header = () => {
   return (
     <header className="absolute top-0 z-10 flex w-screen items-center justify-start p-2">
-      <Image
-        src={wizardHatLogo}
-        alt="Wizard hat logo"
-        className="h-12 w-12 cursor-wait rounded-full object-cover"
-      />
+      <Link href="/">
+        <Image
+          src={wizardHatLogo}
+          alt="Wizard hat logo"
+          className="h-12 w-12 rounded-full object-cover"
+        />
+      </Link>
       <div />
     </header>
   );
-}
-
-export default Header;
+};
