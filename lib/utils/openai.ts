@@ -1,6 +1,7 @@
 import { CreateChatCompletionRequest } from "openai";
 import { MAX_BODY_LENGTH } from "../constants";
 import { Label } from "../types";
+import { truncate } from ".";
 
 /**
  * Ask GPT for labels by title, body, and possible labels
@@ -24,11 +25,7 @@ export async function getLabelsFromGPT({
   existingLabelNames?: string[];
   customInstructions?: string;
 }): Promise<string[]> {
-  // Truncate body if it's too long
-  const bodySample =
-    body?.length > MAX_BODY_LENGTH
-      ? body.slice(0, MAX_BODY_LENGTH) + "..."
-      : body;
+  const bodySample = truncate(body, MAX_BODY_LENGTH);
 
   const prompt = `
 You are tasked with labelling a GitHub issue based on its title and body.
@@ -111,15 +108,8 @@ export async function mergeInstructions({
   issueLabels: string[];
 }): Promise<string> {
   // Truncate body if it's too long
-  const newInstructionsSample =
-    newInstructions?.length > MAX_BODY_LENGTH
-      ? newInstructions.slice(0, MAX_BODY_LENGTH) + "..."
-      : newInstructions;
-
-  const issueBodySample =
-    issueBody?.length > MAX_BODY_LENGTH
-      ? issueBody.slice(0, MAX_BODY_LENGTH) + "..."
-      : issueBody;
+  const newInstructionsSample = truncate(newInstructions, MAX_BODY_LENGTH);
+  const issueBodySample = truncate(issueBody, MAX_BODY_LENGTH);
 
   const prompt = `
 You are Maige, a concise technical writer AI.
@@ -161,10 +151,7 @@ Please think carefully, returning only the updated rules. Thank you.
     });
 
     // Truncate answer if it's too long
-    const answerSample =
-      answer?.length > MAX_BODY_LENGTH
-        ? answer.slice(0, MAX_BODY_LENGTH) + "..."
-        : answer;
+    const answerSample = truncate(answer, MAX_BODY_LENGTH);
 
     return answerSample || "";
   } catch (error) {

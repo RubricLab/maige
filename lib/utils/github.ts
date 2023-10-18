@@ -6,19 +6,19 @@ import { createPaymentLink } from "./payment";
  */
 export async function addComment(
   octokit: any,
-  repoId: string,
+  issueId: string,
   comment: string
 ) {
   const commentResult = await octokit.graphql(
     `
-    mutation($repoId: ID!, $comment: String!) {
-      addComment(input: { subjectId: $repoId, body: $comment }) {
+    mutation($issueId: ID!, $comment: String!) {
+      addComment(input: { subjectId: $issueId, body: $comment }) {
         clientMutationId
       }
     }
     `,
     {
-      repoId,
+      issueId,
       comment,
     }
   );

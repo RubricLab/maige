@@ -19,3 +19,12 @@ export const validateSignature = async (
 
   return isValid;
 };
+
+// Trim text to a max length
+export const truncate = (text: string, length: number): string => {
+  if (!text) return "";
+
+  text.length > length ? text.slice(0, length) + "..." : text;
+
+  return text;
+};
