@@ -68,40 +68,13 @@ Remember to try to obey the user's instructions:
 ${customInstructions}
 `;
 
-  // Assemble OpenAI request
-  const payload: CreateChatCompletionRequest = {
+  // Ask GPT for labels
+  const answer = await askGPT({
+    prompt,
     model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: prompt }],
     temperature: 0.6,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    max_tokens: 200,
-    n: 1,
-  };
-
-  const completionRes = await fetch(
-    "https://api.openai.com/v1/chat/completions",
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
-      },
-      method: "POST",
-      body: JSON.stringify(payload),
-    }
-  );
-
-  if (!completionRes.ok) {
-    throw new Error(`OpenAI API error: ${completionRes.status}`);
-  }
-
-  const { choices } = await completionRes.json();
-  const answer = choices?.[0]?.message?.content;
-
-  if (!answer || answer?.length === 0) {
-    throw new Error("OpenAI API error: no answer");
-  }
+    maxTokens: 200,
+  });
 
   // Extract labels from GPT answer
   const gptLabels: string[] = answer
@@ -124,7 +97,7 @@ ${customInstructions}
 }
 
 /**
- * Ask GPT for labels by title, body, and possible labels
+ * Ask GPT to update custom instructions
  */
 export async function mergeInstructions({
   oldInstructions,
@@ -178,48 +151,74 @@ ${newInstructionsSample || ""}
 Please think carefully, returning only the updated rules. Thank you.
 `;
 
+  // Get answer from GPT
+  try {
+    const answer = await askGPT({
+      prompt,
+      model: "gpt-4",
+      temperature: 0.3,
+      maxTokens: MAX_BODY_LENGTH,
+    });
+
+    // Truncate answer if it's too long
+    const answerSample =
+      answer?.length > MAX_BODY_LENGTH
+        ? answer.slice(0, MAX_BODY_LENGTH) + "..."
+        : answer;
+
+    return answerSample || "";
+  } catch (error) {
+    console.error(error);
+    return "";
+  }
+}
+
+/**
+ * GPT wrapper
+ */
+export async function askGPT({
+  prompt,
+  model,
+  temperature,
+  maxTokens = MAX_BODY_LENGTH,
+}: {
+  prompt: string;
+  model: "gpt-3.5-turbo" | "gpt-4";
+  maxTokens?: number;
+  temperature: number;
+}): Promise<string> {
   // Assemble OpenAI request
   const payload: CreateChatCompletionRequest = {
-    model: "gpt-4",
+    model,
     messages: [{ role: "user", content: prompt }],
-    temperature: 0.3,
+    temperature,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
-    max_tokens: MAX_BODY_LENGTH,
+    max_tokens: maxTokens,
     n: 1,
   };
 
-  const completionRes = await fetch(
-    "https://api.openai.com/v1/chat/completions",
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
-      },
-      method: "POST",
-      body: JSON.stringify(payload),
-    }
-  );
+  const completionsEndpoint = "https://api.openai.com/v1/chat/completions";
+  const completionRes = await fetch(completionsEndpoint, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
+    },
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
   if (!completionRes.ok) {
-    console.error(`OpenAI API error: ${completionRes.status}`);
-    return "";
+    throw new Error(`OpenAI error: ${completionRes.status}`);
   }
 
   const { choices } = await completionRes.json();
   const answer = choices?.[0]?.message?.content;
 
   if (!answer || answer?.length === 0) {
-    console.error("OpenAI API error: no answer");
-    return "";
+    throw new Error("OpenAI error: no answer");
   }
 
-  // Truncate answer if it's too long
-  const answerSample =
-    answer?.length > MAX_BODY_LENGTH
-      ? answer.slice(0, MAX_BODY_LENGTH) + "..."
-      : answer;
-
-  return answerSample || "";
+  return answer;
 }
