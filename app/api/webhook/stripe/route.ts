@@ -1,34 +1,38 @@
-import type { NextApiRequest, NextApiResponse } from "next/types";
-import { stripe } from "~/lib/stripe";
-import { buffer } from "micro";
-import prisma from "~/lib/prisma";
+import { stripe } from "lib/stripe";
+import prisma from "lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+import { env } from "~/env.mjs";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+/**
+ * POST /api/webhook/stripe
+ *
+ * Stripe webhook handler
+ */
+export const POST = async (req: NextRequest) => {
+  const payload = await req.text();
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
-
-const handle = async (req: NextApiRequest, res: NextApiResponse) => {
-  const sig = req.headers["stripe-signature"] || "";
-  const buf = await buffer(req);
-
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
-  } catch (error) {
-    return res.status(400).send({
-      message: "Stripe webhook error",
-    });
+  const signature = req.headers.get("stripe-signature") || "";
+  if (!signature) {
+    return NextResponse.json({ message: "No signature" }, { status: 400 });
   }
 
-  if (req.method !== "POST") {
-    return res.setHeader("Allow", ["POST"]).status(405).send({
-      message: "Only POST requests are accepted.",
-    });
+  let event: Stripe.Event;
+
+  try {
+    event = stripe.webhooks.constructEvent(
+      payload,
+      signature,
+      env.STRIPE_WEBHOOK_SECRET || ""
+    );
+  } catch (error) {
+    console.error("Bad Stripe webhook secret");
+    return NextResponse.json(
+      {
+        message: "Stripe webhook error",
+      },
+      { status: 400 }
+    );
   }
 
   const {
@@ -42,9 +46,10 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     const { client_reference_id: customerId } = object as any;
 
     if (!customerId) {
-      return res.status(400).send({
-        message: "Stripe checkout session missing customer ID in webhook",
-      });
+      return NextResponse.json(
+        { message: "Stripe checkout session missing customer ID in webhook" },
+        { status: 400 }
+      );
     }
 
     await prisma.customer.update({
@@ -65,9 +70,12 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     if (!subscriptionItem) {
-      return res.status(400).send({
-        message: "Could not find Stripe subscription item",
-      });
+      return NextResponse.json(
+        {
+          message: "Could not find Stripe subscription item",
+        },
+        { status: 400 }
+      );
     }
 
     await prisma.customer.update({
@@ -89,7 +97,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
     } catch {
-      return res.status(200).send({
+      return NextResponse.json({
         message: "No customer to delete in DB",
       });
     }
@@ -102,9 +110,12 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     if (!subscriptionItem) {
-      return res.status(400).send({
-        message: "Could not find Stripe subscription item",
-      });
+      return NextResponse.json(
+        {
+          message: "Could not find Stripe subscription item",
+        },
+        { status: 400 }
+      );
     }
 
     try {
@@ -119,7 +130,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (error) {
       console.log("Customer update error:", error);
 
-      return res.status(200).send({
+      return NextResponse.json({
         message: "No customer to update in DB",
       });
     }
@@ -127,9 +138,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log(`Unhandled Stripe webhook event type: ${eventType}`);
   }
 
-  return res.status(200).send({
+  return NextResponse.json({
     message: "Stripe webhook received",
   });
 };
-
-export default handle;

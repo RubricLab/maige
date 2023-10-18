@@ -1,20 +1,17 @@
-import { type NextPage } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Footer } from "~/components/Footer";
 import { Header } from "~/components/Header";
-import SEO from "~/components/SEO";
 import demoSrc from "/public/assets/demo.png";
 import Cal from "~/components/logos/Cal";
 import Precedent from "~/components/logos/Precedent";
 import Trigger from "~/components/logos/Trigger";
 import Highlight from "~/components/logos/Highlight";
-import { isDev } from "~/lib/utils";
+import { isDev } from "lib/utils";
 
-const Home: NextPage = () => {
+const Page = () => {
   return (
     <div className="bg-black">
-      <SEO />
       <Header />
       <main className="relative flex h-screen w-screen flex-col items-center">
         <div className="flex grow flex-col items-center justify-center space-y-2">
@@ -91,4 +88,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Page;

@@ -1,12 +1,9 @@
-import { type NextPage } from "next";
 import { Footer } from "~/components/Footer";
 import { Header } from "~/components/Header";
-import SEO from "~/components/SEO";
 
-const Home: NextPage = () => {
+const Page = () => {
   return (
     <div className="bg-black">
-      <SEO />
       <Header />
       <main className="relative flex h-screen w-screen flex-col items-center">
         <div className="flex grow flex-col items-center justify-center space-y-4">
@@ -23,4 +20,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Page;

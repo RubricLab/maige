@@ -1,55 +1,53 @@
-import type { NextApiRequest, NextApiResponse } from "next/types";
 import { App } from "@octokit/app";
-import prisma from "~/lib/prisma";
-import { Label, Repository } from "~/lib/types";
-import { addComment, labelIssue, openUsageIssue } from "~/lib/utils/github";
-import { getLabelsFromGPT, mergeInstructions } from "~/lib/utils/openai";
-import { incrementUsage } from "~/lib/utils/payment";
-import { stripe } from "~/lib/stripe";
-import { validateSignature } from "~/lib/utils";
+import prisma from "lib/prisma";
+import { Label, Repository } from "lib/types";
+import { addComment, labelIssue, openUsageIssue } from "lib/utils/github";
+import { getLabelsFromGPT, mergeInstructions } from "lib/utils/openai";
+import { incrementUsage } from "lib/utils/payment";
+import { stripe } from "lib/stripe";
+import { validateSignature } from "lib/utils";
+import { NextRequest, NextResponse } from "next/server";
+
+export const maxDuration = 30;
 
 /**
  * POST /api/webhook
  *
- * This is the webhook that GitHub calls.
+ * GitHub webhook handler
  */
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== "POST") {
-    return res.setHeader("Allow", ["POST"]).status(405).send({
-      message: "Only POST requests are accepted.",
-    });
-  }
-
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).send({
-      message: "Missing OpenAI API key",
-    });
-  }
-
+export const POST = async (req: NextRequest) => {
   // Verify webhook signature
-  const validSignature = validateSignature(req);
+  const text = await req.text();
+  const signature = req.headers.get("x-hub-signature-256") || "";
+
+  const validSignature = await validateSignature(text, signature);
   if (!validSignature) {
-    return res.status(403).send({
-      message: "Bad GitHub webhook secret.",
-    });
+    console.error("Bad GitHub webhook secret.");
+    return NextResponse.json(
+      {
+        message: "Bad GitHub webhook secret.",
+      },
+      { status: 403 }
+    );
   }
 
-  const { action } = req.body;
+  const payload = JSON.parse(text);
+  const { action } = payload;
 
   /**
    * Installation-related events. Sync repos/user to database.
    */
-  if (req.body?.installation?.account?.login) {
+  if (payload?.installation?.account?.login) {
     const {
       installation: {
         account: { login },
       },
-    } = req.body;
+    } = payload;
 
     if (action === "created") {
       // Installed GitHub App
 
-      const { repositories } = req.body;
+      const { repositories } = payload;
 
       await prisma.customer.create({
         data: {
@@ -63,7 +61,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       console.log(`Added customer ${login}`);
-      return res.status(200).send({
+      return NextResponse.json({
         message: `Added customer ${login}`,
       });
     } else if (action === "deleted") {
@@ -80,7 +78,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       console.warn(`Deleted customer ${login}`);
-      return res.status(201).send({
+      return NextResponse.json({
         message: `Deleted customer ${login}`,
       });
     } else if (["added", "removed"].includes(action)) {
@@ -89,7 +87,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const {
         repositories_added: addedRepos,
         repositories_removed: removedRepos,
-      } = req.body;
+      } = payload;
 
       const customer = await prisma.customer.upsert({
         where: {
@@ -110,9 +108,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       if (!customer?.id) {
-        return res.status(500).send({
-          message: `Could not find or create customer ${login}`,
-        });
+        return NextResponse.json(
+          {
+            message: `Could not find or create customer ${login}`,
+          },
+          { status: 500 }
+        );
       }
 
       const newRepos = addedRepos.filter((repo: Repository) => {
@@ -141,7 +142,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // Sync repos to database in a single transaction
       await prisma.$transaction([createProjects, deleteProjects]);
 
-      return res.status(201).send({
+      return NextResponse.json({
         message: `Updated repos for ${login}`,
       });
     }
@@ -152,11 +153,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
    */
   if (
     !(
-      (action === "opened" && req.body?.issue) ||
-      (action === "created" && req.body?.comment)
+      (action === "opened" && payload?.issue) ||
+      (action === "created" && payload?.comment)
     )
   ) {
-    return res.status(202).send({
+    return NextResponse.json({
       message: "Webhook received",
     });
   }
@@ -169,7 +170,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       owner: { login: owner },
     },
     installation: { id: instanceId },
-  } = req.body;
+  } = payload;
 
   const existingLabelNames = existingLabels?.map((l: Label) => l.name);
 
@@ -184,7 +185,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       usageWarned: true,
       projects: {
         where: {
-          name: req.body?.repository?.name,
+          name: payload?.repository?.name,
         },
         select: {
           name: true,
@@ -196,9 +197,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (!customer) {
     console.warn("Could not find customer: ", owner);
-    return res.status(500).send({
-      message: "Could not find customer",
-    });
+    return NextResponse.json(
+      {
+        message: "Could not find customer",
+      },
+      { status: 500 }
+    );
   }
 
   const { id: customerId, usage, usageLimit, usageWarned, projects } = customer;
@@ -236,35 +240,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       } catch (error) {
         console.warn("Could not open usage issue for: ", owner, name);
         console.error(error);
-        return res.status(500).send({
-          message: "Could not open usage issue",
-        });
+        return NextResponse.json(
+          {
+            message: "Could not open usage issue",
+          },
+          { status: 500 }
+        );
       }
     }
 
     // Only block usage after grace period
     if (usage > usageLimit + 10) {
       console.warn("Usage limit exceeded for: ", owner, name);
-      return res.status(402).send({
-        message: "Please add payment info to continue.",
-      });
+      return NextResponse.json(
+        {
+          message: "Please add payment info to continue.",
+        },
+        { status: 402 }
+      );
     }
   }
 
   /**
    * Label one old issue, triggered by a comment containing "maige"
    */
-  if (req.body?.comment) {
-    if (!req.body.comment?.body?.toLowerCase?.()?.includes("maige")) {
+  if (payload?.comment) {
+    if (!payload.comment?.body?.toLowerCase?.()?.includes("maige")) {
       console.log("Irrelevant comment received");
-      return res.status(202).send({
+      return NextResponse.json({
         message: "Irrelevant comment received",
       });
     }
 
-    if (req.body.comment.author_association === "NONE") {
+    if (payload.comment.author_association === "NONE") {
       console.log("Comment from non-collaborator received");
-      return res.status(202).send({
+      return NextResponse.json({
         message: "Comment from non-collaborator received",
       });
     }
@@ -300,9 +310,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   );
 
   if (!labelsRes?.repository?.labels?.nodes) {
-    return res.status(401).send({
-      message: "Could not get labels",
-    });
+    return NextResponse.json(
+      {
+        message: "Could not get labels",
+      },
+      { status: 401 }
+    );
   }
 
   const labels: Label[] = labelsRes.repository.labels.nodes;
@@ -311,7 +324,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   /**
    * Label all unlabelled issues
    */
-  const commentBody = req.body.comment?.body;
+  const commentBody = payload.comment?.body;
   if (commentBody?.includes("label all")) {
     console.log("Labelling all unlabelled issues");
 
@@ -341,9 +354,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (!openIssues?.repository?.issues?.nodes) {
       console.log("Could not get open issues");
-      return res.status(401).send({
-        message: "Could not get open issues",
-      });
+      return NextResponse.json(
+        {
+          message: "Could not get open issues",
+        },
+        { status: 401 }
+      );
     }
 
     const unlabelledIssues = openIssues.repository.issues.nodes.filter(
@@ -368,13 +384,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     } catch (error: any) {
       console.log("Could not label issue:", error.message);
-      return res.status(500).send({
-        message: error.message || "Could not label issue",
-      });
+      return NextResponse.json(
+        {
+          message: error.message || "Could not label issue",
+        },
+        { status: 500 }
+      );
     }
 
     console.log("Labels added to all old issues.");
-    return res.status(200).send({
+    return NextResponse.json({
       message: "Labels added to all old issues.",
     });
   } else if (commentBody?.includes("label this") || !commentBody) {
@@ -397,13 +416,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       await incrementUsage(prisma, owner);
     } catch (error: any) {
       console.warn("Could not label issue:", error.message);
-      return res.status(500).send({
-        message: error.message || "Could not label issue",
-      });
+      return NextResponse.json(
+        {
+          message: error.message || "Could not label issue",
+        },
+        { status: 500 }
+      );
     }
 
     console.log("Webhook received. Labels added.");
-    return res.status(200).send({
+    return NextResponse.json({
       message: "Webhook received. Labels added.",
     });
   } else {
@@ -437,16 +459,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       );
 
       console.log("Custom instructions updated.");
-      return res.status(200).send({
+      return NextResponse.json({
         message: "Custom instructions updated.",
       });
     } catch (error: any) {
       console.warn("Could not update custom instructions: ", error.message);
-      return res.status(500).send({
-        message: error.message || "Could not update custom instructions",
-      });
+      return NextResponse.json(
+        {
+          message: error.message || "Could not update custom instructions",
+        },
+        { status: 500 }
+      );
     }
   }
 };
-
-export default handler;
