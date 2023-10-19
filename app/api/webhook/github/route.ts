@@ -470,6 +470,8 @@ export const POST = async (req: NextRequest) => {
       /**
        * Community comment; allow GPT to reply if instructed.
        */
+      console.log("Community comment");
+
       const commentSample = truncate(commentBody, MAX_BODY_LENGTH);
 
       const prompt = `
@@ -482,6 +484,7 @@ Comment: ${commentSample}.
 
 If the instructions do not explicitly apply to the comment, reply "n/a".
 `;
+
       const comment = await askGPT({
         prompt,
         model: "gpt-4",
@@ -490,6 +493,8 @@ If the instructions do not explicitly apply to the comment, reply "n/a".
 
       // TODO: replace this with a tool passed to a LangChain Agent
       if (comment.length > 20) {
+        console.log("Replying to community comment");
+
         await addComment(octokit, issueId, comment);
       }
     }
