@@ -333,6 +333,15 @@ export const POST = async (req: NextRequest) => {
       });
     }
 
+    console.warn(
+      `Comment by a ${payload.comment?.author_association} in ${owner}/${name}`
+    );
+    console.warn(
+      `Comment includes 'maige': ${commentBody
+        ?.toLowercase?.()
+        ?.includes?.("maige")}`
+    );
+
     if (["MEMBER", "OWNER"].includes(payload.comment?.author_association)) {
       /**
        * Repo owner-scoped actions
