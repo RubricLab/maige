@@ -337,9 +337,7 @@ export const POST = async (req: NextRequest) => {
       `Comment by a ${payload.comment?.author_association} in ${owner}/${name}`
     );
     console.warn(
-      `Comment includes 'maige': ${commentBody
-        ?.toLowercase?.()
-        ?.includes?.("maige")}`
+      `Comment includes 'maige': ${commentBody.toLowerCase().includes("maige")}`
     );
 
     if (["MEMBER", "OWNER"].includes(payload.comment?.author_association)) {
@@ -350,7 +348,7 @@ export const POST = async (req: NextRequest) => {
       /**
        * Label all unlabelled issues
        */
-      if (commentBody?.toLowercase?.()?.includes?.("maige label all")) {
+      if (commentBody.toLowerCase().includes("maige label all")) {
         // GraphQL query to get all open issues. Filtering by unlabelled was not possible.
         const openIssues = (await octokit.graphql(
           `
@@ -408,7 +406,7 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json({
           message: "Labels added to all old issues.",
         });
-      } else if (commentBody?.toLowercase?.()?.includes?.("maige label this")) {
+      } else if (commentBody.toLowerCase().includes("maige label this")) {
         /**
          * Label one issue
          */
@@ -429,7 +427,7 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json({
           message: "Webhook received. Labels added.",
         });
-      } else if (commentBody?.toLowercase?.()?.includes?.("maige")) {
+      } else if (commentBody.toLowerCase().includes("maige")) {
         /**
          * Update custom instructions
          */
