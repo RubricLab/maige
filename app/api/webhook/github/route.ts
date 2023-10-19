@@ -272,7 +272,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const commentBody = payload.comment?.body;
 
-    if (payload.comment?.author_association === "MEMBER") {
+    if (["MEMBER", "OWNER"].includes(payload.comment?.author_association)) {
       /**
        * Repo owner-scoped actions
        */
