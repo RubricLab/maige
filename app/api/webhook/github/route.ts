@@ -174,6 +174,9 @@ export const POST = async (req: NextRequest) => {
     installation: { id: instanceId },
   } = payload;
 
+  /**
+   * Ignore comments by Maige
+   */
   if (sender.includes("maige-bot")) {
     return new NextResponse("Comment by Maige");
   }
@@ -213,10 +216,6 @@ export const POST = async (req: NextRequest) => {
 
   const { id: customerId, usage, usageLimit, usageWarned, projects } = customer;
   const { customInstructions } = projects?.[0] || { customInstructions: "" };
-
-  /**
-   * Relevant issue events. Label issues.
-   */
 
   // Get GitHub app instance access token
   const app = new App({
@@ -267,10 +266,13 @@ export const POST = async (req: NextRequest) => {
     }
   }
 
+  /**
+   * Repo commands
+   */
   try {
     const commentBody = payload.comment?.body;
 
-    if (payload.comment.author_association === "OWNER") {
+    if (payload.comment?.author_association === "MEMBER") {
       /**
        * Repo owner-scoped actions
        */
@@ -318,7 +320,7 @@ export const POST = async (req: NextRequest) => {
       /**
        * Label all unlabelled issues
        */
-      if (commentBody?.includes("label all")) {
+      if (commentBody?.toLowercase?.()?.includes?.("maige label all")) {
         // GraphQL query to get all open issues. Filtering by unlabelled was not possible.
         const openIssues = (await octokit.graphql(
           `
@@ -376,7 +378,10 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json({
           message: "Labels added to all old issues.",
         });
-      } else if (!commentBody || commentBody?.includes("label this")) {
+      } else if (
+        !commentBody ||
+        commentBody?.toLowercase?.()?.includes?.("maige label this")
+      ) {
         /**
          * Label one issue
          */
@@ -455,8 +460,6 @@ If the instructions do not explicitly apply to the comment, reply "n/a".
       // TODO: replace this with a tool passed to a LangChain Agent
       if (comment.length > 20) {
         await addComment(octokit, issueId, comment);
-      } else {
-        console.log(`Not replying to comment. Reasoning: ${comment}.`);
       }
     }
 
