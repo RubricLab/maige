@@ -333,14 +333,18 @@ export const POST = async (req: NextRequest) => {
       });
     }
 
-    console.warn(
+    console.log(
       `Comment by a ${payload.comment?.author_association} in ${owner}/${name}`
     );
-    console.warn(
+    console.log(
       `Comment includes 'maige': ${commentBody.toLowerCase().includes("maige")}`
     );
 
-    if (["MEMBER", "OWNER"].includes(payload.comment?.author_association)) {
+    if (
+      ["MEMBER", "OWNER", "CONTRIBUTOR"].includes(
+        payload.comment?.author_association
+      )
+    ) {
       /**
        * Repo owner-scoped actions
        */
@@ -428,6 +432,7 @@ export const POST = async (req: NextRequest) => {
           message: "Webhook received. Labels added.",
         });
       } else if (commentBody.toLowerCase().includes("maige")) {
+        console.log("Updating custom instructions");
         /**
          * Update custom instructions
          */
@@ -437,6 +442,7 @@ export const POST = async (req: NextRequest) => {
           issueBody: body,
           issueLabels: existingLabelNames,
         });
+        console.log("Combined instructions: ", combinedInstructions);
 
         await prisma.project.update({
           where: {
