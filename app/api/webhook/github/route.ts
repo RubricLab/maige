@@ -270,25 +270,15 @@ export const POST = async (req: NextRequest) => {
    * Repo commands
    */
   try {
-    const commentBody = payload.comment?.body;
-    console.log(
-      "payload.comment?.author_association: ",
-      `\x1b[33m${payload.comment?.author_association}\x1b[0m`
-    );
-    if (["MEMBER", "OWNER"].includes(payload.comment?.author_association)) {
-      /**
-       * Repo owner-scoped actions
-       */
-
-      const labelsRes: {
-        repository: {
-          description?: string;
-          labels: {
-            nodes: Label[];
-          };
+    const labelsRes: {
+      repository: {
+        description?: string;
+        labels: {
+          nodes: Label[];
         };
-      } = await octokit.graphql(
-        `
+      };
+    } = await octokit.graphql(
+      `
         query Labels($name: String!, $owner: String!) { 
           repository(name: $name, owner: $owner) {
             description
@@ -302,23 +292,51 @@ export const POST = async (req: NextRequest) => {
           }
         }
       `,
-        {
-          name,
-          owner,
-        }
-      );
-
-      if (!labelsRes?.repository?.labels?.nodes) {
-        return NextResponse.json(
-          {
-            message: "Could not get labels",
-          },
-          { status: 401 }
-        );
+      {
+        name,
+        owner,
       }
+    );
 
-      const labels: Label[] = labelsRes.repository.labels.nodes;
-      const { description: repoDescription } = labelsRes.repository;
+    if (!labelsRes?.repository?.labels?.nodes) {
+      return NextResponse.json(
+        { message: "Could not get labels" },
+        { status: 401 }
+      );
+    }
+
+    const labels: Label[] = labelsRes.repository.labels.nodes;
+    const { description: repoDescription } = labelsRes.repository;
+
+    const commentBody = payload.comment?.body;
+
+    /**
+     * Label new issue
+     */
+    if (!commentBody) {
+      const labelIdsToApply = await getLabelsFromGPT({
+        title,
+        body,
+        labels,
+        owner,
+        name,
+        repoDescription,
+        existingLabelNames,
+        customInstructions,
+      });
+
+      await labelIssue(octokit, labelIdsToApply, issueId);
+      await incrementUsage(prisma, owner);
+
+      return NextResponse.json({
+        message: "Webhook received. Labels added.",
+      });
+    }
+
+    if (["MEMBER", "OWNER"].includes(payload.comment?.author_association)) {
+      /**
+       * Repo owner-scoped actions
+       */
 
       /**
        * Label all unlabelled issues
@@ -381,10 +399,7 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json({
           message: "Labels added to all old issues.",
         });
-      } else if (
-        !commentBody ||
-        commentBody?.toLowercase?.()?.includes?.("maige label this")
-      ) {
+      } else if (commentBody?.toLowercase?.()?.includes?.("maige label this")) {
         /**
          * Label one issue
          */
