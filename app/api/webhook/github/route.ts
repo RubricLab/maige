@@ -271,7 +271,10 @@ export const POST = async (req: NextRequest) => {
    */
   try {
     const commentBody = payload.comment?.body;
-
+    console.log(
+      "payload.comment?.author_association: ",
+      `\x1b[33m${payload.comment?.author_association}\x1b[0m`
+    );
     if (["MEMBER", "OWNER"].includes(payload.comment?.author_association)) {
       /**
        * Repo owner-scoped actions
@@ -402,7 +405,7 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json({
           message: "Webhook received. Labels added.",
         });
-      } else {
+      } else if (commentBody?.toLowercase?.()?.includes?.("maige")) {
         /**
          * Update custom instructions
          */
