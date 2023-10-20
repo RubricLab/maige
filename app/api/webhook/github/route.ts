@@ -493,9 +493,13 @@ If the instructions do not explicitly apply to the comment, reply "n/a".
 
       // TODO: replace this with a tool passed to a LangChain Agent
       if (comment.length > 20) {
-        console.log("Replying to community comment");
+        console.log(
+          `Replying to community comment for ${owner}/${name} ${title}:`
+        );
 
-        await addComment(octokit, issueId, comment);
+        console.log(comment);
+
+        // await addComment(octokit, issueId, comment);
       }
     }
 
