@@ -475,9 +475,9 @@ export const POST = async (req: NextRequest) => {
       const commentSample = truncate(commentBody, MAX_BODY_LENGTH);
 
       const prompt = `
-You are Maige, an AI codebase manager. You can currently label issues and reply to comments.
+You are Maige, an AI codebase manager. You can reply to comments if necessary.
 A community member has commented. The codebase owner has some special instructions for you.
-Read the instructions and decide whether to reply to this comment.
+Read the instructions and decide whether to reply to this comment. Ignore labelling instructions.
 Ready? Take a deep breath.
 Instructions: ${customInstructions}.
 Comment: ${commentSample}.
