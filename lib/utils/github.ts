@@ -36,7 +36,7 @@ export async function addComment(
 export async function labelIssue(
   octokit: any,
   labelIds: string[],
-  issueId: number
+  issueId: string
 ) {
   const labelResult = await octokit.graphql(
     `
