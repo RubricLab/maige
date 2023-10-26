@@ -1,15 +1,14 @@
 import { App } from "@octokit/app";
 import prisma from "lib/prisma";
 import { Label, Repository } from "lib/types";
-import { addComment, labelIssue, openUsageIssue } from "lib/utils/github";
-import { askGPT, getLabelsFromGPT, mergeInstructions } from "lib/utils/openai";
+import { openUsageIssue } from "lib/utils/github";
 import { incrementUsage } from "lib/utils/payment";
 import { stripe } from "lib/stripe";
-import { truncate, validateSignature } from "lib/utils";
+import { validateSignature } from "lib/utils";
 import { NextRequest, NextResponse } from "next/server";
-import { MAX_BODY_LENGTH } from "lib/constants";
+import engineer from "lib/agents/engineer";
 
-export const maxDuration = 30;
+export const maxDuration = 15;
 
 /**
  * POST /api/webhook
@@ -164,7 +163,7 @@ export const POST = async (req: NextRequest) => {
   }
 
   const {
-    issue: { node_id: issueId, title, body, labels: existingLabels },
+    issue: { node_id: issueId, title, body, number, labels: existingLabels },
     repository: {
       node_id: repoId,
       name,
@@ -179,6 +178,10 @@ export const POST = async (req: NextRequest) => {
    */
   if (sender.includes("maige-bot")) {
     return new NextResponse("Comment by Maige");
+  }
+
+  if (payload.comment && !payload.comment?.body?.includes?.("maige")) {
+    return new NextResponse("Irrelevant comment");
   }
 
   const existingLabelNames = existingLabels?.map((l: Label) => l.name);
@@ -266,29 +269,21 @@ export const POST = async (req: NextRequest) => {
     }
   }
 
+  await incrementUsage(prisma, owner);
+
   /**
    * Repo commands
    */
   try {
-    const labelsRes: {
+    const queryRes: {
       repository: {
         description?: string;
-        labels: {
-          nodes: Label[];
-        };
       };
     } = await octokit.graphql(
       `
-        query Labels($name: String!, $owner: String!) { 
+        query Repo($name: String!, $owner: String!) {
           repository(name: $name, owner: $owner) {
             description
-            labels(first: 100) {
-              nodes {
-                id
-                name
-                description
-              }
-            }
           }
         }
       `,
@@ -298,218 +293,52 @@ export const POST = async (req: NextRequest) => {
       }
     );
 
-    if (!labelsRes?.repository?.labels?.nodes) {
+    if (!queryRes?.repository?.description) {
       return NextResponse.json(
-        { message: "Could not get labels" },
+        { message: "Could not get repo" },
         { status: 401 }
       );
     }
 
-    const labels: Label[] = labelsRes.repository.labels.nodes;
-    const { description: repoDescription } = labelsRes.repository;
-
-    const commentBody = payload.comment?.body;
-
-    /**
-     * Label new issue
-     */
-    if (!commentBody) {
-      const labelIdsToApply = await getLabelsFromGPT({
-        title,
-        body,
-        labels,
-        owner,
-        name,
-        repoDescription,
-        existingLabelNames,
-        customInstructions,
-      });
-
-      await labelIssue(octokit, labelIdsToApply, issueId);
-      await incrementUsage(prisma, owner);
-
-      return NextResponse.json({
-        message: "Webhook received. Labels added.",
-      });
-    }
+    const { description: repoDescription } = queryRes.repository;
+    const comment = payload?.comment?.body;
 
     console.log(
       `Comment by a ${payload.comment?.author_association} in ${owner}/${name}`
     );
-    console.log(
-      `Comment includes 'maige': ${commentBody.toLowerCase().includes("maige")}`
-    );
 
-    if (
-      ["MEMBER", "OWNER", "CONTRIBUTOR"].includes(
-        payload.comment?.author_association
-      )
-    ) {
-      /**
-       * Repo owner-scoped actions
-       */
-
-      /**
-       * Label all unlabelled issues
-       */
-      if (commentBody.toLowerCase().includes("maige label all")) {
-        // GraphQL query to get all open issues. Filtering by unlabelled was not possible.
-        const openIssues = (await octokit.graphql(
-          `
-            query UnlabelledIssues($name: String!, $owner: String!) {
-              repository(name: $name, owner: $owner) {
-                issues(first: 100, states: [OPEN]) {
-                  nodes {
-                    title
-                    body
-                    id
-                    labels(first: 1) {
-                      totalCount
-                    }
-                  }
-                }
-              }
-            }
-            `,
-          {
-            name: name,
-            owner: owner,
-          }
-        )) as any;
-
-        if (!openIssues?.repository?.issues?.nodes) {
-          console.log("Could not get open issues");
-          return NextResponse.json(
-            {
-              message: "Could not get open issues",
-            },
-            { status: 401 }
-          );
-        }
-
-        const unlabelledIssues = openIssues.repository.issues.nodes.filter(
-          (issue: any) => issue.labels.totalCount === 0
-        );
-
-        for (const issue of unlabelledIssues) {
-          const labelIdsToApply = await getLabelsFromGPT({
-            title: issue.title,
-            body: issue.body,
-            labels,
-            owner,
-            name,
-            repoDescription,
-            existingLabelNames,
-            customInstructions,
-          });
-
-          await labelIssue(octokit, labelIdsToApply, issue.id);
-          await incrementUsage(prisma, owner);
-        }
-
-        return NextResponse.json({
-          message: "Labels added to all old issues.",
-        });
-      } else if (commentBody.toLowerCase().includes("maige label this")) {
-        /**
-         * Label one issue
-         */
-        const labelIdsToApply = await getLabelsFromGPT({
-          title,
-          body,
-          labels,
-          owner,
-          name,
-          repoDescription,
-          existingLabelNames,
-          customInstructions,
-        });
-
-        await labelIssue(octokit, labelIdsToApply, issueId);
-        await incrementUsage(prisma, owner);
-
-        return NextResponse.json({
-          message: "Webhook received. Labels added.",
-        });
-      } else if (commentBody.toLowerCase().includes("maige")) {
-        console.log("Updating custom instructions");
-        /**
-         * Update custom instructions
-         */
-        const combinedInstructions = await mergeInstructions({
-          newInstructions: commentBody,
-          oldInstructions: customInstructions,
-          issueBody: body,
-          issueLabels: existingLabelNames,
-        });
-        console.log("Combined instructions: ", combinedInstructions);
-
-        await prisma.project.update({
-          where: {
-            customerId_name: {
-              customerId: customerId,
-              name: name,
-            },
-          },
-          data: {
-            customInstructions: combinedInstructions,
-          },
-        });
-
-        await addComment(
-          octokit,
-          issueId,
-          `Here is your custom prompt:\n\n> ${combinedInstructions}\n\nShare feedback by commenting.`
-        );
-
-        return NextResponse.json({
-          message: "Custom instructions updated.",
-        });
-      }
-    } else {
-      /**
-       * Community comment; allow GPT to reply if instructed.
-       */
-      console.log("Community comment");
-
-      const commentSample = truncate(commentBody, MAX_BODY_LENGTH);
-
-      const prompt = `
-You are Maige, an AI codebase manager. You can reply to comments if necessary.
-A community member has commented. The codebase owner has some special instructions for you.
-Read the instructions and decide whether to reply to this comment. Ignore labelling instructions.
-Ready? Take a deep breath.
-Instructions: ${customInstructions}.
-Comment: ${commentSample}.
-
-If the instructions do not explicitly apply to the comment, reply "n/a".
+    /**
+     * Repo owner-scoped actions
+     */
+    const isComment = action === "created";
+    // Note: issue number has been omitted
+    const engPrompt = `
+Hey, here's an incoming ${isComment ? "comment" : "issue"}!
+Repo owner: ${owner}
+Repo name: ${name}
+Repo description: ${repoDescription}
+Issue ID: ${issueId}
+Issue title: ${title}
+Issue body: ${body}
+Issue labels: ${existingLabelNames}
+${isComment ? `Comment body: ${comment}` : ""}
+Custom instructions: ${customInstructions}
+Default instructions: ${isComment ? "" : "label the issue"}
 `;
 
-      const comment = await askGPT({
-        prompt,
-        model: "gpt-4",
-        temperature: 0.6,
-      });
-
-      // TODO: replace this with a tool passed to a LangChain Agent
-      if (comment.length > 20) {
-        console.log(
-          `Replying to community comment for ${owner}/${name} ${title}:`
-        );
-
-        console.log(comment);
-
-        // await addComment(octokit, issueId, comment);
-      }
-    }
+    await engineer({
+      input: engPrompt,
+      octokit,
+      prisma,
+      customerId,
+      owner: name,
+    });
 
     return new NextResponse("ok");
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      {
-        message: `Something went wrong: ${error}`,
-      },
+      { message: `Something went wrong: ${error}` },
       { status: 500 }
     );
   }

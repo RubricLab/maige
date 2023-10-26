@@ -8,7 +8,7 @@ export async function addComment(
   octokit: any,
   issueId: string,
   comment: string
-) {
+): Promise<string> {
   const commentResult = await octokit.graphql(
     `
     mutation($issueId: ID!, $comment: String!) {
@@ -26,6 +26,8 @@ export async function addComment(
   if (!commentResult) {
     throw new Error("Could not add comment");
   }
+
+  return commentResult;
 }
 
 /**
@@ -55,6 +57,8 @@ export async function labelIssue(
   if (!labelResult) {
     throw new Error("Could not add labels");
   }
+
+  return labelResult;
 }
 
 /**
