@@ -346,6 +346,7 @@ export const POST = async (req: Request) => {
     // Note: issue number has been omitted
     const engPrompt = `
 Hey, here's an incoming ${isComment ? "comment" : "issue"}.
+First, some context:
 Repo owner: ${owner}.
 Repo name: ${name}.
 Repo description: ${repoDescription}.
