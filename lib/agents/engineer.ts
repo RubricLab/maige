@@ -14,7 +14,7 @@ import { isDev } from "lib/utils";
 import { Label } from "lib/types";
 
 const model = new ChatOpenAI({
-  modelName: "gpt-3.5-turbo",
+  modelName: "gpt-4",
   openAIApiKey: env.OPENAI_API_KEY,
   temperature: 0.5,
 });
@@ -25,14 +25,14 @@ export default async function engineer({
   prisma,
   customerId,
   owner,
-  labels,
+  allLabels,
 }: {
   input: string;
   octokit: any;
   prisma: any;
   customerId: string;
   owner: string;
-  labels: Label[];
+  allLabels: Label[];
 }) {
   const shell = await Session.create({
     apiKey: env.E2B_API_KEY,
@@ -41,17 +41,11 @@ export default async function engineer({
     onStdout: (data) => console.log(data.line),
   });
 
-  // TODO: make this fast/reusable. Currently takes ~10 s.
-  // const setup = await shell.process.start({
-  //   cmd: `sudo apt install gh && gh auth login --with-token <<< "${env.GITHUB_ACCESS_TOKEN}"`,
-  // });
-  // await setup.wait();
-
   const tools = [
     new SerpAPI(),
-    labelIssueTool({ octokit, labels }),
+    labelIssueTool({ octokit, allLabels }),
     addCommentTool({ octokit }),
-    updateInstructions({ prisma, customerId, owner }),
+    updateInstructions({ octokit, prisma, customerId, owner }),
     ghGraphQL({ octokit }),
     exec({
       description: "Executes a shell command.",
@@ -76,11 +70,12 @@ export default async function engineer({
     }),
   ];
 
-  const prefix = `
-You are a senior AI engineer.
+  const prefix = `You are a senior AI engineer.
 You use the internet, shell, and git to solve problems.
-Always read the docs first.
-`;
+You like to read the docs.
+Only use necessary tools.
+Always check your work before claiming something works.
+`.replaceAll("\n", " ");
 
   const executor = await initializeAgentExecutorWithOptions(tools, model, {
     agentType: "openai-functions",

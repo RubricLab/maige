@@ -162,7 +162,7 @@ export const POST = async (req: Request) => {
   }
 
   const {
-    issue: { node_id: issueId, title, body, number, labels: existingLabels },
+    issue: { node_id: issueId, title, body, labels: existingLabels },
     repository: {
       node_id: repoId,
       name,
@@ -179,7 +179,10 @@ export const POST = async (req: Request) => {
     return new Response("Comment by Maige");
   }
 
-  if (payload.comment && !payload.comment?.body?.includes?.("maige")) {
+  if (
+    payload.comment &&
+    !payload.comment.body.toLowerCase().includes("maige")
+  ) {
     return new Response("Irrelevant comment");
   }
 
@@ -330,7 +333,7 @@ export const POST = async (req: Request) => {
       throw new Error("Could not get labels");
     }
 
-    const labels: Label[] = labelsRes.repository.labels.nodes;
+    const allLabels: Label[] = labelsRes.repository.labels.nodes;
 
     console.log(
       `Comment by a ${payload.comment?.author_association} in ${owner}/${name}`
@@ -342,18 +345,24 @@ export const POST = async (req: Request) => {
     const isComment = action === "created";
     // Note: issue number has been omitted
     const engPrompt = `
-Hey, here's an incoming ${isComment ? "comment" : "issue"}!
-Repo owner: ${owner}
-Repo name: ${name}
-Repo description: ${repoDescription}
-Issue ID: ${issueId}
-Issue title: ${title}
-Issue body: ${body}
-Issue labels: ${existingLabelNames}
-${isComment ? `Comment body: ${comment}` : ""}
-Custom instructions: ${customInstructions}
-Default instructions: ${isComment ? "" : "label the issue"}
-`;
+Hey, here's an incoming ${isComment ? "comment" : "issue"}.
+Repo owner: ${owner}.
+Repo name: ${name}.
+Repo description: ${repoDescription}.
+All repo labels separated by semicolon: ${allLabels
+      .map(
+        (label: Label) =>
+          `${label.name}: ${label.description?.replaceAll(";", ",")}`
+      )
+      .join("; ")}.
+Issue ID: ${issueId}.
+Issue title: ${title}.
+Issue body: ${body}.
+Issue labels: ${existingLabelNames.join(", ")}.
+${isComment ? `Comment body: ${comment}.` : ""}
+${customInstructions ? `Custom instructions: ${customInstructions}.` : ""}
+${isComment ? "" : "Default instructions: label the issue."}
+`.replaceAll("\n", " ");
 
     await engineer({
       input: engPrompt,
@@ -361,7 +370,7 @@ Default instructions: ${isComment ? "" : "label the issue"}
       prisma,
       customerId,
       owner: name,
-      labels,
+      allLabels,
     });
 
     return new Response("ok");

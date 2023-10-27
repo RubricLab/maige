@@ -5,11 +5,15 @@ import { Label } from "lib/types";
 /**
  * Add comment to issue
  */
-export async function addComment(
-  octokit: any,
-  issueId: string,
-  comment: string
-): Promise<string> {
+export async function addComment({
+  octokit,
+  issueId,
+  comment,
+}: {
+  octokit: any;
+  issueId: string;
+  comment: string;
+}): Promise<string> {
   const commentResult = await octokit.graphql(
     `
     mutation($issueId: ID!, $comment: String!) {
@@ -37,15 +41,15 @@ export async function addComment(
 export async function labelIssue({
   octokit,
   labelNames,
-  labels,
+  allLabels,
   issueId,
 }: {
   octokit: any;
   labelNames: string[];
-  labels: Label[];
+  allLabels: Label[];
   issueId: string;
 }) {
-  const labelIds = labels
+  const labelIds = allLabels
     .filter((label) => labelNames.includes(label.name))
     .map((label) => label.id);
 
@@ -55,13 +59,19 @@ export async function labelIssue({
       addLabelsToLabelable(input: {
         labelIds: $labelIds, labelableId: $issueId
       }) {
-        clientMutationId
+        labelable {
+          labels(first:10) {
+            nodes {
+              name
+            }
+          }
+        }
       }
     }
     `,
     {
       issueId,
-      labelIds: labelIds && labelIds.length > 0 ? labelIds : [],
+      labelIds,
     }
   );
 
@@ -86,7 +96,9 @@ export async function openUsageIssue(
     `
       mutation($repoId: ID!, $title: String!, $body: String!) {
         createIssue(input: { repositoryId: $repoId, title: $title, body: $body }) {
-          issue { id }
+          issue {
+            id
+          }
         }
       }
       `,

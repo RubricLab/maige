@@ -54,7 +54,9 @@ export function ghGraphQL({ octokit }: { octokit: any }) {
     description: "GitHub GraphQL API",
     func: async ({ command }) => {
       try {
-        return await octokit.graphql(command);
+        const res = await octokit.graphql(command);
+
+        return JSON.stringify(res);
       } catch (error: any) {
         return `Something went wrong: ${error.message || "unknown error"}`;
       }
@@ -75,10 +77,9 @@ export function ghGraphQL({ octokit }: { octokit: any }) {
  */
 export function addCommentTool({ octokit }: { octokit: any }) {
   return new DynamicStructuredTool({
-    description:
-      "Add a comment to an issue. Only use this if specifically prompted.",
+    description: "Adds a comment to an issue",
     func: async ({ issueId, comment }) => {
-      const res = await addComment(octokit, issueId, comment);
+      const res = await addComment({ octokit, issueId, comment });
 
       return JSON.stringify(res);
     },
@@ -95,20 +96,20 @@ export function addCommentTool({ octokit }: { octokit: any }) {
  */
 export function labelIssueTool({
   octokit,
-  labels,
+  allLabels,
 }: {
   octokit: any;
-  labels: Label[];
+  allLabels: Label[];
 }) {
   return new DynamicStructuredTool({
-    description: "Add a label to an issue",
+    description: "Adds a label to an issue",
     name: "labelIssue",
     schema: z.object({
       issueId: z.string().describe("The ID of the issue"),
       labelNames: z.array(z.string()).describe("The names of labels to apply"),
     }),
     func: async ({ issueId, labelNames }) => {
-      const res = await labelIssue({ octokit, labelNames, labels, issueId });
+      const res = await labelIssue({ octokit, labelNames, allLabels, issueId });
 
       return JSON.stringify(res);
     },
@@ -122,15 +123,17 @@ export function updateInstructions({
   prisma,
   customerId,
   owner,
+  octokit,
 }: {
   prisma: any;
+  octokit: any;
   customerId: string;
   owner: string;
 }) {
   return new DynamicStructuredTool({
     description:
-      "Update user's custom instructions if prompted. After doing this, always comment the new instructions.",
-    func: async ({ newInstructions }) => {
+      "User will explicitly ask for custom instructions to be updated.",
+    func: async ({ newInstructions, issueId }) => {
       const res = await prisma.project.update({
         where: {
           customerId_name: {
@@ -143,15 +146,20 @@ export function updateInstructions({
         },
       });
 
+      await addComment({
+        octokit,
+        issueId,
+        comment: `Done. Your new instructions:\n\n> ${
+          newInstructions || "none"
+        }`,
+      });
+
       return JSON.stringify(res);
     },
     name: "updateInstructions",
     schema: z.object({
-      newInstructions: z
-        .string()
-        .describe(
-          "The new instructions. Make sure to preserve the old instructions."
-        ),
+      newInstructions: z.string().describe("The new instructions."),
+      issueId: z.string().describe("The ID of the issue"),
     }),
   });
 }
