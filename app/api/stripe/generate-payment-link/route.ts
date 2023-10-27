@@ -1,15 +1,14 @@
 import { stripe } from "lib/stripe";
 import { createPaymentLink } from "lib/utils/payment";
-import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Generate a Stripe payment URL for a customer.
  */
-export const POST = async (req: NextRequest) => {
+export const POST = async (req: Request) => {
   const { tier, email, customerId } = (await req.json()) as any;
 
   if (!customerId) {
-    return NextResponse.json(
+    return Response.json(
       {
         message: "Missing customer ID",
       },
@@ -20,11 +19,11 @@ export const POST = async (req: NextRequest) => {
   try {
     const url = await createPaymentLink(stripe, customerId, tier, email);
 
-    return NextResponse.json({
+    return Response.json({
       url,
     });
   } catch {
-    return NextResponse.json(
+    return Response.json(
       {
         message: "Failed to create Stripe session",
       },

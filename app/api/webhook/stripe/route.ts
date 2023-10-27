@@ -1,18 +1,21 @@
 import { stripe } from "lib/stripe";
 import prisma from "lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { env } from "~/env.mjs";
+import { headers } from "next/headers";
 
 /**
  * POST /api/webhook/stripe
  *
  * Stripe webhook handler
  */
-export const POST = async (req: NextRequest) => {
+export const POST = async (req: Request) => {
   const payload = await req.text();
 
-  const signature = req.headers.get("stripe-signature") || "";
+  const headersList = headers();
+  const signature = headersList.get("stripe-signature") || "";
+
   if (!signature) {
     return NextResponse.json({ message: "No signature" }, { status: 400 });
   }

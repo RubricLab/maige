@@ -1,10 +1,10 @@
 {
   "name": "maige",
   "version": "0.1.0",
-  "private": false,
   "license": "MIT",
+  "private": false,
   "scripts": {
-    "build": "npx prisma generate && next build",
+    "build": "bunx prisma generate && next build",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start"

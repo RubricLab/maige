@@ -5,7 +5,7 @@ import { openUsageIssue } from "lib/utils/github";
 import { incrementUsage } from "lib/utils/payment";
 import { stripe } from "lib/stripe";
 import { validateSignature } from "lib/utils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import engineer from "lib/agents/engineer";
 
 export const maxDuration = 15;
@@ -15,7 +15,7 @@ export const maxDuration = 15;
  *
  * GitHub webhook handler
  */
-export const POST = async (req: NextRequest) => {
+export const POST = async (req: Request) => {
   // Verify webhook signature
   const text = await req.text();
   const signature = req.headers.get("x-hub-signature-256") || "";
@@ -303,6 +303,39 @@ export const POST = async (req: NextRequest) => {
     const { description: repoDescription } = queryRes.repository;
     const comment = payload?.comment?.body;
 
+    const labelsRes: {
+      repository: {
+        description?: string;
+        labels: {
+          nodes: Label[];
+        };
+      };
+    } = await octokit.graphql(
+      `
+        query Labels($name: String!, $owner: String!) {
+          repository(name: $name, owner: $owner) {
+            labels(first: 100) {
+              nodes {
+                id
+                name
+                description
+              }
+            }
+          }
+        }
+      `,
+      {
+        name,
+        owner,
+      }
+    );
+
+    if (!labelsRes?.repository?.labels?.nodes) {
+      throw new Error("Could not get labels");
+    }
+
+    const labels: Label[] = labelsRes.repository.labels.nodes;
+
     console.log(
       `Comment by a ${payload.comment?.author_association} in ${owner}/${name}`
     );
@@ -332,6 +365,7 @@ Default instructions: ${isComment ? "" : "label the issue"}
       prisma,
       customerId,
       owner: name,
+      labels,
     });
 
     return new NextResponse("ok");
