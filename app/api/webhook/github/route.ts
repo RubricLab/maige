@@ -22,12 +22,7 @@ export const POST = async (req: Request) => {
   const validSignature = await validateSignature(text, signature);
   if (!validSignature) {
     console.error("Bad GitHub webhook secret.");
-    return Response.json(
-      {
-        message: "Bad GitHub webhook secret.",
-      },
-      { status: 403 }
-    );
+    return new Response("Bad GitHub webhook secret.", { status: 403 });
   }
 
   const payload = JSON.parse(text);
@@ -59,10 +54,7 @@ export const POST = async (req: Request) => {
         },
       });
 
-      console.log(`Added customer ${login}`);
-      return Response.json({
-        message: `Added customer ${login}`,
-      });
+      return new Response(`Added customer ${login}`);
     } else if (action === "deleted") {
       // Uninstalled GitHub App
 
@@ -76,10 +68,7 @@ export const POST = async (req: Request) => {
         console.warn(error);
       }
 
-      console.warn(`Deleted customer ${login}`);
-      return Response.json({
-        message: `Deleted customer ${login}`,
-      });
+      return new Response(`Deleted customer ${login}`);
     } else if (["added", "removed"].includes(action)) {
       // Added or removed repos from GitHub App
 
@@ -107,12 +96,9 @@ export const POST = async (req: Request) => {
       });
 
       if (!customer?.id) {
-        return Response.json(
-          {
-            message: `Could not find or create customer ${login}`,
-          },
-          { status: 500 }
-        );
+        return new Response(`Could not find or create customer ${login}`, {
+          status: 500,
+        });
       }
 
       const newRepos = addedRepos.filter((repo: Repository) => {
@@ -141,9 +127,7 @@ export const POST = async (req: Request) => {
       // Sync repos to database in a single transaction
       await prisma.$transaction([createProjects, deleteProjects]);
 
-      return Response.json({
-        message: `Updated repos for ${login}`,
-      });
+      return new Response(`Successfully updated repos for ${login}`);
     }
   }
 
@@ -156,9 +140,7 @@ export const POST = async (req: Request) => {
       (action === "created" && payload?.comment)
     )
   ) {
-    return Response.json({
-      message: "Webhook received",
-    });
+    return new Response("Webhook received", { status: 202 });
   }
 
   const {
@@ -170,20 +152,15 @@ export const POST = async (req: Request) => {
     },
     sender: { login: sender },
     installation: { id: instanceId },
+    comment,
   } = payload;
 
-  /**
-   * Ignore comments by Maige
-   */
   if (sender.includes("maige-bot")) {
-    return new Response("Comment by Maige");
+    return new Response("Comment by Maige", { status: 202 });
   }
 
-  if (
-    payload.comment &&
-    !payload.comment.body.toLowerCase().includes("maige")
-  ) {
-    return new Response("Irrelevant comment");
+  if (comment && !comment.body.toLowerCase().includes("maige")) {
+    return new Response("Irrelevant comment", { status: 202 });
   }
 
   const existingLabelNames = existingLabels?.map((l: Label) => l.name);
@@ -210,17 +187,11 @@ export const POST = async (req: Request) => {
   });
 
   if (!customer) {
-    console.warn("Could not find customer: ", owner);
-    return Response.json(
-      {
-        message: "Could not find customer",
-      },
-      { status: 500 }
-    );
+    return new Response("Could not find customer", { status: 500 });
   }
 
   const { id: customerId, usage, usageLimit, usageWarned, projects } = customer;
-  const { customInstructions } = projects?.[0] || { customInstructions: "" };
+  const customInstructions = projects?.[0]?.customInstructions || "";
 
   // Get GitHub app instance access token
   const app = new App({
@@ -250,24 +221,16 @@ export const POST = async (req: Request) => {
       } catch (error) {
         console.warn("Could not open usage issue for: ", owner, name);
         console.error(error);
-        return Response.json(
-          {
-            message: "Could not open usage issue",
-          },
-          { status: 500 }
-        );
+        return new Response("Could not open usage issue", { status: 500 });
       }
     }
 
     // Only block usage after grace period
     if (usage > usageLimit + 10) {
       console.warn("Usage limit exceeded for: ", owner, name);
-      return Response.json(
-        {
-          message: "Please add payment info to continue.",
-        },
-        { status: 402 }
-      );
+      return new Response("Please add payment info to continue.", {
+        status: 402,
+      });
     }
   }
 
@@ -296,11 +259,8 @@ export const POST = async (req: Request) => {
     );
 
     if (!queryRes?.repository?.description) {
-      return Response.json({ message: "Could not get repo" }, { status: 401 });
+      return new Response("Could not get repo", { status: 401 });
     }
-
-    const { description: repoDescription } = queryRes.repository;
-    const comment = payload?.comment?.body;
 
     const labelsRes: {
       repository: {
@@ -336,13 +296,13 @@ export const POST = async (req: Request) => {
     const allLabels: Label[] = labelsRes.repository.labels.nodes;
 
     console.log(
-      `Comment by a ${payload.comment?.author_association} in ${owner}/${name}`
+      `Comment by ${comment?.author_association} in ${owner}/${name}`
     );
 
-    /**
-     * Repo owner-scoped actions
-     */
+    const { description: repoDescription } = queryRes.repository;
+
     const isComment = action === "created";
+
     // Note: issue number has been omitted
     const engPrompt = `
 Hey, here's an incoming ${isComment ? "comment" : "issue"}.
@@ -360,7 +320,7 @@ Issue ID: ${issueId}.
 Issue title: ${title}.
 Issue body: ${body}.
 Issue labels: ${existingLabelNames.join(", ")}.
-${isComment ? `Comment body: ${comment}.` : ""}
+${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ""}
 ${customInstructions ? `Custom instructions: ${customInstructions}.` : ""}
 ${isComment ? "" : "Default instructions: label the issue."}
 `.replaceAll("\n", " ");
@@ -377,9 +337,6 @@ ${isComment ? "" : "Default instructions: label the issue."}
     return new Response("ok");
   } catch (error) {
     console.error(error);
-    return Response.json(
-      { message: `Something went wrong: ${error}` },
-      { status: 500 }
-    );
+    return new Response(`Something went wrong: ${error}`, { status: 500 });
   }
 };
