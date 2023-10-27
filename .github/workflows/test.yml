@@ -7,8 +7,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Bun test
       - uses: oven-sh/setup-bun@v1
+      - name: Bun test
         with:
           bun-version: latest
       - run: bun test --coverage
