@@ -11,4 +11,5 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+      - run: bun i
       - run: bun test --coverage
