@@ -39,7 +39,7 @@ export default async function engineer({
     onStdout: (data) => console.log(data.line),
   });
 
-  // TODO: make this fast/reusable. Currently takes ~10s.
+  // TODO: make this fast/reusable. Currently takes ~10 s.
   // const setup = await shell.process.start({
   //   cmd: `sudo apt install gh && gh auth login --with-token <<< "${env.GITHUB_ACCESS_TOKEN}"`,
   // });
