@@ -49,8 +49,8 @@ export default async function engineer({
 
   const tools = [
     new SerpAPI(),
-    addCommentTool({ octokit }),
     labelIssueTool({ octokit, labels }),
+    addCommentTool({ octokit }),
     updateInstructions({ prisma, customerId, owner }),
     ghGraphQL({ octokit }),
     exec({
@@ -85,6 +85,7 @@ Always read the docs first.
   const executor = await initializeAgentExecutorWithOptions(tools, model, {
     agentType: "openai-functions",
     returnIntermediateSteps: isDev,
+    handleParsingErrors: true,
     verbose: isDev,
     agentArgs: {
       prefix,

@@ -5,7 +5,6 @@ import { openUsageIssue } from "lib/utils/github";
 import { incrementUsage } from "lib/utils/payment";
 import { stripe } from "lib/stripe";
 import { validateSignature } from "lib/utils";
-import { NextResponse } from "next/server";
 import engineer from "lib/agents/engineer";
 
 export const maxDuration = 15;
@@ -23,7 +22,7 @@ export const POST = async (req: Request) => {
   const validSignature = await validateSignature(text, signature);
   if (!validSignature) {
     console.error("Bad GitHub webhook secret.");
-    return NextResponse.json(
+    return Response.json(
       {
         message: "Bad GitHub webhook secret.",
       },
@@ -61,7 +60,7 @@ export const POST = async (req: Request) => {
       });
 
       console.log(`Added customer ${login}`);
-      return NextResponse.json({
+      return Response.json({
         message: `Added customer ${login}`,
       });
     } else if (action === "deleted") {
@@ -78,7 +77,7 @@ export const POST = async (req: Request) => {
       }
 
       console.warn(`Deleted customer ${login}`);
-      return NextResponse.json({
+      return Response.json({
         message: `Deleted customer ${login}`,
       });
     } else if (["added", "removed"].includes(action)) {
@@ -108,7 +107,7 @@ export const POST = async (req: Request) => {
       });
 
       if (!customer?.id) {
-        return NextResponse.json(
+        return Response.json(
           {
             message: `Could not find or create customer ${login}`,
           },
@@ -142,7 +141,7 @@ export const POST = async (req: Request) => {
       // Sync repos to database in a single transaction
       await prisma.$transaction([createProjects, deleteProjects]);
 
-      return NextResponse.json({
+      return Response.json({
         message: `Updated repos for ${login}`,
       });
     }
@@ -157,7 +156,7 @@ export const POST = async (req: Request) => {
       (action === "created" && payload?.comment)
     )
   ) {
-    return NextResponse.json({
+    return Response.json({
       message: "Webhook received",
     });
   }
@@ -177,11 +176,11 @@ export const POST = async (req: Request) => {
    * Ignore comments by Maige
    */
   if (sender.includes("maige-bot")) {
-    return new NextResponse("Comment by Maige");
+    return new Response("Comment by Maige");
   }
 
   if (payload.comment && !payload.comment?.body?.includes?.("maige")) {
-    return new NextResponse("Irrelevant comment");
+    return new Response("Irrelevant comment");
   }
 
   const existingLabelNames = existingLabels?.map((l: Label) => l.name);
@@ -209,7 +208,7 @@ export const POST = async (req: Request) => {
 
   if (!customer) {
     console.warn("Could not find customer: ", owner);
-    return NextResponse.json(
+    return Response.json(
       {
         message: "Could not find customer",
       },
@@ -248,7 +247,7 @@ export const POST = async (req: Request) => {
       } catch (error) {
         console.warn("Could not open usage issue for: ", owner, name);
         console.error(error);
-        return NextResponse.json(
+        return Response.json(
           {
             message: "Could not open usage issue",
           },
@@ -260,7 +259,7 @@ export const POST = async (req: Request) => {
     // Only block usage after grace period
     if (usage > usageLimit + 10) {
       console.warn("Usage limit exceeded for: ", owner, name);
-      return NextResponse.json(
+      return Response.json(
         {
           message: "Please add payment info to continue.",
         },
@@ -294,10 +293,7 @@ export const POST = async (req: Request) => {
     );
 
     if (!queryRes?.repository?.description) {
-      return NextResponse.json(
-        { message: "Could not get repo" },
-        { status: 401 }
-      );
+      return Response.json({ message: "Could not get repo" }, { status: 401 });
     }
 
     const { description: repoDescription } = queryRes.repository;
@@ -368,10 +364,10 @@ Default instructions: ${isComment ? "" : "label the issue"}
       labels,
     });
 
-    return new NextResponse("ok");
+    return new Response("ok");
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
+    return Response.json(
       { message: `Something went wrong: ${error}` },
       { status: 500 }
     );
