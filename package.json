@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "bunx prisma generate && next build",
+    "build": "bun x prisma generate && next build",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start"
