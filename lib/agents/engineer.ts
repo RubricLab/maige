@@ -5,13 +5,13 @@ import { SerpAPI } from "langchain/tools";
 import {
   addCommentTool,
   exec,
-  getRepoLabels,
   ghGraphQL,
   labelIssueTool,
   updateInstructions,
 } from "../tools";
 import { env } from "~/env.mjs";
 import { isDev } from "lib/utils";
+import { Label } from "lib/types";
 
 const model = new ChatOpenAI({
   modelName: "gpt-3.5-turbo",
@@ -25,12 +25,14 @@ export default async function engineer({
   prisma,
   customerId,
   owner,
+  labels,
 }: {
   input: string;
   octokit: any;
   prisma: any;
   customerId: string;
   owner: string;
+  labels: Label[];
 }) {
   const shell = await Session.create({
     apiKey: env.E2B_API_KEY,
@@ -48,8 +50,7 @@ export default async function engineer({
   const tools = [
     new SerpAPI(),
     addCommentTool({ octokit }),
-    getRepoLabels({ octokit }),
-    labelIssueTool({ octokit }),
+    labelIssueTool({ octokit, labels }),
     updateInstructions({ prisma, customerId, owner }),
     ghGraphQL({ octokit }),
     exec({

@@ -75,7 +75,8 @@ export function ghGraphQL({ octokit }: { octokit: any }) {
  */
 export function addCommentTool({ octokit }: { octokit: any }) {
   return new DynamicStructuredTool({
-    description: "Add a comment to an issue. Only do this if necessary.",
+    description:
+      "Add a comment to an issue. Only use this if specifically prompted.",
     func: async ({ issueId, comment }) => {
       const res = await addComment(octokit, issueId, comment);
 
@@ -92,69 +93,24 @@ export function addCommentTool({ octokit }: { octokit: any }) {
 /**
  * Label an issue
  */
-export function labelIssueTool({ octokit }: { octokit: any }) {
+export function labelIssueTool({
+  octokit,
+  labels,
+}: {
+  octokit: any;
+  labels: Label[];
+}) {
   return new DynamicStructuredTool({
     description: "Add a label to an issue",
     name: "labelIssue",
     schema: z.object({
       issueId: z.string().describe("The ID of the issue"),
-      labelIds: z.array(z.string()).describe("The IDs of labels to apply"),
+      labelNames: z.array(z.string()).describe("The names of labels to apply"),
     }),
-    func: async ({ issueId, labelIds }) => {
-      const res = await labelIssue(octokit, labelIds, issueId);
+    func: async ({ issueId, labelNames }) => {
+      const res = await labelIssue({ octokit, labelNames, labels, issueId });
 
       return JSON.stringify(res);
-    },
-  });
-}
-
-/**
- * Get repo labels
- */
-export function getRepoLabels({ octokit }: { octokit: any }) {
-  return new DynamicStructuredTool({
-    description: "Get all available labels",
-    name: "getAllLabels",
-    schema: z.object({
-      name: z.string().describe("Name of the repo"),
-      owner: z.string().describe("Owner of the repo"),
-    }),
-    func: async ({ name, owner }) => {
-      // return await octo
-      const labelsRes: {
-        repository: {
-          description?: string;
-          labels: {
-            nodes: Label[];
-          };
-        };
-      } = await octokit.graphql(
-        `
-        query Labels($name: String!, $owner: String!) {
-          repository(name: $name, owner: $owner) {
-            labels(first: 100) {
-              nodes {
-                id
-                name
-                description
-              }
-            }
-          }
-        }
-      `,
-        {
-          name,
-          owner,
-        }
-      );
-
-      if (!labelsRes?.repository?.labels?.nodes) {
-        throw new Error("Could not get labels");
-      }
-
-      const labels: Label[] = labelsRes.repository.labels.nodes;
-
-      return JSON.stringify(labels);
     },
   });
 }

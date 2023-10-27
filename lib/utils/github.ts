@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { createPaymentLink } from "./payment";
+import { Label } from "lib/types";
 
 /**
  * Add comment to issue
@@ -33,11 +34,21 @@ export async function addComment(
 /**
  * Label an issue
  */
-export async function labelIssue(
-  octokit: any,
-  labelIds: string[],
-  issueId: string
-) {
+export async function labelIssue({
+  octokit,
+  labelNames,
+  labels,
+  issueId,
+}: {
+  octokit: any;
+  labelNames: string[];
+  labels: Label[];
+  issueId: string;
+}) {
+  const labelIds = labels
+    .filter((label) => labelNames.includes(label.name))
+    .map((label) => label.id);
+
   const labelResult = await octokit.graphql(
     `
     mutation AddLabels($issueId: ID!, $labelIds: [ID!]!) {
