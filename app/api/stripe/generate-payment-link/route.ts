@@ -6,12 +6,12 @@ import { NextRequest, NextResponse } from "next/server";
  * Generate a Stripe payment URL for a customer.
  */
 export const POST = async (req: NextRequest) => {
-  const { tier, email, customerId } = await req.json();
+  const { tier, email, customerId } = (await req.json()) as any;
 
-  if (!tier || !customerId) {
+  if (!customerId) {
     return NextResponse.json(
       {
-        message: "Missing required parameters",
+        message: "Missing customer ID",
       },
       { status: 400 }
     );
