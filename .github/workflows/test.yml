@@ -1,0 +1,14 @@
+name: Run tests
+
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bun test
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun test --coverage

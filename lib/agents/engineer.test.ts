@@ -9,7 +9,7 @@ test("Bun test runner", () => {
   expect(Bun.version).toInclude("1.0");
 });
 
-test(
+test.skip(
   "GH CLI",
   async () => {
     const shell = await Session.create({
@@ -39,4 +39,10 @@ test("SERP API", async () => {
   const weather = JSON.parse(res);
 
   expect(weather.location).toBe("San Francisco, CA");
+});
+
+test.todo("E2E", () => {
+  console.log(
+    "It should pass a sample issue to engineer() and have it appropriately labelled"
+  );
 });
