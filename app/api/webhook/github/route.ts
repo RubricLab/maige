@@ -144,7 +144,13 @@ export const POST = async (req: Request) => {
   }
 
   const {
-    issue: { node_id: issueId, title, body, labels: existingLabels },
+    issue: {
+      node_id: issueId,
+      title,
+      number: issueNumber,
+      body,
+      labels: existingLabels,
+    },
     repository: {
       node_id: repoId,
       name,
@@ -191,7 +197,7 @@ export const POST = async (req: Request) => {
   }
 
   const { id: customerId, usage, usageLimit, usageWarned, projects } = customer;
-  const customInstructions = projects?.[0]?.customInstructions || "";
+  const instructions = projects?.[0]?.customInstructions || "";
 
   // Get GitHub app instance access token
   const app = new App({
@@ -310,19 +316,19 @@ First, some context:
 Repo owner: ${owner}.
 Repo name: ${name}.
 Repo description: ${repoDescription}.
-All repo labels separated by semicolon: ${allLabels
+All repo labels: ${allLabels
       .map(
-        (label: Label) =>
-          `${label.name}: ${label.description?.replaceAll(";", ",")}`
+        ({ name, description }) =>
+          `${name}: ${description?.replaceAll(";", ",")}`
       )
       .join("; ")}.
 Issue ID: ${issueId}.
+Issue number: ${issueNumber}.
 Issue title: ${title}.
 Issue body: ${body}.
 Issue labels: ${existingLabelNames.join(", ")}.
+Your instructions: ${instructions}.
 ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ""}
-${customInstructions ? `Custom instructions: ${customInstructions}.` : ""}
-${isComment ? "" : "Default instructions: label the issue."}
 `.replaceAll("\n", " ");
 
     await engineer({
@@ -331,7 +337,6 @@ ${isComment ? "" : "Default instructions: label the issue."}
       prisma,
       customerId,
       owner: name,
-      allLabels,
     });
 
     return new Response("ok");

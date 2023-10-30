@@ -47,7 +47,7 @@ export function exec({
 }
 
 /**
- * Call GitHub GQL API
+ * @deprecated Call GitHub GQL API
  */
 export function ghGraphQL({ octokit }: { octokit: any }) {
   return new DynamicStructuredTool({
@@ -73,13 +73,57 @@ export function ghGraphQL({ octokit }: { octokit: any }) {
 }
 
 /**
+ * Call the GitHub REST API
+ */
+export function ghRest({ octokit }: { octokit: any }) {
+  return new DynamicStructuredTool({
+    description: "GitHub REST API",
+    func: async ({ path, body, method }) => {
+      try {
+        const res = await octokit.request(`https://api.github.com${path}`, {
+          method,
+          headers: {
+            accept: "application/vnd.github+json",
+            "user-agent": "octokit-request",
+          },
+          ...body,
+        });
+
+        return res.data ? "success" : "Something went wrong. Read the docs.";
+      } catch (error: any) {
+        return `Something went wrong: ${error.message || "unknown error"}`;
+      }
+    },
+    name: "githubAPI",
+    schema: z.object({
+      path: z
+        .string()
+        .describe(
+          "Path to the resource on the GitHub API eg. /repos/octokit/request/labels"
+        ),
+      body: z
+        .any()
+        .describe(
+          "Variables to pass to request, as an object of keys with values"
+        ),
+      method: z.string().describe("Request method, usually GET or POST"),
+    }),
+  });
+}
+
+/**
  * Comment on an issue
  */
 export function addCommentTool({ octokit }: { octokit: any }) {
   return new DynamicStructuredTool({
     description: "Adds a comment to an issue",
     func: async ({ issueId, comment }) => {
-      const res = await addComment({ octokit, issueId, comment });
+      const footer = `By [Maige](https://maige.app). How's my driving?`;
+      const res = await addComment({
+        octokit,
+        issueId,
+        comment: `${comment}\n\n${footer}`,
+      });
 
       return JSON.stringify(res);
     },
@@ -93,6 +137,7 @@ export function addCommentTool({ octokit }: { octokit: any }) {
 
 /**
  * Label an issue
+ * @deprecated - use GitHub REST API tool
  */
 export function labelIssueTool({
   octokit,

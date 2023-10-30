@@ -2,21 +2,14 @@ import { Session } from "@e2b/sdk";
 import { initializeAgentExecutorWithOptions } from "langchain/agents";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { SerpAPI } from "langchain/tools";
-import {
-  addCommentTool,
-  exec,
-  ghGraphQL,
-  labelIssueTool,
-  updateInstructions,
-} from "../tools";
+import { addCommentTool, exec, ghRest, updateInstructions } from "../tools";
 import { env } from "~/env.mjs";
 import { isDev } from "lib/utils";
-import { Label } from "lib/types";
 
 const model = new ChatOpenAI({
   modelName: "gpt-4",
   openAIApiKey: env.OPENAI_API_KEY,
-  temperature: 0.5,
+  temperature: 0.7,
 });
 
 export default async function engineer({
@@ -25,14 +18,12 @@ export default async function engineer({
   prisma,
   customerId,
   owner,
-  allLabels,
 }: {
   input: string;
   octokit: any;
   prisma: any;
   customerId: string;
   owner: string;
-  allLabels: Label[];
 }) {
   const shell = await Session.create({
     apiKey: env.E2B_API_KEY,
@@ -43,29 +34,27 @@ export default async function engineer({
 
   const tools = [
     new SerpAPI(),
-    labelIssueTool({ octokit, allLabels }),
     addCommentTool({ octokit }),
     updateInstructions({ octokit, prisma, customerId, owner }),
-    ghGraphQL({ octokit }),
+    ghRest({ octokit }),
     exec({
-      description: "Executes a shell command.",
       name: "shell",
+      description: "Executes a shell command.",
       shell,
     }),
     exec({
+      name: "git",
       description:
         'Executes a shell command with git logged in. Commands must begin with "git ".',
-      name: "git",
+      setupCmd: `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}"`,
       preCmdCallback: (cmd: string) => {
         const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`);
         const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`;
 
         // Replace only first occurrence to avoid prompt injection
         // Otherwise "git log && echo 'git '" would print the token
-        const cmdWithAuth = cmd.replace("git ", `git ${authFlag} `);
-        return cmdWithAuth;
+        return cmd.replace("git ", `git ${authFlag} `);
       },
-      setupCmd: `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}"`,
       shell,
     }),
   ];
@@ -74,7 +63,7 @@ export default async function engineer({
 You use the internet, shell, and git to solve problems.
 You like to read the docs.
 Only use necessary tools.
-Always check your work before claiming something works.
+{agent_scratchpad}
 `.replaceAll("\n", " ");
 
   const executor = await initializeAgentExecutorWithOptions(tools, model, {
