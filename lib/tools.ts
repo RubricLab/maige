@@ -79,8 +79,10 @@ export function ghRest({ octokit }: { octokit: any }) {
   return new DynamicStructuredTool({
     description: "GitHub REST API",
     func: async ({ path, body, method }) => {
+      const apiUrl = "https://api.github.com";
+
       try {
-        const res = await octokit.request(`https://api.github.com${path}`, {
+        const res = await octokit.request(`${apiUrl}${path}`, {
           method,
           headers: {
             accept: "application/vnd.github+json",
@@ -89,11 +91,9 @@ export function ghRest({ octokit }: { octokit: any }) {
           ...body,
         });
 
-        return (
-          JSON.stringify(res.data).slice(0, 1000) +
-            "... (trimmed to 1000 chars)" ||
-          "Something went wrong. Read the docs."
-        );
+        return res.data
+          ? JSON.stringify(res.data).replaceAll(apiUrl, "")
+          : "Something went wrong. Read the docs.";
       } catch (error: any) {
         return `Something went wrong: ${error.message || "unknown error"}`;
       }
