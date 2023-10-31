@@ -161,7 +161,7 @@ export const POST = async (req: Request) => {
     comment,
   } = payload;
 
-  if (sender.includes("maige-bot")) {
+  if (sender.includes("maige")) {
     return new Response("Comment by Maige", { status: 202 });
   }
 

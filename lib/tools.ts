@@ -89,7 +89,11 @@ export function ghRest({ octokit }: { octokit: any }) {
           ...body,
         });
 
-        return res.data ? "success" : "Something went wrong. Read the docs.";
+        return (
+          JSON.stringify(res.data).slice(0, 1000) +
+            "... (trimmed to 1000 chars)" ||
+          "Something went wrong. Read the docs."
+        );
       } catch (error: any) {
         return `Something went wrong: ${error.message || "unknown error"}`;
       }
