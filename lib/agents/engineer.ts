@@ -7,7 +7,7 @@ import { env } from "~/env.mjs";
 import { isDev } from "lib/utils";
 
 const model = new ChatOpenAI({
-  modelName: "gpt-4",
+  modelName: "gpt-4-1106-preview",
   openAIApiKey: env.OPENAI_API_KEY,
   temperature: 0.7,
 });
