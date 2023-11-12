@@ -1,4 +1,4 @@
-import Session from '@e2b/sdk'
+import Sandbox from '@e2b/sdk'
 import {DynamicStructuredTool} from 'langchain/tools'
 import {z} from 'zod'
 
@@ -11,7 +11,7 @@ export default function exec({
 	name,
 	description
 }: {
-	shell: Session
+	shell: Sandbox
 	setupCmd?: string
 	preCmdCallback?: (cmd: string) => string
 	name: string
@@ -20,13 +20,6 @@ export default function exec({
 	return new DynamicStructuredTool({
 		description,
 		func: async ({cmd}) => {
-			// const shell = await Session.create({
-			//   apiKey: env.E2B_API_KEY,
-			//   id: "Nodejs",
-			//   onStderr: (data) => {console.error(data.line); stderr += data.line},
-			//   onStdout: (data) => {console.log(data.line); stdout += data.line},
-			// });
-
 			if (setupCmd) {
 				const setup = await shell.process.start({
 					cmd: setupCmd

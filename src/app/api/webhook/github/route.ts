@@ -255,7 +255,7 @@ export const POST = async (req: Request) => {
 			}
 		)
 
-		if (!queryRes?.repository?.description)
+		if (!queryRes?.repository)
 			return new Response('Could not get repo', {status: 401})
 
 		const labelsRes: {
