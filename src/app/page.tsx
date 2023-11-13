@@ -9,7 +9,7 @@ import Trigger from '~/components/logos/Trigger'
 import {env} from '../env.mjs'
 import demoSrc from '/public/assets/demo.png'
 
-const Page = () => {
+export default function Page() {
 	return (
 		<div className='bg-black'>
 			<Header />
@@ -84,5 +84,3 @@ const Page = () => {
 		</div>
 	)
 }
-
-export default Page

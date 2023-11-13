@@ -1,46 +1,26 @@
 import {DynamicStructuredTool} from 'langchain/tools'
 import {z} from 'zod'
-import {addComment} from '~/utils/github'
+import type {Label} from '~/types'
+import {labelIssue} from '~/utils/github'
 
-export function updateInstructions({
-	prisma,
-	customerId,
-	owner,
-	octokit
+export default function labelIssueTool({
+	octokit,
+	allLabels
 }: {
-	prisma: any
 	octokit: any
-	customerId: string
-	owner: string
+	allLabels: Label[]
 }) {
 	return new DynamicStructuredTool({
-		description:
-			'User will explicitly ask for custom instructions to be updated.',
-		func: async ({newInstructions, issueId}) => {
-			const res = await prisma.project.update({
-				where: {
-					customerId_name: {
-						customerId,
-						name: owner
-					}
-				},
-				data: {
-					customInstructions: newInstructions
-				}
-			})
-
-			await addComment({
-				octokit,
-				issueId,
-				comment: `Done. Your new instructions:\n\n> ${newInstructions || 'none'}`
-			})
+		description: 'Adds a label to an issue',
+		name: 'labelIssue',
+		schema: z.object({
+			issueId: z.string().describe('The ID of the issue'),
+			labelNames: z.array(z.string()).describe('The names of labels to apply')
+		}),
+		func: async ({issueId, labelNames}) => {
+			const res = await labelIssue({octokit, labelNames, allLabels, issueId})
 
 			return JSON.stringify(res)
-		},
-		name: 'updateInstructions',
-		schema: z.object({
-			newInstructions: z.string().describe('The new instructions.'),
-			issueId: z.string().describe('The ID of the issue')
-		})
+		}
 	})
 }
