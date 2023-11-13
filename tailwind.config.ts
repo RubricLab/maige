@@ -2,7 +2,7 @@ import config from '@rubriclab/tailwind-config'
 import {Config} from 'tailwindcss'
 
 const tailwindConfig = {
-	content: ['./src/**/*.tsx'],
+	content: ['./app/**/*.tsx', './lib/**/*.tsx'],
 	presets: [config]
 } satisfies Config
 

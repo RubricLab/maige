@@ -6,7 +6,7 @@ import Cal from '~/components/logos/Cal'
 import Highlight from '~/components/logos/Highlight'
 import Precedent from '~/components/logos/Precedent'
 import Trigger from '~/components/logos/Trigger'
-import {env} from '../env.mjs'
+import {env} from '~/env.mjs'
 import demoSrc from '/public/assets/demo.png'
 
 const Page = () => {

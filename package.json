@@ -49,13 +49,13 @@
 	"scripts": {
 		"bleed": "ncu -u && bun i",
 		"build": "next build",
-		"db:push": "prisma db push --schema=./src/db/schema.prisma",
-		"db:studio": "prisma studio --schema=./src/db/schema.prisma",
+		"db:push": "prisma db push --schema=./lib/db/schema.prisma",
+		"db:studio": "prisma studio --schema=./lib/db/schema.prisma",
 		"dev": "next dev",
 		"format": "prettier --write .",
 		"lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.json,.ts,.tsx",
 		"lint:fix": "eslint . --ext .js,.jsx,.cjs,.mjs,.json,.ts,.tsx --fix",
-		"postinstall": "prisma generate --schema=./src/db/schema.prisma",
+		"postinstall": "prisma generate --schema=./lib/db/schema.prisma",
 		"start": "next start"
 	},
 	"version": "0.1.0"
