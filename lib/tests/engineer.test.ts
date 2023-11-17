@@ -1,9 +1,9 @@
 import {Sandbox} from '@e2b/sdk'
 import {expect, test} from 'bun:test'
 import {SerpAPI} from 'langchain/tools'
-import {exec} from 'lib/tools'
 import {z} from 'zod'
 import env from '~/env.mjs'
+import exec from '~/tools/exec'
 
 test('Bun test runner', () => {
 	// This is arbitrary. Could just return true.
