@@ -1,4 +1,4 @@
-import { Session } from "@e2b/sdk";
+import { Sandbox } from "@e2b/sdk";
 import { DynamicStructuredTool } from "langchain/tools";
 import { z } from "zod";
 import { addComment, labelIssue } from "./utils/github";
@@ -14,7 +14,7 @@ export function exec({
   name,
   description,
 }: {
-  shell: Session;
+  shell: Sandbox;
   setupCmd?: string;
   preCmdCallback?: (cmd: string) => string;
   name: string;
