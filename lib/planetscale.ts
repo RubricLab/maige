@@ -1,7 +1,7 @@
-import { connect } from "@planetscale/database";
+import {connect} from '@planetscale/database'
 
 export const config = {
-  url: process.env.DATABASE_URL,
-};
+	url: process.env.DATABASE_URL
+}
 
-export const conn = connect(config);
+export const conn = connect(config)
