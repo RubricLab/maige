@@ -5,7 +5,7 @@ import { openUsageIssue } from "lib/utils/github";
 import { incrementUsage } from "lib/utils/payment";
 import { stripe } from "lib/stripe";
 import { validateSignature } from "lib/utils";
-import engineer from "lib/agents/engineer";
+import pm from "lib/agents/pm";
 
 export const maxDuration = 15;
 
@@ -331,7 +331,7 @@ Your instructions: ${instructions}.
 ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ""}
 `.replaceAll("\n", " ");
 
-    await engineer({
+    await pm({
       input: engPrompt,
       octokit,
       prisma,
