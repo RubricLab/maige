@@ -1,4 +1,4 @@
-import { Session } from "@e2b/sdk";
+import { Sandbox } from "@e2b/sdk";
 import { initializeAgentExecutorWithOptions } from "langchain/agents";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { SerpAPI } from "langchain/tools";
@@ -25,7 +25,7 @@ export default async function engineer({
   customerId: string;
   owner: string;
 }) {
-  const shell = await Session.create({
+  const shell = await Sandbox.create({
     apiKey: env.E2B_API_KEY,
     id: "Nodejs",
     onStderr: (data) => console.error(data.line),
