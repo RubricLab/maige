@@ -57,10 +57,6 @@ test("Zod parser", () => {
   expect(validObj?.field3?.field4).toBe("val4");
 });
 
-test("Test test runner", () => {
-  expect(true).toBe(false);
-});
-
 test.todo("E2E", () => {
   console.log(
     "It should pass a sample issue to engineer() and have it appropriately labelled"
