@@ -2,7 +2,7 @@ import { initializeAgentExecutorWithOptions } from "langchain/agents";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { SerpAPI } from "langchain/tools";
 import { addCommentTool, ghRest, updateInstructions } from "../tools";
-import { env } from "~/env.mjs";
+import env from "~/env.mjs";
 import { isDev } from "lib/utils";
 
 const model = new ChatOpenAI({

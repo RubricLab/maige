@@ -1,7 +1,7 @@
 import { stripe } from "lib/stripe";
 import prisma from "lib/prisma";
 import Stripe from "stripe";
-import { env } from "~/env.mjs";
+import env from "~/env.mjs";
 import { headers } from "next/headers";
 
 /**

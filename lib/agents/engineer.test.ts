@@ -2,7 +2,7 @@ import { Session } from "@e2b/sdk";
 import { expect, test } from "bun:test";
 import { SerpAPI } from "langchain/tools";
 import { exec } from "lib/tools";
-import { env } from "~/env.mjs";
+import env from "~/env.mjs";
 import { z } from "zod";
 
 test("Bun test runner", () => {

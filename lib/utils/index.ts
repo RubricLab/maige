@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from "crypto";
-import { env } from "~/env.mjs";
+import env from "~/env.mjs";
 
 export const isDev = env.NODE_ENV === "development";
 
