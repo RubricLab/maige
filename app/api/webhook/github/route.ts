@@ -325,7 +325,7 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			owner: name
 		})
 
-		return new Response('ok')
+		return new Response('ok', {status: 200})
 	} catch (error) {
 		console.error(error)
 		return new Response(`Something went wrong: ${error}`, {status: 500})
