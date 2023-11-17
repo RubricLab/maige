@@ -1,5 +1,5 @@
-import {stripe} from 'lib/stripe'
-import {createPaymentLink} from 'lib/utils/payment'
+import {stripe} from '~/stripe'
+import {createPaymentLink} from '~/utils/payment'
 
 /**
  * Generate a Stripe payment URL for a customer.

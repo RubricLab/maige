@@ -1,4 +1,4 @@
-import {TIERS} from './constants'
+import {TIERS} from '~/constants'
 
 export type Label = {
 	id: string

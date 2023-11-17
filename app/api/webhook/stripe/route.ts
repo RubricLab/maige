@@ -1,8 +1,8 @@
-import prisma from 'lib/prisma'
-import {stripe} from 'lib/stripe'
 import {headers} from 'next/headers'
 import Stripe from 'stripe'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
+import {stripe} from '~/stripe'
 
 /**
  * POST /api/webhook/stripe

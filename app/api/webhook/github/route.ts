@@ -1,11 +1,11 @@
 import {App} from '@octokit/app'
-import maige from 'lib/agents/maige'
-import prisma from 'lib/prisma'
-import {stripe} from 'lib/stripe'
-import {Label, Repository} from 'lib/types'
-import {validateSignature} from 'lib/utils'
-import {openUsageIssue} from 'lib/utils/github'
-import {incrementUsage} from 'lib/utils/payment'
+import maige from '~/agents/maige'
+import prisma from '~/prisma'
+import {stripe} from '~/stripe'
+import {Label, Repository} from '~/types'
+import {validateSignature} from '~/utils'
+import {openUsageIssue} from '~/utils/github'
+import {incrementUsage} from '~/utils/payment'
 
 export const maxDuration = 15
 

@@ -1,6 +1,6 @@
-import {Label} from 'lib/types'
 import Stripe from 'stripe'
-import {createPaymentLink} from './payment'
+import {Label} from '~/types'
+import {createPaymentLink} from '~/utils/payment'
 
 /**
  * Add comment to issue
