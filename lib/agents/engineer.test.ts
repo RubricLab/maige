@@ -1,4 +1,4 @@
-import { Session } from "@e2b/sdk";
+import { Sandbox } from "@e2b/sdk";
 import { expect, test } from "bun:test";
 import { SerpAPI } from "langchain/tools";
 import { exec } from "lib/tools";
@@ -13,7 +13,7 @@ test("Bun test runner", () => {
 test.skip(
   "GH CLI",
   async () => {
-    const shell = await Session.create({
+    const shell = await Sandbox.create({
       apiKey: env.E2B_API_KEY,
       id: "Nodejs",
     });
