@@ -2,9 +2,12 @@ import {Sandbox} from '@e2b/sdk'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import {SerpAPI} from 'langchain/tools'
-import {isDev} from 'lib/utils'
 import env from '~/env.mjs'
-import {addCommentTool, exec, ghRest, updateInstructions} from '~/tools'
+import commentTool from '~/tools/comment'
+import execTool from '~/tools/exec'
+import githubTool from '~/tools/github'
+import updateInstructionsTool from '~/tools/updateInstructions'
+import {isDev} from '~/utils'
 
 const model = new ChatOpenAI({
 	modelName: 'gpt-4-1106-preview',
@@ -34,15 +37,15 @@ export default async function engineer({
 
 	const tools = [
 		new SerpAPI(),
-		addCommentTool({octokit}),
-		updateInstructions({octokit, prisma, customerId, owner}),
-		ghRest({octokit}),
-		exec({
+		commentTool({octokit}),
+		updateInstructionsTool({octokit, prisma, customerId, owner}),
+		githubTool({octokit}),
+		execTool({
 			name: 'shell',
 			description: 'Executes a shell command.',
 			shell
 		}),
-		exec({
+		execTool({
 			name: 'git',
 			description:
 				'Executes a shell command with git logged in. Commands must begin with "git ".',

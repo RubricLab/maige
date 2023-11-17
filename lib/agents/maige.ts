@@ -1,9 +1,11 @@
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import {SerpAPI} from 'langchain/tools'
-import {isDev} from 'lib/utils'
 import env from '~/env.mjs'
-import {addCommentTool, ghRest, updateInstructions} from '~/tools'
+import commentTool from '~/tools/comment'
+import githubTool from '~/tools/github'
+import updateInstructionsTool from '~/tools/updateInstructions'
+import {isDev} from '~/utils'
 
 const model = new ChatOpenAI({
 	modelName: 'gpt-4-1106-preview',
@@ -26,9 +28,9 @@ export default async function maige({
 }) {
 	const tools = [
 		new SerpAPI(),
-		addCommentTool({octokit}),
-		updateInstructions({octokit, prisma, customerId, owner}),
-		ghRest({octokit})
+		commentTool({octokit}),
+		updateInstructionsTool({octokit, prisma, customerId, owner}),
+		githubTool({octokit})
 	]
 
 	const prefix = `
