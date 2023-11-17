@@ -1,14 +1,19 @@
 import Stripe from "stripe";
 import { createPaymentLink } from "./payment";
+import { Label } from "lib/types";
 
 /**
  * Add comment to issue
  */
-export async function addComment(
-  octokit: any,
-  issueId: string,
-  comment: string
-) {
+export async function addComment({
+  octokit,
+  issueId,
+  comment,
+}: {
+  octokit: any;
+  issueId: string;
+  comment: string;
+}): Promise<string> {
   const commentResult = await octokit.graphql(
     `
     mutation($issueId: ID!, $comment: String!) {
@@ -26,35 +31,55 @@ export async function addComment(
   if (!commentResult) {
     throw new Error("Could not add comment");
   }
+
+  return commentResult;
 }
 
 /**
  * Label an issue
  */
-export async function labelIssue(
-  octokit: any,
-  labelIds: string[],
-  issueId: number
-) {
+export async function labelIssue({
+  octokit,
+  labelNames,
+  allLabels,
+  issueId,
+}: {
+  octokit: any;
+  labelNames: string[];
+  allLabels: Label[];
+  issueId: string;
+}) {
+  const labelIds = allLabels
+    .filter((label) => labelNames.includes(label.name))
+    .map((label) => label.id);
+
   const labelResult = await octokit.graphql(
     `
     mutation AddLabels($issueId: ID!, $labelIds: [ID!]!) {
       addLabelsToLabelable(input: {
         labelIds: $labelIds, labelableId: $issueId
       }) {
-        clientMutationId
+        labelable {
+          labels(first:10) {
+            nodes {
+              name
+            }
+          }
+        }
       }
     }
     `,
     {
       issueId,
-      labelIds: labelIds && labelIds.length > 0 ? labelIds : [],
+      labelIds,
     }
   );
 
   if (!labelResult) {
     throw new Error("Could not add labels");
   }
+
+  return labelResult;
 }
 
 /**
@@ -71,7 +96,9 @@ export async function openUsageIssue(
     `
       mutation($repoId: ID!, $title: String!, $body: String!) {
         createIssue(input: { repositoryId: $repoId, title: $title, body: $body }) {
-          issue { id }
+          issue {
+            id
+          }
         }
       }
       `,

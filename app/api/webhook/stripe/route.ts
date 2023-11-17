@@ -1,20 +1,22 @@
 import { stripe } from "lib/stripe";
 import prisma from "lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { env } from "~/env.mjs";
+import { headers } from "next/headers";
 
 /**
  * POST /api/webhook/stripe
  *
  * Stripe webhook handler
  */
-export const POST = async (req: NextRequest) => {
+export const POST = async (req: Request) => {
   const payload = await req.text();
 
-  const signature = req.headers.get("stripe-signature") || "";
+  const headersList = headers();
+  const signature = headersList.get("stripe-signature") || "";
+
   if (!signature) {
-    return NextResponse.json({ message: "No signature" }, { status: 400 });
+    return Response.json({ message: "No signature" }, { status: 400 });
   }
 
   let event: Stripe.Event;
@@ -27,7 +29,7 @@ export const POST = async (req: NextRequest) => {
     );
   } catch (error) {
     console.error("Bad Stripe webhook secret");
-    return NextResponse.json(
+    return Response.json(
       {
         message: "Stripe webhook error",
       },
@@ -46,7 +48,7 @@ export const POST = async (req: NextRequest) => {
     const { client_reference_id: customerId } = object as any;
 
     if (!customerId) {
-      return NextResponse.json(
+      return Response.json(
         { message: "Stripe checkout session missing customer ID in webhook" },
         { status: 400 }
       );
@@ -70,7 +72,7 @@ export const POST = async (req: NextRequest) => {
     );
 
     if (!subscriptionItem) {
-      return NextResponse.json(
+      return Response.json(
         {
           message: "Could not find Stripe subscription item",
         },
@@ -97,7 +99,7 @@ export const POST = async (req: NextRequest) => {
         },
       });
     } catch {
-      return NextResponse.json({
+      return Response.json({
         message: "No customer to delete in DB",
       });
     }
@@ -110,7 +112,7 @@ export const POST = async (req: NextRequest) => {
     );
 
     if (!subscriptionItem) {
-      return NextResponse.json(
+      return Response.json(
         {
           message: "Could not find Stripe subscription item",
         },
@@ -130,7 +132,7 @@ export const POST = async (req: NextRequest) => {
     } catch (error) {
       console.log("Customer update error:", error);
 
-      return NextResponse.json({
+      return Response.json({
         message: "No customer to update in DB",
       });
     }
@@ -138,7 +140,7 @@ export const POST = async (req: NextRequest) => {
     console.log(`Unhandled Stripe webhook event type: ${eventType}`);
   }
 
-  return NextResponse.json({
+  return Response.json({
     message: "Stripe webhook received",
   });
 };
