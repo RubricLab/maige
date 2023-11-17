@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import Stripe from "stripe";
-import { Tier } from "../types";
-import { STRIPE, TIERS } from "../constants";
+import { Tier } from "~/types";
+import { STRIPE, TIERS } from "~/constants";
 
 /**
  * Increment usage count for a customer

@@ -2,7 +2,7 @@ import { Session } from "@e2b/sdk";
 import { initializeAgentExecutorWithOptions } from "langchain/agents";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { SerpAPI } from "langchain/tools";
-import { addCommentTool, exec, ghRest, updateInstructions } from "../tools";
+import { addCommentTool, exec, ghRest, updateInstructions } from "~/tools";
 import env from "~/env.mjs";
 import { isDev } from "lib/utils";
 
