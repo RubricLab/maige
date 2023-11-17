@@ -1,4 +1,4 @@
-import {Metadata} from 'next'
+import {Metadata, Viewport} from 'next'
 import '~/styles/globals.css'
 
 const title = 'Maige'
@@ -10,10 +10,13 @@ const preview = {
 	alt: 'Maige logo'
 }
 
+export const viewport: Viewport = {
+	themeColor: '#000'
+}
+
 export const metadata: Metadata = {
 	title,
 	description,
-	themeColor: '#000',
 	metadataBase: new URL('https://maige.app'),
 	alternates: {
 		canonical: '/',
