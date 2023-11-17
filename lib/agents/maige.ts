@@ -1,8 +1,7 @@
-import { Session } from "@e2b/sdk";
 import { initializeAgentExecutorWithOptions } from "langchain/agents";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { SerpAPI } from "langchain/tools";
-import { addCommentTool, exec, ghRest, updateInstructions } from "../tools";
+import { addCommentTool, ghRest, updateInstructions } from "../tools";
 import { env } from "~/env.mjs";
 import { isDev } from "lib/utils";
 
@@ -25,13 +24,6 @@ export default async function maige({
   customerId: string;
   owner: string;
 }) {
-  const shell = await Session.create({
-    apiKey: env.E2B_API_KEY,
-    id: "Nodejs",
-    onStderr: (data) => console.error(data.line),
-    onStdout: (data) => console.log(data.line),
-  });
-
   const tools = [
     new SerpAPI(),
     addCommentTool({ octokit }),
@@ -58,8 +50,6 @@ You also maintain a set of user instructions that can customize your behaviour; 
 
   const result = await executor.call({ input });
   const { output } = result;
-
-  await shell.close();
 
   return output;
 }
