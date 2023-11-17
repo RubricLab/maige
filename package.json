@@ -26,6 +26,10 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@rubriclab/eslint-config": "latest",
+		"@rubriclab/prettier-config": "latest",
+		"@rubriclab/tailwind-config": "latest",
+		"@rubriclab/typescript-config": "latest",
     "@octokit/types": "^12.1.1",
     "@planetscale/database": "^1.6.0",
     "@types/eslint": "^8.21.1",
