@@ -1,11 +1,11 @@
 {
 	"compilerOptions": {
-    "types": ["bun-types"],
 		"baseUrl": ".",
 		"paths": {
 			"~/*": ["./lib/*"]
 		},
-		"plugins": [{"name": "next"}]
+		"plugins": [{"name": "next"}],
+		"types": ["bun-types"]
 	},
 	"exclude": ["node_modules"],
 	"extends": "@rubriclab/typescript-config/nextjs",

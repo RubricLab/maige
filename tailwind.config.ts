@@ -3,7 +3,7 @@ import {Config} from 'tailwindcss'
 
 const tailwindConfig = {
 	content: ['./app/**/*.tsx', './lib/**/*.tsx'],
-	presets: [config],
+	presets: [config]
 } satisfies Config
 
 export default tailwindConfig

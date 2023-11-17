@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  a {
-    @apply transition-all focus:underline focus:outline-none;
-  }
+	a {
+		@apply transition-all focus:underline focus:outline-none;
+	}
 }
