@@ -5,7 +5,7 @@ import { openUsageIssue } from "lib/utils/github";
 import { incrementUsage } from "lib/utils/payment";
 import { stripe } from "lib/stripe";
 import { validateSignature } from "lib/utils";
-import pm from "lib/agents/pm";
+import pm from "lib/agents/maige";
 
 export const maxDuration = 15;
 
@@ -264,7 +264,7 @@ export const POST = async (req: Request) => {
       }
     );
 
-    if (!queryRes?.repository?.description) {
+    if (!queryRes?.repository) {
       return new Response("Could not get repo", { status: 401 });
     }
 

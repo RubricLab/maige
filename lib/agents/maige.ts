@@ -12,7 +12,7 @@ const model = new ChatOpenAI({
   temperature: 0,
 });
 
-export default async function pm({
+export default async function maige({
   input,
   octokit,
   prisma,
@@ -37,26 +37,26 @@ export default async function pm({
     addCommentTool({ octokit }),
     updateInstructions({ octokit, prisma, customerId, owner }),
     ghRest({ octokit }),
-    exec({
-      name: "shell",
-      description: "Executes a shell command.",
-      shell,
-    }),
-    exec({
-      name: "git",
-      description:
-        'Executes a shell command with git logged in. Commands must begin with "git ".',
-      setupCmd: `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}"`,
-      preCmdCallback: (cmd: string) => {
-        const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`);
-        const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`;
+    // exec({
+    //   name: "shell",
+    //   description: "Executes a shell command.",
+    //   shell,
+    // }),
+    // exec({
+    //   name: "git",
+    //   description:
+    //     'Executes a shell command with git logged in. Commands must begin with "git ".',
+    //   setupCmd: `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}"`,
+    //   preCmdCallback: (cmd: string) => {
+    //     const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`);
+    //     const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`;
 
-        // Replace only first occurrence to avoid prompt injection
-        // Otherwise "git log && echo 'git '" would print the token
-        return cmd.replace("git ", `git ${authFlag} `);
-      },
-      shell,
-    }),
+    //     // Replace only first occurrence to avoid prompt injection
+    //     // Otherwise "git log && echo 'git '" would print the token
+    //     return cmd.replace("git ", `git ${authFlag} `);
+    //   },
+    //   shell,
+    // }),
   ];
 
   const prefix = `You are a project manager that is tagged when new issues come into github. You are responsible for labelling the issues using the Github API. You also maintain a set of user instructions that can customize your behaviour, you can also write to these instructions at the request of a user.
