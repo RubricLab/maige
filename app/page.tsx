@@ -70,7 +70,7 @@ const Page = () => {
 						</div>
 					</div>
 					<div className='flex flex-col items-center gap-2 py-8'>
-						<p className='text-sm text-white/60'>Used by</p>
+						<p className='text-sm text-white/60'>Used by 1k+ repos</p>
 						<div className='flex flex-row items-center justify-center space-x-7 text-white/60'>
 							<Highlight className='h-6 hover:text-white' />
 							<Precedent className='group h-6 hover:text-white' />
