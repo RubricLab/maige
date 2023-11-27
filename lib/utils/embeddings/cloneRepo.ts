@@ -19,6 +19,8 @@ export const excludeFiles: RegExp[] = [
 	/\.jpeg$/,
 	/\.png$/,
 	/\.gif$/,
+	/\.mov$/,
+	/\.mp4$/,
 	/\.bmp$/,
 	/\.pdf$/,
 	/\.tiff$/,
@@ -57,7 +59,7 @@ export async function cloneRepo(
 	const loader = new GithubRepoLoader(repoUrl, {
 		branch: branchName,
 		recursive: true,
-		unknown: 'error',
+		unknown: 'warn',
 		ignoreFiles: excludeFiles,
 		accessToken: accessToken || ''
 	})

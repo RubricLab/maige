@@ -5,13 +5,13 @@ import {addComment} from '~/utils/github'
 export default function updateInstructions({
 	prisma,
 	customerId,
-	owner,
+	repoName,
 	octokit
 }: {
 	prisma: any
 	octokit: any
 	customerId: string
-	owner: string
+	repoName: string
 }) {
 	return new DynamicStructuredTool({
 		description:
@@ -21,7 +21,7 @@ export default function updateInstructions({
 				where: {
 					customerId_name: {
 						customerId,
-						name: owner
+						name: repoName
 					}
 				},
 				data: {

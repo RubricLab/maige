@@ -1,4 +1,4 @@
-import {type WeaviateConfig} from './weaviate-client'
+import {type WeaviateConfig} from './db'
 
 export default async function deleteRepo(
 	weaviateConfig: WeaviateConfig,

@@ -2,7 +2,7 @@ import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
 import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
 import {WeaviateStore} from 'langchain/vectorstores/weaviate'
 import {cloneRepo} from './cloneRepo'
-import {type WeaviateConfig} from './weaviate-client'
+import {type WeaviateConfig} from './db'
 
 export default async function addRepo(
 	weaviateConfig: WeaviateConfig,
@@ -33,14 +33,15 @@ export default async function addRepo(
 			}
 		})
 
-		const store = await WeaviateStore.fromExistingIndex(
-			new OpenAIEmbeddings({openAIApiKey: process.env.OPENAI_API_KEY}),
-			{
-				// "as any" is required for langchain
-				client: weaviateConfig.client as any,
-				indexName: weaviateConfig.indexName
-			}
-		)
+		const embeddings = new OpenAIEmbeddings({
+			openAIApiKey: process.env.OPENAI_API_KEY
+		})
+
+		const store = await WeaviateStore.fromExistingIndex(embeddings, {
+			// "as any" is required for langchain
+			client: weaviateConfig.client as any,
+			indexName: weaviateConfig.indexName
+		})
 
 		// returns the Weaviate ids of the added documents
 		return await store.addDocuments(docs)

@@ -1,24 +1,24 @@
 import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
-import {type WeaviateConfig} from './weaviate-client'
+import {type WeaviateConfig} from './db'
+
+const keys = [
+	'source',
+	'text',
+	'ext',
+	'repository',
+	'branch',
+	'userId',
+	'loc_lines_from',
+	'loc_lines_to'
+]
 
 export default async function search(
 	weaviateConfig: WeaviateConfig,
 	question: string,
-	k: number,
+	maxResults: number,
 	repository: string
 ) {
-	const keys = [
-		'source',
-		'text',
-		'ext',
-		'repository',
-		'branch',
-		'userId',
-		'loc_lines_from',
-		'loc_lines_to'
-	]
-
-	const data = await weaviateConfig.client.graphql
+	const query = await weaviateConfig.client.graphql
 		.get()
 		.withClassName(weaviateConfig.indexName)
 		.withFields(`${keys.join(' ')} _additional { score }`)
@@ -32,8 +32,8 @@ export default async function search(
 				},
 				{
 					path: ['repository'],
-					operator: 'Equal',
-					valueString: repository
+					operator: 'ContainsAny',
+					valueStringArray: [repository]
 				}
 			]
 		})
@@ -42,8 +42,8 @@ export default async function search(
 				openAIApiKey: process.env.OPENAI_API_KEY
 			}).embedQuery(question)
 		})
-		.withLimit(k)
+		.withLimit(maxResults)
 		.do()
 
-	return data.data.Get[weaviateConfig.indexName]
+	return query.data.Get[weaviateConfig.indexName]
 }

@@ -1,4 +1,4 @@
-import {WeaviateClient} from './weaviate-client'
+import {type WeaviateClient} from './db'
 
 export default async function checkIndexExists(
 	client: WeaviateClient,
