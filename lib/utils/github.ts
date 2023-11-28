@@ -114,3 +114,14 @@ export async function openUsageIssue(
 		throw new Error('Failed to open usage issue.')
 	}
 }
+
+/**
+ * Get main branch of a repo
+ */
+export const getMainBranch = async (repoFullName: string) => {
+	const repoRes = await fetch(`https://api.github.com/repos/${repoFullName}`)
+	const repo = (await repoRes.json()) as any
+	const branchName = repo.default_branch
+
+	return branchName
+}
