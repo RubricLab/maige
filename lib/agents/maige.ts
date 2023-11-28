@@ -2,6 +2,7 @@ import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import {SerpAPI} from 'langchain/tools'
 import env from '~/env.mjs'
+import {codebaseSearch} from '~/tools/codeSearch'
 import commentTool from '~/tools/comment'
 import githubTool from '~/tools/github'
 import updateInstructionsTool from '~/tools/updateInstructions'
@@ -18,24 +19,25 @@ export default async function maige({
 	octokit,
 	prisma,
 	customerId,
-	owner
+	repoName
 }: {
 	input: string
 	octokit: any
 	prisma: any
 	customerId: string
-	owner: string
+	repoName: string
 }) {
 	const tools = [
 		new SerpAPI(),
 		commentTool({octokit}),
-		updateInstructionsTool({octokit, prisma, customerId, owner}),
-		githubTool({octokit})
+		updateInstructionsTool({octokit, prisma, customerId, repoName}),
+		githubTool({octokit}),
+		codebaseSearch({customerId, repoName})
 	]
 
 	const prefix = `
-You are a project manager that is tagged when new issues come into github.
-You are responsible for labelling the issues using the Github API.
+You are a project manager that is tagged when new issues come into GitHub.
+You are responsible for labelling the issues using the GitHub API.
 You also maintain a set of user instructions that can customize your behaviour; you can write to these instructions at the request of a user.
 {agent_scratchpad}
 `.replaceAll('\n', ' ')

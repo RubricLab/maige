@@ -6,9 +6,7 @@ Visit [Maige.app](https://maige.app) to get started.
 
 ## Setup
 
-First, install dependencies with `bun i`.
-Copy the environment file: `cp .env.example .env`.
-Run the app with `bun run dev` then `ngrok http 3000` in another terminal. Copy the resulting URL for later.
+First, install dependencies with `bun i`. Copy the environment file: `cp .env.example .env`. Run the app with `bun run dev` then `ngrok http 3000` in another terminal. Copy the resulting URL for later.
 
 ### Setting up a GitHub App
 

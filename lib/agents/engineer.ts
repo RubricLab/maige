@@ -20,13 +20,13 @@ export default async function engineer({
 	octokit,
 	prisma,
 	customerId,
-	owner
+	repoName
 }: {
 	input: string
 	octokit: any
 	prisma: any
 	customerId: string
-	owner: string
+	repoName: string
 }) {
 	const shell = await Sandbox.create({
 		apiKey: env.E2B_API_KEY,
@@ -38,7 +38,7 @@ export default async function engineer({
 	const tools = [
 		new SerpAPI(),
 		commentTool({octokit}),
-		updateInstructionsTool({octokit, prisma, customerId, owner}),
+		updateInstructionsTool({octokit, prisma, customerId, repoName}),
 		githubTool({octokit}),
 		execTool({
 			name: 'shell',

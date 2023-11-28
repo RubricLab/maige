@@ -1,10 +1,12 @@
 import {App} from '@octokit/app'
 import maige from '~/agents/maige'
+import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
 import {Label, Repository} from '~/types'
 import {validateSignature} from '~/utils'
-import {openUsageIssue} from '~/utils/github'
+import Weaviate from '~/utils/embeddings/db'
+import {getMainBranch, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
 
 export const maxDuration = 15
@@ -43,7 +45,7 @@ export const POST = async (req: Request) => {
 
 			const {repositories} = payload
 
-			await prisma.customer.create({
+			const customer = await prisma.customer.create({
 				data: {
 					name: login,
 					projects: {
@@ -53,6 +55,16 @@ export const POST = async (req: Request) => {
 					}
 				}
 			})
+
+			// Clone, vectorize, and save public code to database
+			const vectorDB = new Weaviate(customer.id)
+
+			for (const repo of repositories) {
+				const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
+				const branch = await getMainBranch(repo.full_name)
+
+				await vectorDB.embedRepo(repoUrl, branch)
+			}
 
 			return new Response(`Added customer ${login}`)
 		} else if (action === 'deleted') {
@@ -103,6 +115,16 @@ export const POST = async (req: Request) => {
 					(project: {name: string}) => project.name === repo.name
 				)
 			})
+
+			// Clone, vectorize, and save public code to database
+			const vectorDB = new Weaviate(customer.id)
+
+			for (const repo of addedRepos) {
+				const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
+				const branch = await getMainBranch(repo.full_name)
+
+				await vectorDB.embedRepo(repoUrl, branch)
+			}
 
 			const createProjects = prisma.project.createMany({
 				data: newRepos.map((repo: Repository) => ({
@@ -322,7 +344,7 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			octokit,
 			prisma,
 			customerId,
-			owner: name
+			repoName: name
 		})
 
 		return new Response('ok', {status: 200})
