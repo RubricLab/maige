@@ -2,17 +2,37 @@ import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
 import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
 import {WeaviateStore} from 'langchain/vectorstores/weaviate'
 import {cloneRepo} from './cloneRepo'
+import deleteRepo from './delete'
+import {checkRepoExists} from './exists'
 import {type WeaviateConfig} from './db'
 
 export default async function addRepo(
 	weaviateConfig: WeaviateConfig,
 	repoUrl: string,
-	branch: string
+	branch: string,
+	replace: boolean
 ) {
 	const textSplitter = new RecursiveCharacterTextSplitter({
 		chunkSize: 4000,
 		chunkOverlap: 250
 	})
+
+	try {
+		const exists: boolean = await checkRepoExists(
+			weaviateConfig.client,
+			weaviateConfig.indexName,
+			weaviateConfig.userId,
+			repoUrl
+		)
+		if (exists && !replace)
+			throw new Error(
+				`Repository ${repoUrl} already exists in index ${weaviateConfig.indexName}. Set replace to true to replace it.`
+			)
+		else deleteRepo(weaviateConfig, repoUrl)
+	} catch (e) {
+		console.error(e)
+		return
+	}
 
 	try {
 		const repo = await cloneRepo(
@@ -47,5 +67,6 @@ export default async function addRepo(
 		return await store.addDocuments(docs)
 	} catch (e) {
 		console.error(e)
+		return
 	}
 }
