@@ -1,7 +1,5 @@
 # Maige
 
-Staging!
-
 Label your GitHub issues with AI.
 
 Visit [Maige.app](https://maige.app) to get started.
