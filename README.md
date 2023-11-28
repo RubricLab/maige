@@ -30,3 +30,4 @@ Some other tests:
 - "maige assign me to this issue"
 - "maige remove all labels from this issue"
 - "maige add the 'self-hosting' label anytime someone mentions 'docker'"
+- "maige what packages does this repo use?"
