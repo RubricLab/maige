@@ -1,7 +1,7 @@
 import weaviate from 'weaviate-ts-client'
 import deleteRepo from './delete'
 import addRepo from './embed'
-import checkIndexExists from './exists'
+import {checkIndexExists} from './exists'
 import search from './query'
 
 export type WeaviateClient = ReturnType<typeof weaviate.client>
@@ -31,8 +31,8 @@ export default class Weaviate {
 		}
 	}
 
-	async embedRepo(repoUrl: string, branch: string) {
-		return await addRepo(this.config, repoUrl, branch)
+	async embedRepo(repoUrl: string, branch: string, replace: boolean = false) {
+		return await addRepo(this.config, repoUrl, branch, replace)
 	}
 
 	async searchCode(query: string, repository: string, numResults: number = 3) {
