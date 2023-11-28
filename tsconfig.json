@@ -8,7 +8,7 @@
 		"types": ["bun-types"]
 	},
 	"exclude": ["node_modules"],
-	"extends": "@rubriclab/typescript-config/nextjs",
+	"extends": "@rubriclab/typescript-config/nextjs.json",
 	"include": [
 		"./app/**/*.ts",
 		"./app/**/*.tsx",
