@@ -8,7 +8,7 @@
     "encoding": "^0.1.13",
     "graphql": "^16.8.1",
     "ignore": "^5.3.0",
-    "langchain": "^0.0.192",
+    "langchain": "^0.0.198",
     "next": "^14.0.3",
     "prisma": "^5.6.0",
     "react": "^18.2.0",
