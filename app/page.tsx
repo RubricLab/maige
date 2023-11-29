@@ -56,16 +56,16 @@ const Page = () => {
 							<p className='text-sm'>
 								Comment{' '}
 								<span className='font-medium text-white'>
-									&quot;Maige label all&quot;
+									&quot;Maige [instructions]&quot;
 								</span>{' '}
-								to label all old issues.
+								to add custom instructions.
 							</p>
 							<p className='text-sm'>
 								Comment{' '}
 								<span className='font-medium text-white'>
-									&quot;Maige [instructions]&quot;
+									&quot;Maige [question]&quot;
 								</span>{' '}
-								to add custom instructions.
+								to ask a question about a codebase.
 							</p>
 						</div>
 					</div>
