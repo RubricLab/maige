@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import wizardHatLogo from '/public/logo.png'
+import wizardHatLogo from '../../public/logo.png'
 
 export const Header = () => {
 	return (

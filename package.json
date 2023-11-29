@@ -52,7 +52,7 @@
 		"build": "next build",
 		"db:push": "prisma db push",
 		"db:studio": "prisma studio",
-		"dev": "next dev",
+		"dev": "next dev --turbo",
 		"format": "prettier --write .",
 		"lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.json,.ts,.tsx",
 		"lint:fix": "eslint . --ext .js,.jsx,.cjs,.mjs,.json,.ts,.tsx --fix",
