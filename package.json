@@ -58,7 +58,7 @@
 		"lint:fix": "eslint . --ext .js,.jsx,.cjs,.mjs,.json,.ts,.tsx --fix",
 		"postinstall": "prisma generate",
 		"start": "next start",
-		"vector:schema:push": "bun run ./lib/utils/embeddings/setup.ts"
+		"vector:schema:push": "bun run ./lib/utils/embeddings/setup"
 	},
 	"version": "0.1.0"
 }
