@@ -1,9 +1,8 @@
-import fs from 'fs'
 import weaviate from 'weaviate-ts-client'
+import {schema} from './schema'
 
 export async function main() {
 	console.log('Grabbing Weaviate schema template...')
-	const schema = JSON.parse(fs.readFileSync('./schema.json', 'utf-8'))
 
 	console.log('Creating Weaviate schema...')
 	const client = weaviate.client({
