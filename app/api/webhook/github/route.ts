@@ -8,6 +8,7 @@ import {validateSignature} from '~/utils'
 import Weaviate from '~/utils/embeddings/db'
 import {getMainBranch, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
+import reviewer from '~/agents/reviewer'
 
 export const maxDuration = 15
 
@@ -254,6 +255,17 @@ export const POST = async (req: Request) => {
 	}
 
 	await incrementUsage(prisma, owner)
+
+	if(payload?.issue.pull_request){
+		console.log("Pull request")
+		const data = await (await fetch(payload?.issue.pull_request.diff_url, { method: 'GET' })).text();
+		await reviewer({
+			octokit: octokit,
+			input: data,
+			pullId: issueId
+		})
+	    return new Response('ok', {status: 200})
+	}
 
 	/**
 	 * Repo commands
