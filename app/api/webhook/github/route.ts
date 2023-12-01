@@ -344,7 +344,7 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			octokit,
 			prisma,
 			customerId,
-			repoName: name
+			repoName: `${owner}/${name}`
 		})
 
 		return new Response('ok', {status: 200})

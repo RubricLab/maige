@@ -5,7 +5,6 @@ import env from '~/env.mjs'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commentTool from '~/tools/comment'
 import dispatchEngineer from '~/tools/dispatchEngineer'
-import githubTool from '~/tools/github'
 import updateInstructionsTool from '~/tools/updateInstructions'
 import {isDev} from '~/utils'
 
@@ -32,7 +31,7 @@ export default async function maige({
 		new SerpAPI(),
 		commentTool({octokit}),
 		updateInstructionsTool({octokit, prisma, customerId, repoName}),
-		githubTool({octokit}),
+		// githubTool({octokit}),
 		codebaseSearch({customerId, repoName}),
 		dispatchEngineer({octokit, prisma, customerId, repoName})
 	]
@@ -48,7 +47,7 @@ You also maintain a set of user instructions that can customize your behaviour; 
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		verbose: isDev,
+		// verbose: isDev,
 		agentArgs: {
 			prefix
 		}
