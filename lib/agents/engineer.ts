@@ -36,7 +36,7 @@ export default async function engineer({
 	})
 
 	function preCmdCallback(cmd: string) {
-		const tokenB64 = btoa(`pat:${process.env.GITHUB_ACCESS_TOKEN}`)
+		const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
 		const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
 	
 		// Replace only first occurrence to avoid prompt injection
@@ -46,7 +46,7 @@ export default async function engineer({
 
 	const cloneName = `maige-${repoName.split('/')[1]}`
 
-	const repoSetup = preCmdCallback(`git config --global user.email "${process.env.GITHUB_EMAIL}" && git config --global user.name "${process.env.GITHUB_USERNAME}" && git clone https://github.com/${repoName}.git ${cloneName} && cd ${cloneName} && git log -n 3`)
+	const repoSetup = preCmdCallback(`git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git clone https://github.com/${repoName}.git ${cloneName} && cd ${cloneName} && git log -n 3`)
 
 	const clone = await shell.process.start({
 		cmd: repoSetup
