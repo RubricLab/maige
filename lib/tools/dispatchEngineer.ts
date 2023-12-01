@@ -5,35 +5,36 @@ import engineer from '~/agents/engineer'
  * Execute a shell command
  */
 export default function dispatchEngineer({
-	octokit,
-	prisma,
-	customerId,
-	repoName
+	repo,
+	issue,
+	customerId
 }: {
-	octokit: any
-	prisma: any
+	repo: string
+	issue: number
 	customerId: string
-	repoName: string
 }) {
 	return new DynamicStructuredTool({
 		description: 'Dispatch an engineer to work on an issue',
-		func: async ({input}) => {
+		func: async ({task}) => {
 			console.log('DISPATCHING ENGINEER')
+			console.log(`\n\n\n ${repo} \n\n\n`)
+
 			engineer({
-				input,
-				octokit,
-				prisma,
-				customerId,
-				repoName
+				task,
+				repo,
+				issue,
+				customerId
 			})
 			// await new Promise(resolve => setTimeout(resolve, 1000))
 			return 'dispatched'
 		},
 		name: 'dispatchEngineer',
 		schema: z.object({
-			input: z
+			task: z
 				.string()
-				.describe('specific, detailed instructions for the engineer.')
+				.describe(
+					"specific, detailed instructions for the engineer. Don't include the repo name, issue number, etc. Only a very direct instruction."
+				)
 		})
 	})
 }

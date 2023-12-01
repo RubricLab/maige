@@ -1,11 +1,13 @@
 import {Sandbox} from '@e2b/sdk'
+import {Octokit} from '@octokit/core'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
-import {SerpAPI} from 'langchain/tools'
 import env from '~/env.mjs'
-import commentTool from '~/tools/comment'
-import execTool from '~/tools/exec'
-import updateInstructionsTool from '~/tools/updateInstructions'
+import {codebaseSearch} from '~/tools/codeSearch'
+import commitCode from '~/tools/commitCode'
+import listFiles from '~/tools/listFiles'
+import readFile from '~/tools/readFile'
+import writeFile from '~/tools/writeFile'
 import {isDev} from '~/utils'
 
 const model = new ChatOpenAI({
@@ -15,78 +17,59 @@ const model = new ChatOpenAI({
 })
 
 export default async function engineer({
-	input,
-	octokit,
-	prisma,
-	customerId,
-	repoName
+	task,
+	repo,
+	issue,
+	customerId
 }: {
-	input: string
-	octokit: any
-	prisma: any
+	task: string
+	repo: string
+	issue: number
 	customerId: string
-	repoName: string
 }) {
 	const shell = await Sandbox.create({
 		apiKey: env.E2B_API_KEY,
 		onStderr: data => console.error(data.line),
-		onStdout: data => console.log(data.line)
+		onStdout: data => console.log(data.line),
+		cwd: '/code'
 	})
 
-	function preCmdCallback(cmd: string) {
-		const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
-		const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
+	const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
 
-		// Replace only first occurrence to avoid prompt injection
-		// Otherwise "git log && echo 'git '" would print the token
-		return cmd.replace('git ', `git ${authFlag} `)
-	}
+	const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
 
-	const cloneName = `maige-${repoName.split('/')[1]}`
+	const repoName = repo.split('/')[1]
 
-	const repoSetup = preCmdCallback(
-		`git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git clone https://github.com/${repoName}.git ${cloneName} && cd ${cloneName} && git log -n 3`
-	)
+	const branch = `maige/${issue}-${Date.now()}`
+
+	const repoSetup = `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git ${authFlag} clone https://github.com/${repo}.git && cd ${repoName} && git checkout -b ${branch}`
 
 	const clone = await shell.process.start({
-		cmd: repoSetup
+		cmd: `${repoSetup}`
 	})
+
 	await clone.wait()
 
 	const tools = [
-		new SerpAPI(),
-		commentTool({octokit}),
-		updateInstructionsTool({octokit, prisma, customerId, repoName}),
-		execTool({
-			name: 'shell',
-			description: 'Executes a shell command.',
-			shell
-		}),
-		execTool({
-			name: 'git',
-			description:
-				'Executes a shell command with git already logged in and configured. Commands must begin with "git ".',
-			setupCmd: `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}"`,
-			preCmdCallback: (cmd: string) => {
-				const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
-				const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
-
-				// Replace only first occurrence to avoid prompt injection
-				// Otherwise "git log && echo 'git '" would print the token
-				return cmd.replace('git ', `git ${authFlag} `)
-			},
-			shell
-		})
+		readFile({shell, dir: repoName}),
+		listFiles({shell, dir: repoName}),
+		writeFile({shell, dir: repoName}),
+		commitCode({shell, dir: repoName}),
+		codebaseSearch({repoName: repo, customerId})
 	]
 
 	const prefix = `You are a senior AI engineer.
-You use the internet, shell, and git to solve problems.
-A shell has been initialized for your session and has a file system.
-The repo has already been cloned and you can use ls or cat to view files, touch, mkdir, echo, etc. 
-Your job is to write code, commit it to a new branch, and open a pull request.
-Always commit code before terminating.
-YOUR FIRST STEP SHOULD ALWAYS BE TO RUN ls
-{agent_scratchpad}
+You write code based on the supplied instructions.
+First some context:
+- The code has already been cloned to ${repoName} and you are in that dir.
+Your first step should be to do any necessary research to understand the problem.
+Next, run the listFiles tool to see what files are in the repo.
+Then you should come up with a plan of action using chain of thought.
+Then you should write the code to implement the plan.
+Make sure to commit as you go.
+When you are finished, the code will automatically be pushed to a new branch and a pull request will be opened.
+Any uncommitted changes will be discarded.
+Your final output message should be the message that will be included in the pull request.
 `.replaceAll('\n', ' ')
 
 	const executor = await initializeAgentExecutorWithOptions(tools, model, {
@@ -99,8 +82,31 @@ YOUR FIRST STEP SHOULD ALWAYS BE TO RUN ls
 		}
 	})
 
-	const result = await executor.call({input})
+	const engPrompt = `${task}`
+
+	const result = await executor.call({input: engPrompt})
 	const {output} = result
+
+	const push = await shell.process.start({
+		cmd: `cd ${repoName} && git ${authFlag} push -u origin ${branch}`
+	})
+
+	await push.wait()
+
+	const octokit = new Octokit({auth: env.GITHUB_ACCESS_TOKEN})
+
+	const prData = await octokit.request(`POST /repos/${repo}/pulls`, {
+		owner: repo.split('/')[0],
+		repo: repo.split('/')[1],
+		title: `Fix/${issue}`,
+		body: output,
+		head: branch,
+		base: 'main'
+	})
+
+	const pr = prData.data
+
+	console.log(pr)
 
 	await shell.close()
 

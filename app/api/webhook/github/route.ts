@@ -318,7 +318,6 @@ export const POST = async (req: Request) => {
 
 		const isComment = action === 'created'
 
-		// Note: issue number has been omitted
 		const engPrompt = `
 Hey, here's an incoming ${isComment ? 'comment' : 'issue'}.
 First, some context:
@@ -344,7 +343,8 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			octokit,
 			prisma,
 			customerId,
-			repoName: `${owner}/${name}`
+			repoName: `${owner}/${name}`,
+			issue: issueNumber
 		})
 
 		return new Response('ok', {status: 200})
