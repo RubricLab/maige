@@ -35,8 +35,18 @@ export default async function engineer({
 		onStdout: data => console.log(data.line)
 	})
 
-	const cloneName = `maige-${repoName.split('/')[0]}`
-	const repoSetup = `git config --global user.email "${process.env.GITHUB_EMAIL}" && git config --global user.name "${process.env.GITHUB_USERNAME}" && git clone https://github.com/${repoName}.git ${cloneName} && cd ${cloneName} && git log -n 3`
+	function preCmdCallback(cmd: string) {
+		const tokenB64 = btoa(`pat:${process.env.GITHUB_ACCESS_TOKEN}`)
+		const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
+	
+		// Replace only first occurrence to avoid prompt injection
+		// Otherwise "git log && echo 'git '" would print the token
+		return cmd.replace('git ', `git ${authFlag} `)
+	}
+
+	const cloneName = `maige-${repoName.split('/')[1]}`
+
+	const repoSetup = preCmdCallback(`git config --global user.email "${process.env.GITHUB_EMAIL}" && git config --global user.name "${process.env.GITHUB_USERNAME}" && git clone https://github.com/${repoName}.git ${cloneName} && cd ${cloneName} && git log -n 3`)
 
 	const clone = await shell.process.start({
 		cmd: repoSetup
