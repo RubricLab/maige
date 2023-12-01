@@ -18,7 +18,7 @@ export default function dispatchEngineer({
 	return new DynamicStructuredTool({
 		description: 'Dispatch an engineer to work on an issue',
 		func: async ({input}) => {
-			console.log('HEUHWUFIWURFIW')
+			console.log('DISPATCHING ENGINEER')
 			engineer({
 				input,
 				octokit,
@@ -31,7 +31,9 @@ export default function dispatchEngineer({
 		},
 		name: 'dispatchEngineer',
 		schema: z.object({
-			input: z.string()
+			input: z
+				.string()
+				.describe('specific, detailed instructions for the engineer.')
 		})
 	})
 }
