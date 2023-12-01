@@ -35,20 +35,13 @@ export default async function engineer({
 		onStdout: data => console.log(data.line)
 	})
 
-	function preCmdCallback(cmd: string) {
-		const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
-		const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
+	const cloneName = `maige-${repoName.split('/')[0]}`
+	const repoSetup = `git config --global user.email "${process.env.GITHUB_EMAIL}" && git config --global user.name "${process.env.GITHUB_USERNAME}" && git clone https://github.com/${repoName}.git ${cloneName} && cd ${cloneName} && git log -n 3`
 
-		// Replace only first occurrence to avoid prompt injection
-		// Otherwise "git log && echo 'git '" would print the token
-		return cmd.replace('git ', `git ${authFlag} `)
-	}
-
-	const repoSetup = preCmdCallback(`git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME} && git clone https://github.com/${repoName}.git`)
-
-	await shell.process.start({
-		cmd: repoSetup,
+	const clone = await shell.process.start({
+		cmd: repoSetup
 	})
+	await clone.wait()
 
 	const tools = [
 		new SerpAPI(),
