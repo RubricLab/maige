@@ -264,7 +264,7 @@ export const POST = async (req: Request) => {
 			const data = await response.text()
 			await reviewer({
 				octokit: octokit,
-				input: data,
+				input: `Instruction: ${comment?.body}\n\nPR Diff:\n`+ data,
 				pullId: issueId
 			})
 			return new Response('ok', {status: 200})
