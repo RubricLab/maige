@@ -256,15 +256,22 @@ export const POST = async (req: Request) => {
 
 	await incrementUsage(prisma, owner)
 
-	if(payload?.issue.pull_request){
-		console.log("Pull request")
-		const data = await (await fetch(payload?.issue.pull_request.diff_url, { method: 'GET' })).text();
-		await reviewer({
-			octokit: octokit,
-			input: data,
-			pullId: issueId
-		})
-	    return new Response('ok', {status: 200})
+	try {
+		if(payload?.issue.pull_request){
+			console.log("Analyzing PR")
+			const response = await fetch(payload?.issue.pull_request.diff_url, { method: 'GET' })
+			if(!response.ok) return new Response('Could not fetch PR changes', {status: 401})
+			const data = await response.text()
+			await reviewer({
+				octokit: octokit,
+				input: data,
+				pullId: issueId
+			})
+			return new Response('ok', {status: 200})
+		}
+	} catch (error) {
+		console.error(error)
+		return new Response(`Something went wrong: ${error}`, {status: 500})
 	}
 
 	/**
