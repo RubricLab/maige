@@ -21,7 +21,7 @@ export default function updateInstructions({
 				where: {
 					customerId_name: {
 						customerId,
-						name: repoName
+						name: repoName.split('/')[1]
 					}
 				},
 				data: {
