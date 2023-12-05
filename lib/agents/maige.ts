@@ -4,7 +4,6 @@ import {SerpAPI} from 'langchain/tools'
 import env from '~/env.mjs'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commentTool from '~/tools/comment'
-import dispatchEngineer from '~/tools/dispatchEngineer'
 import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
 import {isDev} from '~/utils'
@@ -35,8 +34,8 @@ export default async function maige({
 		commentTool({octokit}),
 		updateInstructionsTool({octokit, prisma, customerId, repoName}),
 		labelTool({octokit, allLabels}),
-		codebaseSearch({customerId, repoName}),
-		dispatchEngineer({octokit, prisma, customerId, repoName})
+		codebaseSearch({customerId, repoName})
+		// dispatchEngineer({octokit, prisma, customerId, repoName})
 	]
 
 	const prefix = `
