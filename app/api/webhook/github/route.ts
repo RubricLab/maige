@@ -1,5 +1,6 @@
 import {App} from '@octokit/app'
 import maige from '~/agents/maige'
+import reviewer from '~/agents/reviewer'
 import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
@@ -153,6 +154,48 @@ export const POST = async (req: Request) => {
 	/**
 	 * Issue-related events. We care about new issues and comments.
 	 */
+	const {
+		comment,
+		issue,
+		sender: {login: sender},
+		installation: {id: instanceId}
+	} = payload
+
+	if (sender.includes('maige'))
+		return new Response('Comment by Maige', {status: 202})
+
+	if (comment && !comment.body.toLowerCase().includes('maige'))
+		return new Response('Irrelevant comment', {status: 202})
+
+	if (issue.pull_request) {
+		const {
+			pull_request: {diff_url: diffUrl},
+			node_id: pullId
+		} = issue
+
+		// Get GitHub app instance access token
+		const app = new App({
+			appId: process.env.GITHUB_APP_ID || '',
+			privateKey: process.env.GITHUB_PRIVATE_KEY || ''
+		})
+
+		const octokit = await app.getInstallationOctokit(instanceId)
+
+		const response = await fetch(diffUrl)
+
+		if (!response.ok) return new Response('Could not fetch diff', {status: 401})
+
+		const data = await response.text()
+
+		await reviewer({
+			octokit: octokit,
+			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
+			pullId
+		})
+
+		return new Response('Reviewed PR', {status: 200})
+	}
+
 	if (
 		!(
 			(action === 'opened' && payload?.issue) ||
@@ -173,17 +216,8 @@ export const POST = async (req: Request) => {
 			node_id: repoId,
 			name,
 			owner: {login: owner}
-		},
-		sender: {login: sender},
-		installation: {id: instanceId},
-		comment
+		}
 	} = payload
-
-	if (sender.includes('maige'))
-		return new Response('Comment by Maige', {status: 202})
-
-	if (comment && !comment.body.toLowerCase().includes('maige'))
-		return new Response('Irrelevant comment', {status: 202})
 
 	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
 
@@ -344,7 +378,8 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			octokit,
 			prisma,
 			customerId,
-			repoName: name
+			repoName: `${owner}/${name}`,
+			allLabels
 		})
 
 		return new Response('ok', {status: 200})

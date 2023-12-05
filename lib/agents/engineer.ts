@@ -5,14 +5,13 @@ import {SerpAPI} from 'langchain/tools'
 import env from '~/env.mjs'
 import commentTool from '~/tools/comment'
 import execTool from '~/tools/exec'
-import githubTool from '~/tools/github'
 import updateInstructionsTool from '~/tools/updateInstructions'
 import {isDev} from '~/utils'
 
 const model = new ChatOpenAI({
 	modelName: 'gpt-4-1106-preview',
 	openAIApiKey: env.OPENAI_API_KEY,
-	temperature: 0.7
+	temperature: 0.3
 })
 
 export default async function engineer({
@@ -30,16 +29,34 @@ export default async function engineer({
 }) {
 	const shell = await Sandbox.create({
 		apiKey: env.E2B_API_KEY,
-		id: 'Nodejs',
 		onStderr: data => console.error(data.line),
 		onStdout: data => console.log(data.line)
 	})
+
+	function preCmdCallback(cmd: string) {
+		const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
+		const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
+
+		// Replace only first occurrence to avoid prompt injection
+		// Otherwise "git log && echo 'git '" would print the token
+		return cmd.replace('git ', `git ${authFlag} `)
+	}
+
+	const cloneName = `maige-${repoName.split('/')[1]}`
+
+	const repoSetup = preCmdCallback(
+		`git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git clone https://github.com/${repoName}.git ${cloneName} && cd ${cloneName} && git log -n 3`
+	)
+
+	const clone = await shell.process.start({
+		cmd: repoSetup
+	})
+	await clone.wait()
 
 	const tools = [
 		new SerpAPI(),
 		commentTool({octokit}),
 		updateInstructionsTool({octokit, prisma, customerId, repoName}),
-		githubTool({octokit}),
 		execTool({
 			name: 'shell',
 			description: 'Executes a shell command.',
@@ -48,7 +65,7 @@ export default async function engineer({
 		execTool({
 			name: 'git',
 			description:
-				'Executes a shell command with git logged in. Commands must begin with "git ".',
+				'Executes a shell command with git already logged in and configured. Commands must begin with "git ".',
 			setupCmd: `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}"`,
 			preCmdCallback: (cmd: string) => {
 				const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
@@ -64,8 +81,11 @@ export default async function engineer({
 
 	const prefix = `You are a senior AI engineer.
 You use the internet, shell, and git to solve problems.
-You like to read the docs.
-Only use necessary tools.
+A shell has been initialized for your session and has a file system.
+The repo has already been cloned and you can use ls or cat to view files, touch, mkdir, echo, etc. 
+Your job is to write code, commit it to a new branch, and open a pull request.
+Always commit code before terminating.
+YOUR FIRST STEP SHOULD ALWAYS BE TO RUN ls
 {agent_scratchpad}
 `.replaceAll('\n', ' ')
 
@@ -73,7 +93,7 @@ Only use necessary tools.
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		verbose: isDev,
+		verbose: false,
 		agentArgs: {
 			prefix
 		}
