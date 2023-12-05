@@ -5,7 +5,7 @@ import {addComment} from '~/utils/github'
 /**
  * Comment on an issue
  */
-export default function pr_comment({octokit, pullId}: {octokit: any, pullId: string}) {
+export function prComment({octokit, pullId}: {octokit: any; pullId: string}) {
 	return new DynamicStructuredTool({
 		description: 'Adds a comment to a PR',
 		func: async ({comment, severity}) => {
@@ -20,7 +20,10 @@ export default function pr_comment({octokit, pullId}: {octokit: any, pullId: str
 		name: 'prComment',
 		schema: z.object({
 			comment: z.string().describe('The comment to add'),
-            severity: z.number().optional().describe('The severity of the needed fix on a scale of 1-5')
+			severity: z
+				.number()
+				.optional()
+				.describe('The severity of the needed fix on a scale of 1-5')
 		})
 	})
 }

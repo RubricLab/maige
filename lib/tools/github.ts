@@ -4,7 +4,7 @@ import {z} from 'zod'
 /**
  * Call the GitHub REST API
  */
-export default function github({octokit}: {octokit: any}) {
+export function githubTool({octokit}: {octokit: any}) {
 	return new DynamicStructuredTool({
 		description: 'GitHub REST API',
 		func: async ({path, body, method}) => {

@@ -93,7 +93,7 @@ YOUR FIRST STEP SHOULD ALWAYS BE TO RUN ls
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		// verbose: isDev,
+		verbose: false,
 		agentArgs: {
 			prefix
 		}

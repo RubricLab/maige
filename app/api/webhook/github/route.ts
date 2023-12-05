@@ -1,5 +1,6 @@
 import {App} from '@octokit/app'
 import maige from '~/agents/maige'
+import reviewer from '~/agents/reviewer'
 import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
@@ -8,7 +9,6 @@ import {validateSignature} from '~/utils'
 import Weaviate from '~/utils/embeddings/db'
 import {getMainBranch, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
-import reviewer from '~/agents/reviewer'
 
 export const maxDuration = 15
 
@@ -154,6 +154,48 @@ export const POST = async (req: Request) => {
 	/**
 	 * Issue-related events. We care about new issues and comments.
 	 */
+	const {
+		comment,
+		issue,
+		sender: {login: sender},
+		installation: {id: instanceId}
+	} = payload
+
+	if (sender.includes('maige'))
+		return new Response('Comment by Maige', {status: 202})
+
+	if (comment && !comment.body.toLowerCase().includes('maige'))
+		return new Response('Irrelevant comment', {status: 202})
+
+	if (issue.pull_request) {
+		const {
+			pull_request: {diff_url: diffUrl},
+			node_id: pullId
+		} = issue
+
+		// Get GitHub app instance access token
+		const app = new App({
+			appId: process.env.GITHUB_APP_ID || '',
+			privateKey: process.env.GITHUB_PRIVATE_KEY || ''
+		})
+
+		const octokit = await app.getInstallationOctokit(instanceId)
+
+		const response = await fetch(diffUrl)
+
+		if (!response.ok) return new Response('Could not fetch diff', {status: 401})
+
+		const data = await response.text()
+
+		await reviewer({
+			octokit: octokit,
+			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
+			pullId
+		})
+
+		return new Response('Reviewed PR', {status: 200})
+	}
+
 	if (
 		!(
 			(action === 'opened' && payload?.issue) ||
@@ -174,17 +216,8 @@ export const POST = async (req: Request) => {
 			node_id: repoId,
 			name,
 			owner: {login: owner}
-		},
-		sender: {login: sender},
-		installation: {id: instanceId},
-		comment
+		}
 	} = payload
-
-	if (sender.includes('maige'))
-		return new Response('Comment by Maige', {status: 202})
-
-	if (comment && !comment.body.toLowerCase().includes('maige'))
-		return new Response('Irrelevant comment', {status: 202})
 
 	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
 
@@ -255,24 +288,6 @@ export const POST = async (req: Request) => {
 	}
 
 	await incrementUsage(prisma, owner)
-
-	try {
-		if(payload?.issue.pull_request){
-			console.log("Analyzing PR")
-			const response = await fetch(payload?.issue.pull_request.diff_url, { method: 'GET' })
-			if(!response.ok) return new Response('Could not fetch PR changes', {status: 401})
-			const data = await response.text()
-			await reviewer({
-				octokit: octokit,
-				input: `Instruction: ${comment?.body}\n\nPR Diff:\n`+ data,
-				pullId: issueId
-			})
-			return new Response('ok', {status: 200})
-		}
-	} catch (error) {
-		console.error(error)
-		return new Response(`Something went wrong: ${error}`, {status: 500})
-	}
 
 	/**
 	 * Repo commands
@@ -363,7 +378,8 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			octokit,
 			prisma,
 			customerId,
-			repoName: `${owner}/${name}`
+			repoName: `${owner}/${name}`,
+			allLabels
 		})
 
 		return new Response('ok', {status: 200})
