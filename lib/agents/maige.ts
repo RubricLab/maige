@@ -5,6 +5,7 @@ import env from '~/env.mjs'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commentTool from '~/tools/comment'
 import dispatchEngineer from '~/tools/dispatchEngineer'
+import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
 import {isDev} from '~/utils'
 
@@ -19,19 +20,21 @@ export default async function maige({
 	octokit,
 	prisma,
 	customerId,
-	repoName
+	repoName,
+	allLabels
 }: {
 	input: string
 	octokit: any
 	prisma: any
 	customerId: string
 	repoName: string
+	allLabels: any[]
 }) {
 	const tools = [
 		new SerpAPI(),
 		commentTool({octokit}),
 		updateInstructionsTool({octokit, prisma, customerId, repoName}),
-		// githubTool({octokit}),
+		labelTool({octokit, allLabels}),
 		codebaseSearch({customerId, repoName}),
 		dispatchEngineer({octokit, prisma, customerId, repoName})
 	]
@@ -47,7 +50,7 @@ You also maintain a set of user instructions that can customize your behaviour; 
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		// verbose: isDev,
+		verbose: false,
 		agentArgs: {
 			prefix
 		}
