@@ -10,7 +10,7 @@ import Weaviate from '~/utils/embeddings/db'
 import {getMainBranch, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
 
-export const maxDuration = 15
+export const maxDuration = 30
 
 /**
  * POST /api/webhook
