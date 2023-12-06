@@ -1,4 +1,3 @@
-import {OctokitReqType} from '@octokit/app'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import {SerpAPI} from 'langchain/tools'
@@ -25,7 +24,7 @@ export default async function reviewer({
 	head
 }: {
 	input: string
-	octokit: OctokitReqType
+	octokit: any
 	pullId?: string
 	owner?: string
 	repo?: string
