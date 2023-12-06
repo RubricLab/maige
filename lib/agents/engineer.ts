@@ -44,11 +44,9 @@ export default async function engineer({
 
 	const repoSetup = `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git ${authFlag} clone https://github.com/${repo}.git && cd ${repoName} && git checkout -b ${branch}`
 
-	const clone = await shell.process.start({
-		cmd: `${repoSetup}`
+	await shell.process.startAndWait({
+		cmd: repoSetup
 	})
-
-	await clone.wait()
 
 	const tools = [
 		readFile({shell, dir: repoName}),
@@ -82,16 +80,13 @@ Your final output message should be the message that will be included in the pul
 		}
 	})
 
-	const engPrompt = `${task}`
-
-	const result = await executor.call({input: engPrompt})
+	const input = `${task}`
+	const result = await executor.call({input})
 	const {output} = result
 
-	const push = await shell.process.start({
+	await shell.process.startAndWait({
 		cmd: `cd ${repoName} && git ${authFlag} push -u origin ${branch}`
 	})
-
-	await push.wait()
 
 	const octokit = new Octokit({auth: env.GITHUB_ACCESS_TOKEN})
 
