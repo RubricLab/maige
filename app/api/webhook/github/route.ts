@@ -378,7 +378,7 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			prisma,
 			customerId,
 			repoName: `${owner}/${name}`,
-			issue: issueNumber,
+			issueNumber,
 			allLabels
 		})
 
