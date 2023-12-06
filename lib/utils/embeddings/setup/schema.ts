@@ -41,6 +41,13 @@ export const schema = {
 			dataType: ['text'],
 			indexFilterable: true,
 			indexSearchable: true,
+			name: 'summary',
+			tokenization: 'word'
+		},
+		{
+			dataType: ['text'],
+			indexFilterable: true,
+			indexSearchable: true,
 			name: 'branch',
 			tokenization: 'word'
 		},
