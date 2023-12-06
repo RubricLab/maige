@@ -4,7 +4,8 @@ import env from '~/env.mjs'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commentTool from '~/tools/comment'
 import dispatchEngineer from '~/tools/dispatchEngineer'
-import githubTool from '~/tools/github'
+import {githubTool} from '~/tools/github'
+import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
 import {isDev} from '~/utils'
 
@@ -20,7 +21,8 @@ export default async function maige({
 	prisma,
 	customerId,
 	repoName,
-	issue
+	issue,
+	allLabels
 }: {
 	input: string
 	octokit: any
@@ -28,13 +30,15 @@ export default async function maige({
 	customerId: string
 	repoName: string
 	issue: number
+	allLabels: any[]
 }) {
 	const tools = [
 		commentTool({octokit}),
 		updateInstructionsTool({octokit, prisma, customerId, repoName}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoName}),
-		dispatchEngineer({issue, repo: repoName, customerId})
+		dispatchEngineer({issue, repo: repoName, customerId}),
+		labelTool({octokit, allLabels})
 	]
 
 	const prefix = `
@@ -47,7 +51,7 @@ You also maintain a set of user instructions that can customize your behaviour; 
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		// verbose: isDev,
+		verbose: false,
 		agentArgs: {
 			prefix
 		}

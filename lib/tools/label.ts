@@ -6,7 +6,7 @@ import {labelIssue} from '~/utils/github'
 /**
  * Label an issue using GitHub REST API tool
  */
-export default function label({
+export function labelTool({
 	octokit,
 	allLabels
 }: {

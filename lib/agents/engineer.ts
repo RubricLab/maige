@@ -76,7 +76,7 @@ Your final output message should be the message that will be included in the pul
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		// verbose: isDev,
+		verbose: false,
 		agentArgs: {
 			prefix
 		}

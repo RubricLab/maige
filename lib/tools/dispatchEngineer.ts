@@ -23,6 +23,7 @@ export default function dispatchEngineer({
 				task,
 				repo,
 				issue,
+				repoName: repo,
 				customerId
 			})
 			// await new Promise(resolve => setTimeout(resolve, 1000))
