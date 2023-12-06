@@ -99,11 +99,9 @@ Your final output message should be the message that will be included in the pul
 		base: 'main'
 	})
 
-	const pr = prData.data
-
-	console.log(pr)
+	const prUrl = prData?.data?.url
 
 	await shell.close()
 
-	return output
+	return prUrl || 'Something went wrong'
 }
