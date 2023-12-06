@@ -166,9 +166,9 @@ export const POST = async (req: Request) => {
 	if (comment && !comment.body.toLowerCase().includes('maige'))
 		return new Response('Irrelevant comment', {status: 202})
 
-	if ((action == "opened" || action == "synchronize") && payload.pull_request) {
+	if ((action == 'opened' || action == 'synchronize') && payload.pull_request) {
 		const {
-			pull_request: {diff_url: diffUrl},
+			pull_request: {diff_url: diffUrl}
 		} = payload
 
 		// Get GitHub app instance access token
@@ -192,7 +192,7 @@ export const POST = async (req: Request) => {
 			pull_number: payload.number,
 			repo: payload.repository.name,
 			owner: payload.repository.owner.login,
-			head: payload.pull_request.head.sha,
+			head: payload.pull_request.head.sha
 			// pullId
 		})
 

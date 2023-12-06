@@ -1,12 +1,11 @@
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import {SerpAPI} from 'langchain/tools'
+import parse, {Change, Chunk, File} from 'parse-diff'
 import env from '~/env.mjs'
 import {codeComment} from '~/tools/codeComment'
 import {prComment} from '~/tools/prComment'
 import {isDev} from '~/utils'
-
-var parse = require('parse-diff')
 
 const model = new ChatOpenAI({
 	modelName: 'gpt-4-1106-preview',
@@ -66,14 +65,13 @@ export default async function reviewer({
 		{agent_scratchpad}
 		`.replaceAll('\n', ' ')
 
-		var files = parse(input)
-		files.forEach(function (file: any) {
-			file.chunks.forEach(async function (chunk: any) {
-				var changes = ''
-				chunk.changes.forEach(function (change: any) {
-					changes += `${change.ln2 === undefined ? change.ln : change.ln2} ${
-						change.content
-					}\n`
+		let files = parse(input)
+
+		files.forEach((file: File) => {
+			file.chunks.forEach(async (chunk: Chunk) => {
+				let changes = ''
+				chunk.changes.forEach((change: Change & {ln2?: string; ln?: string}) => {
+					changes += `${change.ln2 ? change.ln2 : change.ln} ${change.content}\n`
 				})
 
 				const tools = [

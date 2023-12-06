@@ -19,7 +19,7 @@ export function prComment({octokit, pullId}: {octokit: any; pullId: string}) {
 		},
 		name: 'prComment',
 		schema: z.object({
-			comment: z.string().describe('The comment to add'),
+			comment: z.string().describe('The comment to add')
 		})
 	})
 }
