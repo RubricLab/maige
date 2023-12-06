@@ -16,17 +16,15 @@ export default function dispatchEngineer({
 	return new DynamicStructuredTool({
 		description: 'Dispatch an engineer to work on an issue',
 		func: async ({task}) => {
-			console.log('DISPATCHING ENGINEER')
-			console.log(`\n\n\n ${repo} \n\n\n`)
+			console.log(`Dispatching engineer for ${repo}`)
 
 			engineer({
 				task,
 				repo,
 				issue,
-				repoName: repo,
 				customerId
 			})
-			// await new Promise(resolve => setTimeout(resolve, 1000))
+
 			return 'dispatched'
 		},
 		name: 'dispatchEngineer',
