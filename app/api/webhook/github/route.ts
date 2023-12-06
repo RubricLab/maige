@@ -189,18 +189,16 @@ export const POST = async (req: Request) => {
 		await reviewer({
 			octokit: octokit,
 			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
-			// pull_number: payload.issue.number,
-			pull_number: payload.number,
+			pullNumber: payload.number,
 			repo: payload.repository.name,
 			owner: payload.repository.owner.login,
 			head: payload.pull_request.head.sha
-			// pullId
 		})
 
 		return new Response('Reviewed PR', {status: 200})
 	}
 
-	if (issue.pull_request) {
+	if (issue?.pull_request) {
 		const {
 			pull_request: {diff_url: diffUrl},
 			node_id: pullId
