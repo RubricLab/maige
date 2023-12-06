@@ -150,7 +150,6 @@ export const POST = async (req: Request) => {
 			return new Response(`Successfully updated repos for ${login}`)
 		}
 	}
-
 	/**
 	 * Issue-related events. We care about new issues and comments.
 	 */
@@ -166,6 +165,39 @@ export const POST = async (req: Request) => {
 
 	if (comment && !comment.body.toLowerCase().includes('maige'))
 		return new Response('Irrelevant comment', {status: 202})
+
+	if ((action == "opened" || action == "synchronize") && payload.pull_request) {
+		const {
+			pull_request: {diff_url: diffUrl},
+		} = payload
+
+		// Get GitHub app instance access token
+		const app = new App({
+			appId: process.env.GITHUB_APP_ID || '',
+			privateKey: process.env.GITHUB_PRIVATE_KEY || ''
+		})
+
+		const octokit = await app.getInstallationOctokit(instanceId)
+
+		const response = await fetch(diffUrl)
+
+		if (!response.ok) return new Response('Could not fetch diff', {status: 401})
+
+		const data = await response.text()
+
+		await reviewer({
+			octokit: octokit,
+			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
+			// pull_number: payload.issue.number,
+			pull_number: payload.number,
+			repo: payload.repository.name,
+			owner: payload.repository.owner.login,
+			head: payload.pull_request.head.sha,
+			// pullId
+		})
+
+		return new Response('Reviewed PR', {status: 200})
+	}
 
 	if (issue.pull_request) {
 		const {
@@ -190,10 +222,10 @@ export const POST = async (req: Request) => {
 		await reviewer({
 			octokit: octokit,
 			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
-			pullId
+			pullId: pullId
 		})
 
-		return new Response('Reviewed PR', {status: 200})
+		return new Response('Replied to PR comment', {status: 200})
 	}
 
 	if (
