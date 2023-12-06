@@ -7,11 +7,11 @@ import engineer from '~/agents/engineer'
  */
 export default function dispatchEngineer({
 	repo,
-	issue,
+	issueNumber,
 	customerId
 }: {
 	repo: string
-	issue: number
+	issueNumber: number
 	customerId: string
 }) {
 	return new DynamicStructuredTool({
@@ -22,7 +22,7 @@ export default function dispatchEngineer({
 			engineer({
 				task,
 				repo,
-				issue,
+				issueNumber,
 				customerId
 			})
 

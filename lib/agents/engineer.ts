@@ -19,12 +19,12 @@ const model = new ChatOpenAI({
 export default async function engineer({
 	task,
 	repo,
-	issue,
+	issueNumber,
 	customerId
 }: {
 	task: string
 	repo: string
-	issue: number
+	issueNumber: number
 	customerId: string
 }) {
 	const shell = await Sandbox.create({
@@ -40,7 +40,7 @@ export default async function engineer({
 
 	const repoName = repo.split('/')[1]
 
-	const branch = `maige/${issue}-${Date.now()}`
+	const branch = `maige/${issueNumber}-${Date.now()}`
 
 	const repoSetup = `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git ${authFlag} clone https://github.com/${repo}.git && cd ${repoName} && git checkout -b ${branch}`
 
@@ -93,7 +93,7 @@ Your final output message should be the message that will be included in the pul
 	const prData = await octokit.request(`POST /repos/${repo}/pulls`, {
 		owner: repo.split('/')[0],
 		repo: repo.split('/')[1],
-		title: `Fix/${issue}`,
+		title: `Fix/${issueNumber}`,
 		body: output,
 		head: branch,
 		base: 'main'

@@ -21,7 +21,7 @@ export default async function maige({
 	prisma,
 	customerId,
 	repoName,
-	issue,
+	issueNumber,
 	allLabels
 }: {
 	input: string
@@ -29,7 +29,7 @@ export default async function maige({
 	prisma: any
 	customerId: string
 	repoName: string
-	issue: number
+	issueNumber: number
 	allLabels: any[]
 }) {
 	const tools = [
@@ -37,7 +37,7 @@ export default async function maige({
 		updateInstructionsTool({octokit, prisma, customerId, repoName}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoName}),
-		dispatchEngineer({issue, repo: repoName, customerId}),
+		dispatchEngineer({issueNumber, repo: repoName, customerId}),
 		labelTool({octokit, allLabels})
 	]
 
