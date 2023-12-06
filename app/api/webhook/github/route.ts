@@ -150,6 +150,7 @@ export const POST = async (req: Request) => {
 			return new Response(`Successfully updated repos for ${login}`)
 		}
 	}
+
 	/**
 	 * Issue-related events. We care about new issues and comments.
 	 */
