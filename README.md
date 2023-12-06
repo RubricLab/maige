@@ -31,3 +31,4 @@ Some other tests:
 - "maige remove all labels from this issue"
 - "maige add the 'self-hosting' label anytime someone mentions 'docker'"
 - "maige what packages does this repo use?"
+- "maige add the 'banana' label to this issue because it's a-peeling!"
