@@ -8,15 +8,15 @@ export function codeComment({
 	octokit,
 	owner,
 	repo,
-	pull_number,
-	commit_id,
-	path,
+	pullNumber,
+	commitId,
+	path
 }: {
 	octokit: any
 	owner: string
 	repo: string
-	pull_number: number
-	commit_id: string
+	pullNumber: number
+	commitId: string
 	path: string
 }) {
 	return new DynamicStructuredTool({
@@ -28,9 +28,9 @@ export function codeComment({
 				{
 					owner: owner,
 					repo: repo,
-					pull_number: pull_number,
+					pull_number: pullNumber,
 					body: comment + '\n\n' + footer,
-					commit_id: commit_id,
+					commit_id: commitId,
 					path: path,
 					line: line,
 					side: side,

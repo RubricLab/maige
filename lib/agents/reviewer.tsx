@@ -19,7 +19,7 @@ export default async function reviewer({
 	pullId,
 	owner,
 	repo,
-	pull_number,
+	pullNumber,
 	head
 }: {
 	input: string
@@ -27,7 +27,7 @@ export default async function reviewer({
 	pullId?: string
 	owner?: string
 	repo?: string
-	pull_number?: number
+	pullNumber?: number
 	head?: string
 }) {
 	if (pullId) {
@@ -79,8 +79,8 @@ export default async function reviewer({
 						octokit,
 						owner,
 						repo,
-						pull_number,
-						commit_id: head,
+						pullNumber,
+						commitId: head,
 						path: file.from
 					})
 				]
