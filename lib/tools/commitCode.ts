@@ -12,11 +12,9 @@ export default function commitCode({
 	return new DynamicStructuredTool({
 		description: '',
 		func: async ({message, files}) => {
-			const commit = await shell.process.start({
+			await shell.process.startAndWait({
 				cmd: `cd ${dir} && git add ${files.join(' ')} && git commit -m "${message}"`
 			})
-
-			await commit.wait()
 
 			return 'committed'
 		},

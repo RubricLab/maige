@@ -11,6 +11,7 @@ export default function writeFile({shell, dir}: {shell: Sandbox; dir: string}) {
 
 			await shell.filesystem.makeDir(directory)
 			await shell.filesystem.write(`${dir}/${fileName}`, code)
+
 			return 'wrote file'
 		},
 		name: 'writeFile',

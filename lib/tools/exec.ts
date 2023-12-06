@@ -20,13 +20,10 @@ export default function exec({
 	return new DynamicStructuredTool({
 		description,
 		func: async ({cmd}) => {
-			if (setupCmd) {
-				const setup = await shell.process.start({
+			if (setupCmd)
+				await shell.process.startAndWait({
 					cmd: setupCmd
 				})
-
-				await setup.wait()
-			}
 
 			const modifiedCmd = preCmdCallback(cmd)
 
