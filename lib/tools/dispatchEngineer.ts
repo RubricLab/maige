@@ -1,8 +1,9 @@
 import {DynamicStructuredTool} from 'langchain/tools'
 import {z} from 'zod'
 import engineer from '~/agents/engineer'
+
 /**
- * Execute a shell command
+ * Dispatch an engineer agent
  */
 export default function dispatchEngineer({
 	repo,
