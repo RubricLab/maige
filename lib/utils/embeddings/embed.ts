@@ -2,9 +2,10 @@ import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
 import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
 import {WeaviateStore} from 'langchain/vectorstores/weaviate'
 import {cloneRepo} from './cloneRepo'
-import {type WeaviateConfig} from './db'
 import deleteRepo from './delete'
 import {checkRepoExists} from './exists'
+import {type WeaviateConfig} from './db'
+import { AISummary } from './summary'
 
 export default async function addRepo(
 	weaviateConfig: WeaviateConfig,
@@ -42,16 +43,17 @@ export default async function addRepo(
 			process.env.GITHUB_ACCESS_TOKEN || ''
 		)
 
-		const docs = repo.map(doc => {
+		const docs = Promise.all(repo.map(async doc => {
 			return {
 				...doc,
 				metadata: {
 					...doc.metadata,
 					userId: weaviateConfig.userId,
+					summary: await AISummary(doc.pageContent),
 					ext: doc.metadata.source.split('.')[1] || ''
 				}
 			}
-		})
+		}))
 
 		const embeddings = new OpenAIEmbeddings({
 			openAIApiKey: process.env.OPENAI_API_KEY
@@ -64,7 +66,7 @@ export default async function addRepo(
 		})
 
 		// returns the Weaviate ids of the added documents
-		return await store.addDocuments(docs)
+		return await store.addDocuments(await docs)
 	} catch (e) {
 		console.error(e)
 		return
