@@ -10,7 +10,7 @@ import Weaviate from '~/utils/embeddings/db'
 import {getMainBranch, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
 
-export const maxDuration = 30
+export const maxDuration = 90
 
 /**
  * POST /api/webhook
@@ -377,7 +377,7 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			octokit,
 			prisma,
 			customerId,
-			repoName: `${owner}/${name}`,
+			repoFullName: `${owner}/${name}`,
 			issueNumber,
 			allLabels
 		})
