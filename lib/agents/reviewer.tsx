@@ -11,7 +11,7 @@ const model = new ChatOpenAI({
 	temperature: 0.3
 })
 
-export default async function reviewer({
+export async function reviewer({
 	input,
 	octokit,
 	pullId

@@ -15,7 +15,7 @@ const model = new ChatOpenAI({
 	temperature: 0
 })
 
-export default async function maige({
+export async function maige({
 	input,
 	octokit,
 	prisma,
@@ -51,7 +51,7 @@ You also maintain a set of user instructions that can customize your behaviour; 
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		verbose: false,
+		// verbose: true,
 		agentArgs: {
 			prefix
 		}

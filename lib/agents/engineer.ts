@@ -16,7 +16,7 @@ const model = new ChatOpenAI({
 	temperature: 0.3
 })
 
-export default async function engineer({
+export async function engineer({
 	task,
 	repoFullName,
 	issueNumber,
@@ -38,7 +38,7 @@ export default async function engineer({
 	const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
 	const branch = `maige/${issueNumber}-${Date.now()}`
 	const [owner, repo] = repoFullName.split('/')
-	const repoSetup = `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git ${authFlag} clone https://github.com/${repo}.git && cd ${repo} && git checkout -b ${branch}`
+	const repoSetup = `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git ${authFlag} clone https://github.com/${repoFullName}.git && cd ${repo} && git checkout -b ${branch}`
 
 	await shell.process.startAndWait({
 		cmd: repoSetup

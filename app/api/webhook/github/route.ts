@@ -1,6 +1,6 @@
 import {App} from '@octokit/app'
-import maige from '~/agents/maige'
-import reviewer from '~/agents/reviewer'
+import {maige} from '~/agents/maige'
+import {reviewer} from '~/agents/reviewer'
 import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
@@ -183,7 +183,7 @@ export const POST = async (req: Request) => {
 
 		const response = await fetch(diffUrl)
 
-		if (!response.ok) return new Response('Could not fetch diff', {status: 401})
+		if (!response.ok) return new Response('Could not fetch diff', {status: 503})
 
 		const data = await response.text()
 
