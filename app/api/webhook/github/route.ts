@@ -1,6 +1,6 @@
 import {App} from '@octokit/app'
-import maige from '~/agents/maige'
-import reviewer from '~/agents/reviewer'
+import {maige} from '~/agents/maige'
+import {reviewer} from '~/agents/reviewer'
 import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
@@ -10,7 +10,7 @@ import Weaviate from '~/utils/embeddings/db'
 import {getMainBranch, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
 
-export const maxDuration = 30
+export const maxDuration = 90
 
 /**
  * POST /api/webhook
@@ -167,7 +167,7 @@ export const POST = async (req: Request) => {
 	if (comment && !comment.body.toLowerCase().includes('maige'))
 		return new Response('Irrelevant comment', {status: 202})
 
-	if (issue.pull_request) {
+	if (issue?.pull_request) {
 		const {
 			pull_request: {diff_url: diffUrl},
 			node_id: pullId
@@ -183,7 +183,7 @@ export const POST = async (req: Request) => {
 
 		const response = await fetch(diffUrl)
 
-		if (!response.ok) return new Response('Could not fetch diff', {status: 401})
+		if (!response.ok) return new Response('Could not fetch diff', {status: 503})
 
 		const data = await response.text()
 
@@ -352,7 +352,6 @@ export const POST = async (req: Request) => {
 
 		const isComment = action === 'created'
 
-		// Note: issue number has been omitted
 		const engPrompt = `
 Hey, here's an incoming ${isComment ? 'comment' : 'issue'}.
 First, some context:
@@ -378,7 +377,8 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			octokit,
 			prisma,
 			customerId,
-			repoName: `${owner}/${name}`,
+			repoFullName: `${owner}/${name}`,
+			issueNumber,
 			allLabels
 		})
 

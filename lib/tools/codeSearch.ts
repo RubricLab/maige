@@ -7,17 +7,17 @@ import Weaviate from '~/utils/embeddings/db'
  */
 export function codebaseSearch({
 	customerId,
-	repoName
+	repoFullName
 }: {
 	customerId: string
-	repoName: string
+	repoFullName: string
 }) {
 	return new DynamicStructuredTool({
 		description:
 			'Search the codebase by query. Uses vector similarity; format queries to make use of this.',
 		func: async ({query}) => {
 			const db = new Weaviate(customerId)
-			const docs = await db.searchCode(query, repoName)
+			const docs = await db.searchCode(query, repoFullName)
 
 			if (!docs?.length) return 'No results found'
 
