@@ -27,6 +27,11 @@ export async function engineer({
 	issueNumber: number
 	customerId: string
 }) {
+	const {content: title} = await model.call([
+		'Could you output a very concise PR title for this request?',
+		`Task: ${task}`
+	])
+
 	const shell = await Sandbox.create({
 		apiKey: env.E2B_API_KEY,
 		onStderr: data => console.error(data.line),
@@ -79,6 +84,7 @@ Your final output message should be the message that will be included in the pul
 	const input = `${task}`
 	const result = await executor.call({input})
 	const {output} = result
+	const body = `${output}\n\nCloses #${issueNumber}`
 
 	// Must cd again because each process starts from ~/
 	await shell.process.startAndWait({
@@ -87,18 +93,16 @@ Your final output message should be the message that will be included in the pul
 
 	const octokit = new Octokit({auth: env.GITHUB_ACCESS_TOKEN})
 
-	const prData = await octokit.request(`POST /repos/${repoFullName}/pulls`, {
+	await octokit.request(`POST /repos/${repoFullName}/pulls`, {
 		owner,
 		repo,
-		title: `Fix/${issueNumber}`,
-		body: output,
+		title,
+		body,
 		head: branch,
 		base: 'main'
 	})
 
-	const prUrl = prData?.data?.url
-
 	await shell.close()
 
-	return prUrl || 'Something went wrong'
+	return
 }

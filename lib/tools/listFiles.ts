@@ -9,10 +9,10 @@ export default function listFiles({shell, dir}: {shell: Sandbox; dir: string}) {
 			const files = await shell.filesystem.list(`${dir}/${path}`)
 
 			const fileList = files
-				.map(file => (file.isDir ? `dir: ${file.name}` : file.name))
+				.map(file => (file.isDir ? `${file.name}/` : file.name))
 				.join('\n')
 
-			console.log(`ls ${path}: `, fileList)
+			console.log(`ls ${path}:\n\n`, fileList)
 
 			return fileList
 		},
