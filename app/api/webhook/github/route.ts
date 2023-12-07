@@ -268,8 +268,7 @@ export const POST = async (req: Request) => {
 			octokit: octokit,
 			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
 			pullNumber: payload.number,
-			repoName: `${owner}/${name}`,
-			owner: payload.repository.owner.login,
+			repoFullName: `${owner}/${name}`,
 			head: payload.pull_request.head.sha
 		})
 
@@ -293,7 +292,7 @@ export const POST = async (req: Request) => {
 			octokit: octokit,
 			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
 			pullId: pullId,
-			repoName: `${owner}/${name}`
+			repoFullName: `${owner}/${name}`
 		})
 
 		return new Response('Replied to PR comment', {status: 200})

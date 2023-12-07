@@ -19,8 +19,7 @@ export async function reviewer({
 	input,
 	octokit,
 	pullId,
-	owner,
-	repoName,
+	repoFullName,
 	pullNumber,
 	head
 }: {
@@ -28,13 +27,12 @@ export async function reviewer({
 	input: string
 	octokit: any
 	pullId?: string
-	owner?: string
-	repoName?: string
+	repoFullName?: string
 	pullNumber?: number
 	head?: string
 }) {
 	if (pullId) {
-		const tools = [new SerpAPI(), codebaseSearch({customerId, repoName})]
+		const tools = [new SerpAPI(), codebaseSearch({customerId, repoFullName})]
 
 		const prefix = `
 		You are senior engineer named Maige that is answering questions about a Pull Request on GitHub. Try to keep it somewhat short
@@ -92,30 +90,32 @@ export async function reviewer({
 		let files = parse(input)
 
 		files.forEach(async (file: File) => {
-			var changes = `File Path: ${file.from}\n\n`
+			let changes = `File Path: ${file.from}\n\n`
+
 			file.chunks.forEach((chunk: Chunk) => {
 				chunk.changes.forEach((change: Change & {ln2?: string; ln?: string}) => {
 					changes += `${change.ln2 ? change.ln2 : change.ln} ${change.content}\n`
 				})
+
 				changes += '='.repeat(50) + '\n'
 			})
+
 			const tools = [
+				codebaseSearch({customerId, repoFullName}),
 				codeComment({
 					octokit,
-					owner,
-					repo: repoName.split('/')[1],
+					repoFullName,
 					pullNumber,
 					commitId: head,
 					path: file.from
-				}),
-				codebaseSearch({customerId, repoName})
+				})
 			]
 
 			const executor = await initializeAgentExecutorWithOptions(tools, model, {
 				agentType: 'openai-functions',
 				returnIntermediateSteps: isDev,
 				handleParsingErrors: true,
-				verbose: false,
+				verbose: true,
 				agentArgs: {
 					prefix
 				}

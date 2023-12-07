@@ -6,15 +6,13 @@ import {z} from 'zod'
  */
 export function codeComment({
 	octokit,
-	owner,
-	repo,
+	repoFullName,
 	pullNumber,
 	commitId,
 	path
 }: {
 	octokit: any
-	owner: string
-	repo: string
+	repoFullName: string
 	pullNumber: number
 	commitId: string
 	path: string
@@ -24,10 +22,8 @@ export function codeComment({
 		func: async ({comment, line, side}) => {
 			const footer = `By [Maige](https://maige.app). How's my driving?`
 			const res = await octokit.request(
-				'POST /repos/{owner}/{repo}/pulls/{pull_number}/comments',
+				`POST /repos/${repoFullName}/pulls/{pull_number}/comments`,
 				{
-					owner: owner,
-					repo: repo,
 					pull_number: pullNumber,
 					body: comment + '\n\n' + footer,
 					commit_id: commitId,
