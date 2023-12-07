@@ -1,6 +1,6 @@
 import {App} from '@octokit/app'
-import maige from '~/agents/maige'
-import reviewer from '~/agents/reviewer'
+import {maige} from '~/agents/maige'
+import {reviewer} from '~/agents/reviewer'
 import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
@@ -10,7 +10,7 @@ import Weaviate from '~/utils/embeddings/db'
 import {getMainBranch, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
 
-export const maxDuration = 30
+export const maxDuration = 90
 
 /**
  * POST /api/webhook
@@ -293,7 +293,7 @@ export const POST = async (req: Request) => {
 			octokit: octokit,
 			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
 			pullId: pullId,
-			repoName: `${owner}/${name}`,
+			repoName: `${owner}/${name}`
 		})
 
 		return new Response('Replied to PR comment', {status: 200})
@@ -306,7 +306,7 @@ export const POST = async (req: Request) => {
 			number: issueNumber,
 			body,
 			labels: existingLabels
-		},
+		}
 	} = payload
 
 	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
@@ -374,7 +374,6 @@ export const POST = async (req: Request) => {
 
 		const isComment = action === 'created'
 
-		// Note: issue number has been omitted
 		const engPrompt = `
 Hey, here's an incoming ${isComment ? 'comment' : 'issue'}.
 First, some context:
@@ -400,7 +399,8 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			octokit,
 			prisma,
 			customerId,
-			repoName: `${owner}/${name}`,
+			repoFullName: `${owner}/${name}`,
+			issueNumber,
 			allLabels
 		})
 

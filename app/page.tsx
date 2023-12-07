@@ -15,11 +15,11 @@ const Page = () => {
 			<Header />
 			<main className='relative flex h-screen w-screen flex-col items-center'>
 				<div className='flex grow flex-col items-center justify-center space-y-2'>
-					<div className='flex flex-col items-center space-y-2'>
-						<h1 className='bg-gradient-to-l from-orange-200 to-indigo-800 bg-clip-text text-8xl font-bold leading-normal tracking-tight text-transparent'>
+					<div className='flex flex-row items-center justify-center gap-2 sm:flex-col'>
+						<h1 className='bg-gradient-to-l from-orange-200 to-indigo-800 bg-clip-text text-lg font-bold leading-normal tracking-tight text-transparent sm:pb-4 sm:text-8xl'>
 							Maige
 						</h1>
-						<h2 className='pb-8 text-3xl font-medium leading-3 tracking-tight text-white/80'>
+						<h2 className='text:lg font-medium leading-3 tracking-tight text-white/80 sm:pb-8 sm:text-3xl'>
 							Have AI label your issues.
 						</h2>
 					</div>
@@ -44,23 +44,25 @@ const Page = () => {
 							</Link>
 							<p className='text-xs text-white/60'>Free to try.</p>
 						</div>
-						<div className='flex flex-col items-center space-y-2 text-white/60'>
-							<p className='text-sm'>New issues will be labelled automatically.</p>
-							<p className='text-sm'>
+						<div className='flex flex-col items-center space-y-2 text-center text-white/60'>
+							<p className='text-xs sm:text-sm'>
+								New issues will be labelled automatically.
+							</p>
+							<p className='text-xs sm:text-sm'>
 								Comment{' '}
 								<span className='font-medium text-white'>
 									&quot;Maige label this&quot;
 								</span>{' '}
 								to label an existing issue.
 							</p>
-							<p className='text-sm'>
+							<p className='text-xs sm:text-sm'>
 								Comment{' '}
 								<span className='font-medium text-white'>
 									&quot;Maige [instructions]&quot;
 								</span>{' '}
 								to add custom instructions.
 							</p>
-							<p className='text-sm'>
+							<p className='text-xs sm:text-sm'>
 								Comment{' '}
 								<span className='font-medium text-white'>
 									&quot;Maige [question]&quot;
@@ -71,7 +73,7 @@ const Page = () => {
 					</div>
 					<div className='flex flex-col items-center gap-2 py-8'>
 						<p className='text-sm text-white/60'>Used by 1k+ repos</p>
-						<div className='flex flex-row items-center justify-center space-x-7 text-white/60'>
+						<div className='flex flex-row flex-wrap items-center justify-center gap-5 text-white/60'>
 							<Highlight className='h-6 hover:text-white' />
 							<Precedent className='group h-6 hover:text-white' />
 							<Cal className='h-5 hover:text-white' />

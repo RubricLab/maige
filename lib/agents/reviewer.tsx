@@ -4,7 +4,7 @@ import {SerpAPI} from 'langchain/tools'
 import parse, {Change, Chunk, File} from 'parse-diff'
 import env from '~/env.mjs'
 import {codeComment} from '~/tools/codeComment'
-import { codebaseSearch } from '~/tools/codeSearch'
+import {codebaseSearch} from '~/tools/codeSearch'
 import {prComment} from '~/tools/prComment'
 import {isDev} from '~/utils'
 
@@ -14,7 +14,7 @@ const model = new ChatOpenAI({
 	temperature: 0.3
 })
 
-export default async function reviewer({
+export async function reviewer({
 	customerId,
 	input,
 	octokit,
@@ -60,7 +60,7 @@ export default async function reviewer({
 			handleParsingErrors: true,
 			verbose: false,
 			agentArgs: {
-				prefix,
+				prefix
 			}
 		})
 
@@ -92,12 +92,12 @@ export default async function reviewer({
 		let files = parse(input)
 
 		files.forEach(async (file: File) => {
-			var changes = `File Path: ${file.from}\n\n`;
+			var changes = `File Path: ${file.from}\n\n`
 			file.chunks.forEach((chunk: Chunk) => {
 				chunk.changes.forEach((change: Change & {ln2?: string; ln?: string}) => {
 					changes += `${change.ln2 ? change.ln2 : change.ln} ${change.content}\n`
 				})
-				changes += "=".repeat(50) + "\n"
+				changes += '='.repeat(50) + '\n'
 			})
 			const tools = [
 				codeComment({
@@ -107,7 +107,7 @@ export default async function reviewer({
 					pullNumber,
 					commitId: head,
 					path: file.from
-				}), 
+				}),
 				codebaseSearch({customerId, repoName})
 			]
 
