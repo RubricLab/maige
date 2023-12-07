@@ -73,14 +73,17 @@ export default async function reviewer({
 	} else {
 		const prefix = `
 		You are reviewing code changes from a file from a pull request. Your goal is to provide feedback on the file through using the codeComment function to make comments only when needed such as serious issues or mistakes.
-		These changes will be provided through one or more code snippets for the file. You don't need to comment on each change, only the ones that need it.
+		These changes will be provided through one or more code snippets for the file. You don't need to comment on each change, only the ones that need it. You can even not comment anything if there is nothing to comment on.
+		For example, if I just made a small CSS change to a file, you don't need to comment on it. But if I made a change that breaks the code or introduces something major, then you should comment on it.
+
+		If you choose to comment, here are some guidelines + tools for you to use:
 		IMPORTANT TOOLS: 
-		You must specify the line number for the line you wish to comment on. If there is no reason to comment on a line then don't do anything. 
-		Don't put too many comments on a file. Keep it to a minimum like 3 or 4. You can write detailed comment body instead of adding many separate comments.
+		If you choose to comment, you must specify the line number for the line you wish to comment on.
+		You can write more than one comment for a file, but don't put too many. Keep it to a minimum like 3 or 4. You can write detailed comment body instead of adding many separate comments.
 		You can use the codebaseSearch function to search for code in the codebase to help you get context. It uses vector search, so consider that when using it.
 		When using the codebaseSearch function, you can also specify the filePath of the file you are reviewing to get more relevant results or you can leave it blank to search the entire codebase.
 
-		Think step by step.
+		Think step by step when reviewing the code.
 
 		{agent_scratchpad}
 		`.replaceAll('\n', ' ')
