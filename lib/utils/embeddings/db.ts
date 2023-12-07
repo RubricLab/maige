@@ -1,10 +1,12 @@
-import weaviate from 'weaviate-ts-client'
+import weaviate, {WhereFilter} from 'weaviate-ts-client'
 import deleteRepo from './delete'
 import addRepo from './embed'
 import {checkIndexExists} from './exists'
 import search from './query'
 
 export type WeaviateClient = ReturnType<typeof weaviate.client>
+
+export type WeaviateFilter = WhereFilter
 
 export type WeaviateConfig = {
 	client: WeaviateClient
@@ -35,8 +37,8 @@ export default class Weaviate {
 		return await addRepo(this.config, repoUrl, branch, replace)
 	}
 
-	async searchCode(query: string, repository: string, numResults: number = 3) {
-		return await search(this.config, query, numResults, repository)
+	async searchCode(query: string, repository: string, numResults: number = 3, filePath: string = "") {
+		return await search(this.config, query, numResults, repository, filePath)
 	}
 
 	async deleteRepo(repoUrl: string) {

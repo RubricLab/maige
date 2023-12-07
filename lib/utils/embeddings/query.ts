@@ -1,5 +1,5 @@
 import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
-import {type WeaviateConfig} from './db'
+import { type WeaviateConfig, WeaviateFilter } from './db';
 
 const keys = [
 	'source',
@@ -16,26 +16,36 @@ export default async function search(
 	weaviateConfig: WeaviateConfig,
 	question: string,
 	maxResults: number,
-	repository: string
+	repository: string,
+	filePath?: string
 ) {
+	const operands = [
+		{
+			path: ['userId'],
+			operator: 'Equal',
+			valueText: weaviateConfig.userId
+		},
+		{
+			path: ['repository'],
+			operator: 'ContainsAny',
+			valueStringArray: [repository]
+		},
+		...(filePath && [
+			{
+				path: ['source'],
+				operator: 'Equal',
+				valueText: filePath
+			}
+		])
+	]
+
 	const query = await weaviateConfig.client.graphql
 		.get()
 		.withClassName(weaviateConfig.indexName)
 		.withFields(`${keys.join(' ')} _additional { score }`)
 		.withWhere({
 			operator: 'And',
-			operands: [
-				{
-					path: ['userId'],
-					operator: 'Equal',
-					valueText: weaviateConfig.userId
-				},
-				{
-					path: ['repository'],
-					operator: 'ContainsAny',
-					valueStringArray: [repository]
-				}
-			]
+			operands: operands as WeaviateFilter[]
 		})
 		.withNearVector({
 			vector: await new OpenAIEmbeddings({
