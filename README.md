@@ -1,33 +1,28 @@
 # Maige
 
-Label your GitHub issues with AI.
+Automate your GitHub issue labeling with the power of AI. Maige streamlines your workflow by intelligently categorizing issues and pull requests. Get started at [Maige.app](https://maige.app).
 
-Visit [Maige.app](https://maige.app) to get started.
+## Quick Setup
 
-## Setup
+- Install dependencies: `bun i`
+- Set up environment: `cp .env.example .env`
+- Start the app: `bun run dev`
+- Expose locally: `ngrok http 3000`
 
-First, install dependencies with `bun i`. Copy the environment file: `cp .env.example .env`. Run the app with `bun run dev` then `ngrok http 3000` in another terminal. Copy the resulting URL for later.
+## GitHub App Integration
 
-### Setting up a GitHub App
+Easily integrate Maige with your GitHub repositories:
 
-You'll need a GitHub App to trigger webhooks and handle access to repos.
+1. Create a GitHub App in your account settings.
+2. Add the app credentials to your **.env** file.
+3. Set the webhook URL using your nGrok URL.
+4. Secure webhooks with a secret generated via `openssl rand -hex 32`.
+5. Enable necessary permissions and events for issues and pull requests.
 
-1. Go to Settings (personal or org) > Developer > GitHub Apps
-2. Copy your app name, ID, and client secret. Add these to your **.env**.
-3. Webhook URL: combine the nGrok URL from above with the handler path eg. `https://abc.ngrok.app/api/webhook/github`.
-4. Webhook secret: generate this with `openssl rand -hex 32`. Add it to your **.env**.
-5. Permissions: toggle **Issue: Read & Write** and **Pull Request: Read & Write**.
-6. Events: toggle **issues**, **issue comments**, **pull requests**, and **labels**.
+## Experience the Magic
 
-### Usage
+- Open an issue in your integrated repo and watch Maige label it automatically.
+- Use commands like `maige assign me` to manage issues with ease.
+- Customize Maige's behavior with simple instructions.
 
-Visit your nGrok URL in the browser and integrate a testing repo.
-
-Open an issue. It should get labelled! 🎉
-
-Some other tests:
-
-- "maige assign me to this issue"
-- "maige remove all labels from this issue"
-- "maige add the 'self-hosting' label anytime someone mentions 'docker'"
-- "maige what packages does this repo use?"
+Ready to enhance your GitHub workflow? Visit [Maige.app](https://maige.app) and integrate your first repository today!
