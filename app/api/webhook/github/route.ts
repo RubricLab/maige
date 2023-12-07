@@ -257,16 +257,14 @@ export const POST = async (req: Request) => {
 			pull_request: {diff_url: diffUrl}
 		} = payload
 
-		const response = await fetch(diffUrl)
-
-		if (!response.ok) return new Response('Could not fetch diff', {status: 401})
-
-		const data = await response.text()
+		const res = await fetch(diffUrl)
+		if (!res.ok) return new Response('Could not fetch diff', {status: 503})
+		const diff = await res.text()
 
 		await reviewer({
 			customerId,
 			octokit,
-			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
+			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${diff}`,
 			pullNumber: payload.number,
 			repoFullName: `${owner}/${name}`,
 			head: payload.pull_request.head.sha
@@ -281,16 +279,14 @@ export const POST = async (req: Request) => {
 			node_id: pullId
 		} = issue
 
-		const response = await fetch(diffUrl)
-
-		if (!response.ok) return new Response('Could not fetch diff', {status: 401})
-
-		const data = await response.text()
+		const res = await fetch(diffUrl)
+		if (!res.ok) return new Response('Could not fetch diff', {status: 503})
+		const diff = await res.text()
 
 		await reviewer({
 			customerId,
 			octokit,
-			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
+			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${diff}`,
 			pullId,
 			repoFullName: `${owner}/${name}`
 		})

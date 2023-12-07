@@ -1,7 +1,7 @@
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import {SerpAPI} from 'langchain/tools'
-import parse, {Change, Chunk, File} from 'parse-diff'
+import parse, {Change, Chunk} from 'parse-diff'
 import env from '~/env.mjs'
 import {codeComment} from '~/tools/codeComment'
 import {codebaseSearch} from '~/tools/codeSearch'
@@ -31,23 +31,17 @@ export async function reviewer({
 	pullNumber?: number
 	head?: string
 }) {
+	/**
+	 * Comment on a PR
+	 */
 	if (pullId) {
 		const tools = [new SerpAPI(), codebaseSearch({customerId, repoFullName})]
 
 		const prefix = `
-		You are senior engineer named Maige that is answering questions about a Pull Request on GitHub. Try to keep it somewhat short
-		and don't add fluff to it. Keep the tone neutral and do not include any expressions of gratitude or personal names, Just give the answer.
-		Don't ask to leave a comment, you must do it automatically.
-		DO NOT use any emojis or non-Ascii characters.
-
-		Write your answer using direct markdown code. Make your answer easier to read and understand by using code blocks, examples, and lists/bullet points. But keep the answer as a whole concise.
-
-		IMPORTANT TOOLS: 
-		You can use the codebaseSearch function to search for code in the codebase to help you get context. It uses vector search, so consider that when using it.
-		When using the codebaseSearch function, you can also specify the filePath of the file you are reviewing to get more relevant results or you can leave it blank to search the entire codebase.
-		SerpAPI is a tool that can be used to search the web for information. You can use it to search for information about some code like what syntax is correct or how a function works in some language.
-
-		Think step by step.
+		You are a 100x senior engineer summarizing a pull request on GitHub.
+		Provide a high-level summary (maximum 5 sentences) of the diff.
+		If you write too much, the author will get overwhelmed.
+		Limit prose.
 
 		{agent_scratchpad}
 		`.replaceAll('\n', ' ')
@@ -56,7 +50,7 @@ export async function reviewer({
 			agentType: 'openai-functions',
 			returnIntermediateSteps: isDev,
 			handleParsingErrors: true,
-			verbose: false,
+			verbose: true,
 			agentArgs: {
 				prefix
 			}
@@ -65,31 +59,28 @@ export async function reviewer({
 		const result = await executor.call({input})
 
 		// Forcefully call the prComment tool
-		await prComment({octokit, pullId}).func({comment: result.output})
+		await prComment({octokit, pullId}).func({
+			comment: result.output
+		})
 
 		return
 	} else {
+		/**
+		 * New PR
+		 */
 		const prefix = `
-		You are reviewing code changes from a file from a pull request. Your goal is to provide feedback on the file through using the codeComment function to make comments only when needed such as serious issues or mistakes.
-		These changes will be provided through one or more code snippets for the file. You don't need to comment on each change, only the ones that need it. You can even not comment anything if there is nothing to comment on.
-		For example, if I just made a small CSS change to a file, refactored some code, or did some straightforward things you don't need to comment on it. Also, if nothing is wrong with the changes then don't comment anything. 
-		But if I made a change that breaks the code or introduces something major, then you should comment on it.
-
-		If you choose to comment, here are some guidelines + tools for you to use:
-		IMPORTANT TOOLS: 
-		If you choose to comment, you must specify the line number for the line you wish to comment on.
-		You can write more than one comment for a file, but don't put too many. Keep it to a minimum like 3 or 4. You can write detailed comment body instead of adding many separate comments.
-		You can use the codebaseSearch function to search for code in the codebase to help you get context. It uses vector search, so consider that when using it.
-		When using the codebaseSearch function, you can also specify the filePath of the file you are reviewing to get more relevant results or you can leave it blank to search the entire codebase.
-
-		Think step by step when reviewing the code.
+		You are a 100x senior engineer reviewing code changes from a pull request on GitHub.
+		Limit prose. Default to just commenting directly.
+		Be moderate when commenting. Don't comment on every change.
+		Only comment on serious issues, mistakes, potential breaking changes, or bad patterns.
+		Think step by step.
 
 		{agent_scratchpad}
 		`.replaceAll('\n', ' ')
 
 		let files = parse(input)
 
-		files.forEach(async (file: File) => {
+		for (const file of files) {
 			let changes = `File Path: ${file.from}\n\n`
 
 			file.chunks.forEach((chunk: Chunk) => {
@@ -115,14 +106,14 @@ export async function reviewer({
 				agentType: 'openai-functions',
 				returnIntermediateSteps: isDev,
 				handleParsingErrors: true,
-				// verbose: true,
+				verbose: true,
 				agentArgs: {
 					prefix
 				}
 			})
 
 			await executor.call({input: changes})
-		})
+		}
 		return
 	}
 }
