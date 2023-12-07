@@ -115,7 +115,7 @@ export async function reviewer({
 				agentType: 'openai-functions',
 				returnIntermediateSteps: isDev,
 				handleParsingErrors: true,
-				verbose: true,
+				// verbose: true,
 				agentArgs: {
 					prefix
 				}
