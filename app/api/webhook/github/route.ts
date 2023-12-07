@@ -264,8 +264,8 @@ export const POST = async (req: Request) => {
 		const data = await response.text()
 
 		await reviewer({
-			customerId: customerId,
-			octokit: octokit,
+			customerId,
+			octokit,
 			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
 			pullNumber: payload.number,
 			repoFullName: `${owner}/${name}`,
@@ -288,10 +288,10 @@ export const POST = async (req: Request) => {
 		const data = await response.text()
 
 		await reviewer({
-			customerId: customerId,
-			octokit: octokit,
+			customerId,
+			octokit,
 			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
-			pullId: pullId,
+			pullId,
 			repoFullName: `${owner}/${name}`
 		})
 
