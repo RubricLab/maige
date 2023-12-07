@@ -18,12 +18,12 @@ const model = new ChatOpenAI({
 
 export default async function engineer({
 	task,
-	repo,
+	repoFullName,
 	issueNumber,
 	customerId
 }: {
 	task: string
-	repo: string
+	repoFullName: string
 	issueNumber: number
 	customerId: string
 }) {
@@ -35,31 +35,27 @@ export default async function engineer({
 	})
 
 	const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
-
 	const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
-
-	const repoName = repo.split('/')[1]
-
 	const branch = `maige/${issueNumber}-${Date.now()}`
-
-	const repoSetup = `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git ${authFlag} clone https://github.com/${repo}.git && cd ${repoName} && git checkout -b ${branch}`
+	const [owner, repo] = repoFullName.split('/')
+	const repoSetup = `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git ${authFlag} clone https://github.com/${repo}.git && cd ${repo} && git checkout -b ${branch}`
 
 	await shell.process.startAndWait({
 		cmd: repoSetup
 	})
 
 	const tools = [
-		readFile({shell, dir: repoName}),
-		listFiles({shell, dir: repoName}),
-		writeFile({shell, dir: repoName}),
-		commitCode({shell, dir: repoName}),
-		codebaseSearch({repoName: repo, customerId})
+		readFile({shell, dir: repo}),
+		listFiles({shell, dir: repo}),
+		writeFile({shell, dir: repo}),
+		commitCode({shell, dir: repo}),
+		codebaseSearch({repoFullName, customerId})
 	]
 
 	const prefix = `You are a senior AI engineer.
 You write code based on the supplied instructions.
 First some context:
-- The code has already been cloned to ${repoName} and you are in that dir.
+- The code has already been cloned to ${repo} and you are in that dir.
 Your first step should be to do any necessary research to understand the problem.
 Next, run the listFiles tool to see what files are in the repo.
 Then you should come up with a plan of action using chain of thought.
@@ -74,7 +70,7 @@ Your final output message should be the message that will be included in the pul
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		verbose: false,
+		// verbose: true,
 		agentArgs: {
 			prefix
 		}
@@ -84,15 +80,16 @@ Your final output message should be the message that will be included in the pul
 	const result = await executor.call({input})
 	const {output} = result
 
+	// Must cd again because each process starts from ~/
 	await shell.process.startAndWait({
-		cmd: `cd ${repoName} && git ${authFlag} push -u origin ${branch}`
+		cmd: `cd ${repo} && git ${authFlag} push -u origin ${branch}`
 	})
 
 	const octokit = new Octokit({auth: env.GITHUB_ACCESS_TOKEN})
 
-	const prData = await octokit.request(`POST /repos/${repo}/pulls`, {
-		owner: repo.split('/')[0],
-		repo: repo.split('/')[1],
+	const prData = await octokit.request(`POST /repos/${repoFullName}/pulls`, {
+		owner,
+		repo,
 		title: `Fix/${issueNumber}`,
 		body: output,
 		head: branch,

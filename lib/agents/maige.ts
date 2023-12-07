@@ -20,7 +20,7 @@ export default async function maige({
 	octokit,
 	prisma,
 	customerId,
-	repoName,
+	repoFullName,
 	issueNumber,
 	allLabels
 }: {
@@ -28,16 +28,16 @@ export default async function maige({
 	octokit: any
 	prisma: any
 	customerId: string
-	repoName: string
+	repoFullName: string
 	issueNumber: number
 	allLabels: any[]
 }) {
 	const tools = [
 		commentTool({octokit}),
-		updateInstructionsTool({octokit, prisma, customerId, repoName}),
+		updateInstructionsTool({octokit, prisma, customerId, repoFullName}),
 		githubTool({octokit}),
-		codebaseSearch({customerId, repoName}),
-		dispatchEngineer({issueNumber, repo: repoName, customerId}),
+		codebaseSearch({customerId, repoFullName}),
+		dispatchEngineer({issueNumber, repoFullName, customerId}),
 		labelTool({octokit, allLabels})
 	]
 

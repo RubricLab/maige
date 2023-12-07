@@ -6,22 +6,22 @@ import engineer from '~/agents/engineer'
  * Dispatch an engineer agent
  */
 export default function dispatchEngineer({
-	repo,
+	repoFullName,
 	issueNumber,
 	customerId
 }: {
-	repo: string
+	repoFullName: string
 	issueNumber: number
 	customerId: string
 }) {
 	return new DynamicStructuredTool({
 		description: 'Dispatch an engineer to work on an issue',
 		func: async ({task}) => {
-			console.log(`Dispatching engineer for ${repo}`)
+			console.log(`Dispatching engineer for ${repoFullName}`)
 
 			engineer({
 				task,
-				repo,
+				repoFullName,
 				issueNumber,
 				customerId
 			})

@@ -7,10 +7,14 @@ export default function listFiles({shell, dir}: {shell: Sandbox; dir: string}) {
 		description: '',
 		func: async ({path}) => {
 			const files = await shell.filesystem.list(`${dir}/${path}`)
-			console.log('LISTING FILES: ', files)
-			return files
+
+			const fileList = files
 				.map(file => (file.isDir ? `dir: ${file.name}` : file.name))
 				.join('\n')
+
+			console.log(`ls ${path}: `, fileList)
+
+			return fileList
 		},
 		name: 'listFiles',
 		schema: z.object({
