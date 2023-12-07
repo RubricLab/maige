@@ -74,7 +74,8 @@ export default async function reviewer({
 		const prefix = `
 		You are reviewing code changes from a file from a pull request. Your goal is to provide feedback on the file through using the codeComment function to make comments only when needed such as serious issues or mistakes.
 		These changes will be provided through one or more code snippets for the file. You don't need to comment on each change, only the ones that need it. You can even not comment anything if there is nothing to comment on.
-		For example, if I just made a small CSS change to a file, you don't need to comment on it. But if I made a change that breaks the code or introduces something major, then you should comment on it.
+		For example, if I just made a small CSS change to a file, refactored some code, or did some straightforward things you don't need to comment on it. Also, if nothing is wrong with the changes then don't comment anything. 
+		But if I made a change that breaks the code or introduces something major, then you should comment on it.
 
 		If you choose to comment, here are some guidelines + tools for you to use:
 		IMPORTANT TOOLS: 
