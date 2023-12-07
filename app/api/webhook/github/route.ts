@@ -167,7 +167,7 @@ export const POST = async (req: Request) => {
 	if (comment && !comment.body.toLowerCase().includes('maige'))
 		return new Response('Irrelevant comment', {status: 202})
 
-	if (issue.pull_request) {
+	if (issue?.pull_request) {
 		const {
 			pull_request: {diff_url: diffUrl},
 			node_id: pullId
