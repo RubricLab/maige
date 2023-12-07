@@ -1,5 +1,6 @@
 import {DynamicStructuredTool} from 'langchain/tools'
 import {z} from 'zod'
+import {COPY} from '~/constants'
 
 /**
  * Comment on code
@@ -20,12 +21,10 @@ export function codeComment({
 	return new DynamicStructuredTool({
 		description: 'Adds a comment to code in a PR',
 		func: async ({comment, line, side}) => {
-			const footer = `By [Maige](https://maige.app). How's my driving?`
 			const res = await octokit.request(
-				`POST /repos/${repoFullName}/pulls/{pull_number}/comments`,
+				`POST /repos/${repoFullName}/pulls/${pullNumber}/comments`,
 				{
-					pull_number: pullNumber,
-					body: comment + '\n\n' + footer,
+					body: `${comment}\n\n${COPY.FOOTER}`,
 					commit_id: commitId,
 					path: path,
 					line: line,
