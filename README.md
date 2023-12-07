@@ -1,33 +1,21 @@
 # Maige
 
-Label your GitHub issues with AI.
+AI-powered GitHub issue labeling made simple.
 
-Visit [Maige.app](https://maige.app) to get started.
+Quickly set up Maige and let AI handle your issue labels with ease. Get started at [Maige.app](https://maige.app).
 
-## Setup
+## Quick Setup
 
-First, install dependencies with `bun i`. Copy the environment file: `cp .env.example .env`. Run the app with `bun run dev` then `ngrok http 3000` in another terminal. Copy the resulting URL for later.
+- Install dependencies: `bun i`
+- Set up environment: `cp .env.example .env`
+- Start the app: `bun run dev` & `ngrok http 3000`
 
-### Setting up a GitHub App
+## GitHub App Integration
 
-You'll need a GitHub App to trigger webhooks and handle access to repos.
+Create a GitHub App for webhooks and repo access. Fill in your **.env** with app details and set up the webhook URL as `https://<your-ngrok-url>/api/webhook/github`.
 
-1. Go to Settings (personal or org) > Developer > GitHub Apps
-2. Copy your app name, ID, and client secret. Add these to your **.env**.
-3. Webhook URL: combine the nGrok URL from above with the handler path eg. `https://abc.ngrok.app/api/webhook/github`.
-4. Webhook secret: generate this with `openssl rand -hex 32`. Add it to your **.env**.
-5. Permissions: toggle **Issue: Read & Write** and **Pull Request: Read & Write**.
-6. Events: toggle **issues**, **issue comments**, **pull requests**, and **labels**.
+## Dive In
 
-### Usage
+Access Maige through your nGrok URL and link a test repo. Open an issue and watch Maige work its magic with labels!
 
-Visit your nGrok URL in the browser and integrate a testing repo.
-
-Open an issue. It should get labelled! 🎉
-
-Some other tests:
-
-- "maige assign me to this issue"
-- "maige remove all labels from this issue"
-- "maige add the 'self-hosting' label anytime someone mentions 'docker'"
-- "maige what packages does this repo use?"
+Enjoy streamlined issue management with Maige! 🚀
