@@ -25,9 +25,7 @@ export default async function addRepo(
 			repoUrl
 		)
 		if (exists && !replace)
-			throw new Error(
-				`Repository ${repoUrl} already exists in index ${weaviateConfig.indexName}. Set replace to true to replace it.`
-			)
+			return `Repository ${repoUrl} already exists in index ${weaviateConfig.indexName}. Set replace to true to replace it.`
 		else deleteRepo(weaviateConfig, repoUrl)
 	} catch (e) {
 		console.error(e)

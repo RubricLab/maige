@@ -9,10 +9,10 @@ test.skip('Bun test runner - Weaviate', () => {
 
 // If Bun is unable to access env vars, pass these to the test runner:
 // WEAVIATE_HOST, WEAVIATE_SCHEME, OPENAI_API_KEY
-test.skip(
+test(
 	'Embed repo',
 	async () => {
-		const customerId = '2ceed'
+		const customerId = 'clot5gx6a0000uvdovvfi1x9q'
 		const repoUrl = 'https://github.com/RubricLab/maige'
 		const branch = 'staging'
 		const query = 'codeSearch'
@@ -20,13 +20,13 @@ test.skip(
 		const vectorDB = new Weaviate(customerId)
 		const docs = await vectorDB.embedRepo(repoUrl, branch)
 
-		expect(docs.length).toBeGreaterThan(0)
+		expect(docs?.length).toBeGreaterThan(0)
 
 		const search = await vectorDB.searchCode(query, repoUrl, 1, undefined, branch)
 
-		expect(search.length).toBeGreaterThan(0)
+		expect(search?.length).toBeGreaterThan(0)
 
-		if (search.length > 0) expect(search[0].text).toInclude('search')
+		if (search?.length > 0) expect(search[0].text).toInclude('search')
 	},
 	15 * 1000
 )
