@@ -27,9 +27,7 @@ export function codeComment({
 					path,
 					line,
 					side,
-					headers: {
-						'X-GitHub-Api-Version': '2022-11-28'
-					}
+					headers: {'X-GitHub-Api-Version': '2022-11-28'}
 				}
 			)
 			return JSON.stringify(res)
