@@ -15,7 +15,7 @@ test(
 		const customerId = 'clot5gx6a0000uvdovvfi1x9q'
 		const repoUrl = 'https://github.com/RubricLab/maige'
 		const branch = 'staging'
-		const query = 'codeSearch'
+		const query = 'codeSearch' // arbitrary - should change over time
 
 		const vectorDB = new Weaviate(customerId)
 		const docs = await vectorDB.embedRepo(repoUrl, branch)
