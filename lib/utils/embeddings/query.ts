@@ -19,35 +19,33 @@ export default async function search(
 	repository: string,
 	filePath?: string
 ) {
-	const operands = [
-		{
-			path: ['userId'],
-			operator: 'Equal' as 'Equal',
-			valueText: weaviateConfig.userId
-		},
-		{
-			path: ['repository'],
-			operator: 'ContainsAny' as 'ContainsAny',
-			valueStringArray: [repository]
-		},
-		...(filePath
-			? [
-					{
-						path: ['source'],
-						operator: 'Equal' as 'Equal',
-						valueText: filePath
-					}
-			  ]
-			: [])
-	]
-
 	const query = await weaviateConfig.client.graphql
 		.get()
 		.withClassName(weaviateConfig.indexName)
 		.withFields(`${keys.join(' ')} _additional { score }`)
 		.withWhere({
 			operator: 'And',
-			operands
+			operands: [
+				{
+					path: ['userId'],
+					operator: 'Equal' as 'Equal',
+					valueText: weaviateConfig.userId
+				},
+				{
+					path: ['repository'],
+					operator: 'ContainsAny' as 'ContainsAny',
+					valueStringArray: [repository]
+				},
+				...(filePath
+					? [
+							{
+								path: ['source'],
+								operator: 'Equal' as 'Equal',
+								valueText: filePath
+							}
+					  ]
+					: [])
+			]
 		})
 		.withNearVector({
 			vector: await new OpenAIEmbeddings({
