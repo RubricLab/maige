@@ -1,26 +1,31 @@
 import {DynamicStructuredTool} from 'langchain/tools'
 import {z} from 'zod'
+import {COPY} from '~/constants'
 import {addComment} from '~/utils/github'
 
 /**
  * Comment on an issue
  */
-export default function comment({octokit}: {octokit: any}) {
+export default function comment({
+	octokit,
+	issueId
+}: {
+	octokit: any
+	issueId: string
+}) {
 	return new DynamicStructuredTool({
 		description: 'Adds a comment to an issue',
-		func: async ({issueId, comment}) => {
-			const footer = `By [Maige](https://maige.app). How's my driving?`
+		func: async ({comment}) => {
 			const res = await addComment({
 				octokit,
 				issueId,
-				comment: `${comment}\n\n${footer}`
+				comment: `${comment}\n\n${COPY.FOOTER}`
 			})
 
 			return JSON.stringify(res)
 		},
 		name: 'addComment',
 		schema: z.object({
-			issueId: z.string().describe('The ID of the issue'),
 			comment: z.string().describe('The comment to add')
 		})
 	})
