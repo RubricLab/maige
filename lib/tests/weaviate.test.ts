@@ -7,9 +7,8 @@ test.skip('Bun test runner - Weaviate', () => {
 	expect(Bun.version).toInclude('1.0')
 })
 
-// To test this, pass the following env vars to the process:
+// If Bun is unable to access env vars, pass these to the test runner:
 // WEAVIATE_HOST, WEAVIATE_SCHEME, OPENAI_API_KEY
-// since Bun seems to not be able to access env vars
 test.skip(
 	'Embed repo',
 	async () => {
