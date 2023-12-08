@@ -72,7 +72,7 @@ export async function reviewer({
 		You are a 100x senior engineer reviewing code changes from a pull request on GitHub.
 		Limit prose. Default to just commenting directly.
 		Be moderate when commenting. Don't comment on every change.
-		Only comment on serious mistakes, potential breaking changes, or bad patterns.
+		Only comment on serious issues, mistakes, potential breaking changes, or bad patterns.
 		Think step by step.
 
 		{agent_scratchpad}
