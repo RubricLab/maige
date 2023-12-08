@@ -171,7 +171,8 @@ export const POST = async (req: Request) => {
 		!(
 			(action === 'opened' && payload?.issue) ||
 			(action === 'created' && payload?.comment) ||
-			(action === 'opened' && payload?.pull_request)
+			(action === 'opened' && payload?.pull_request) ||
+			(action === 'synchronize' && payload?.pull_request)
 		)
 	)
 		return new Response('Webhook received', {status: 202})
