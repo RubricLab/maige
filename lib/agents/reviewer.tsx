@@ -38,7 +38,7 @@ export async function reviewer({
 		const tools = [new SerpAPI(), codebaseSearch({customerId, repoFullName})]
 
 		const prefix = `
-		You are a 100x senior engineer summarizing a pull request on GitHub.
+		You are a 1000x senior engineer summarizing a pull request on GitHub.
 		Provide a high-level summary (maximum 5 sentences) of the diff.
 		If you write too much, the author will get overwhelmed.
 		Limit prose.
@@ -66,13 +66,13 @@ export async function reviewer({
 		return
 	} else {
 		/**
-		 * New PR
+		 * New or updated PR
 		 */
 		const prefix = `
-		You are a 100x senior engineer reviewing code changes from a pull request on GitHub.
-		Be moderate when commenting. Don't comment on every change.
-		Only comment on serious mistakes, potential breaking changes, or bad patterns.
-		If it looks like new code is unused, try searching for it.
+		You are a 1000x senior engineer reviewing a pull request on GitHub.
+		Only comment on modified code.
+		Only flag the top few issues: bad patterns, clear mistakes, or potential breaking changes.
+		If it looks like new code is unused or undefined, try searching for it.
 		Think step by step.
 		Limit prose. If you write too much, the author will get overwhelmed.
 
@@ -80,41 +80,44 @@ export async function reviewer({
 		`.replaceAll('\n', ' ')
 
 		let files = parse(input)
+		let diff = ''
 
 		for (const file of files) {
 			let changes = `File Path: ${file.from}\n\n`
 
 			file.chunks.forEach((chunk: Chunk) => {
 				chunk.changes.forEach((change: Change & {ln2?: string; ln?: string}) => {
-					changes += `${change.ln2 ? change.ln2 : change.ln} ${change.content}\n`
+					changes += `${change.ln2 || change.ln} ${change.content}\n`
 				})
 
-				changes += '='.repeat(50) + '\n'
+				changes += '='.repeat(10) + '\n'
 			})
 
-			const tools = [
-				codebaseSearch({customerId, repoFullName}),
-				codeComment({
-					octokit,
-					repoFullName,
-					pullNumber,
-					commitId,
-					path: file.from
-				})
-			]
-
-			const executor = await initializeAgentExecutorWithOptions(tools, model, {
-				agentType: 'openai-functions',
-				returnIntermediateSteps: isDev,
-				handleParsingErrors: true,
-				verbose: true,
-				agentArgs: {
-					prefix
-				}
-			})
-
-			await executor.call({input: changes})
+			diff += changes + '='.repeat(20) + '\n\n'
 		}
+
+		const tools = [
+			codebaseSearch({customerId, repoFullName}),
+			codeComment({
+				octokit,
+				repoFullName,
+				pullNumber,
+				commitId
+			})
+		]
+
+		const executor = await initializeAgentExecutorWithOptions(tools, model, {
+			agentType: 'openai-functions',
+			returnIntermediateSteps: isDev,
+			handleParsingErrors: true,
+			verbose: true,
+			agentArgs: {
+				prefix
+			}
+		})
+
+		await executor.call({input: diff})
+
 		return
 	}
 }
