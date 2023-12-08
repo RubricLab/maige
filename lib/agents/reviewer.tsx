@@ -21,7 +21,7 @@ export async function reviewer({
 	pullId,
 	repoFullName,
 	pullNumber,
-	head
+	commitId
 }: {
 	customerId: string
 	input: string
@@ -29,7 +29,7 @@ export async function reviewer({
 	pullId?: string
 	repoFullName?: string
 	pullNumber?: number
-	head?: string
+	commitId?: string
 }) {
 	/**
 	 * Comment on a PR
@@ -97,7 +97,7 @@ export async function reviewer({
 					octokit,
 					repoFullName,
 					pullNumber,
-					commitId: head,
+					commitId,
 					path: file.from
 				})
 			]

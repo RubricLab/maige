@@ -267,7 +267,7 @@ export const POST = async (req: Request) => {
 			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${diff}`,
 			pullNumber: payload.number,
 			repoFullName: `${owner}/${name}`,
-			head: payload.pull_request.head.sha
+			commitId: payload.pull_request.head.sha
 		})
 
 		return new Response('Reviewed PR', {status: 200})
