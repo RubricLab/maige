@@ -18,7 +18,6 @@ test.skip(
 		const branch = 'main'
 
 		const vectorDB = new Weaviate(customerId)
-
 		const docs = await vectorDB.embedRepo(repoUrl, branch, true)
 
 		console.log(`Loaded ${docs?.length} docs`)
