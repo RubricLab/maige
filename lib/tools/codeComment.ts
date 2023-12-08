@@ -30,7 +30,8 @@ export function codeComment({
 					headers: {'X-GitHub-Api-Version': '2022-11-28'}
 				}
 			)
-			return JSON.stringify(res)
+
+			return res.status === 201 ? 'commented' : 'failed to comment'
 		},
 		name: 'codeComment',
 		schema: z.object({
