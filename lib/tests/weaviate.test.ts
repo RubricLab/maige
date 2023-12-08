@@ -14,7 +14,7 @@ test.skip(
 	'Embed repo',
 	async () => {
 		const customerId = Math.random().toString(36).substring(7)
-		const repoUrl = 'https://github.com/RubricLab/shot'
+		const repoUrl = 'https://github.com/RubricLab/maige'
 		const branch = 'main'
 
 		const vectorDB = new Weaviate(customerId)
