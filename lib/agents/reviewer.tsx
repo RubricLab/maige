@@ -87,7 +87,8 @@ export async function reviewer({
 
 			file.chunks.forEach((chunk: Chunk) => {
 				chunk.changes.forEach((change: Change & {ln2?: string; ln?: string}) => {
-					changes += `${change.ln2 || change.ln} ${change.content}\n`
+					const line = change.content.replaceAll('\t', ' ')
+					changes += `${change.ln2 || change.ln} ${line}\n`
 				})
 
 				changes += '='.repeat(10) + '\n'
