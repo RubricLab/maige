@@ -82,7 +82,7 @@ export async function reviewer({
 		let files = parse(input)
 		let diff = ''
 
-		for (const file of files) {
+		files.forEach((file: any) => {
 			let changes = `File Path: ${file.from}\n\n`
 
 			file.chunks.forEach((chunk: Chunk) => {
@@ -95,7 +95,7 @@ export async function reviewer({
 			})
 
 			diff += changes + '='.repeat(20) + '\n\n'
-		}
+		})
 
 		const tools = [
 			codebaseSearch({customerId, repoFullName}),
