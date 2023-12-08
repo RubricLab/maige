@@ -167,59 +167,23 @@ export const POST = async (req: Request) => {
 	if (comment && !comment.body.toLowerCase().includes('maige'))
 		return new Response('Irrelevant comment', {status: 202})
 
-	if (issue?.pull_request) {
-		const {
-			pull_request: {diff_url: diffUrl},
-			node_id: pullId
-		} = issue
-
-		// Get GitHub app instance access token
-		const app = new App({
-			appId: process.env.GITHUB_APP_ID || '',
-			privateKey: process.env.GITHUB_PRIVATE_KEY || ''
-		})
-
-		const octokit = await app.getInstallationOctokit(instanceId)
-
-		const response = await fetch(diffUrl)
-
-		if (!response.ok) return new Response('Could not fetch diff', {status: 503})
-
-		const data = await response.text()
-
-		await reviewer({
-			octokit: octokit,
-			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${data}`,
-			pullId
-		})
-
-		return new Response('Reviewed PR', {status: 200})
-	}
-
 	if (
 		!(
 			(action === 'opened' && payload?.issue) ||
-			(action === 'created' && payload?.comment)
+			(action === 'created' && payload?.comment) ||
+			(action === 'opened' && payload?.pull_request) ||
+			(action === 'synchronize' && payload?.pull_request)
 		)
 	)
 		return new Response('Webhook received', {status: 202})
 
 	const {
-		issue: {
-			node_id: issueId,
-			title,
-			number: issueNumber,
-			body,
-			labels: existingLabels
-		},
 		repository: {
 			node_id: repoId,
 			name,
 			owner: {login: owner}
 		}
 	} = payload
-
-	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
 
 	const customer = await prisma.customer.findUnique({
 		where: {
@@ -288,6 +252,60 @@ export const POST = async (req: Request) => {
 	}
 
 	await incrementUsage(prisma, owner)
+
+	if ((action == 'opened' || action == 'synchronize') && payload.pull_request) {
+		const {
+			pull_request: {diff_url: diffUrl}
+		} = payload
+
+		const res = await fetch(diffUrl)
+		if (!res.ok) return new Response('Could not fetch diff', {status: 503})
+		const diff = await res.text()
+
+		await reviewer({
+			customerId,
+			octokit,
+			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${diff}`,
+			pullNumber: payload.number,
+			repoFullName: `${owner}/${name}`,
+			commitId: payload.pull_request.head.sha
+		})
+
+		return new Response('Reviewed PR', {status: 200})
+	}
+
+	if (issue?.pull_request) {
+		const {
+			pull_request: {diff_url: diffUrl},
+			node_id: pullId
+		} = issue
+
+		const res = await fetch(diffUrl)
+		if (!res.ok) return new Response('Could not fetch diff', {status: 503})
+		const diff = await res.text()
+
+		await reviewer({
+			customerId,
+			octokit,
+			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${diff}`,
+			pullId,
+			repoFullName: `${owner}/${name}`
+		})
+
+		return new Response('Replied to PR comment', {status: 200})
+	}
+
+	const {
+		issue: {
+			node_id: issueId,
+			title,
+			number: issueNumber,
+			body,
+			labels: existingLabels
+		}
+	} = payload
+
+	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
 
 	/**
 	 * Repo commands

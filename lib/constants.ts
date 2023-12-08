@@ -14,3 +14,7 @@ export const TIERS = {
 		priceId: process.env.STRIPE_BASE_PRICE_ID || ''
 	}
 }
+
+export const COPY = {
+	FOOTER: `By [Maige](https://maige.app). How's my driving?`
+}
