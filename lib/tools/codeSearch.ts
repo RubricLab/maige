@@ -23,7 +23,12 @@ export function codebaseSearch({
 
 			// TODO: format this optimally for GPT
 			const codeString = docs
-				.map(({source, text}) => JSON.stringify({source, text}))
+				.map(({source, text}) =>
+					JSON.stringify({
+						source,
+						text: text.replaceAll('\\t', '\t').replaceAll('\\n', '\n')
+					})
+				)
 				.join('\n\n')
 
 			return codeString
