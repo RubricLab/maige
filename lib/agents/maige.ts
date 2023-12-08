@@ -4,6 +4,7 @@ import env from '~/env.mjs'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commentTool from '~/tools/comment'
 import dispatchEngineer from '~/tools/dispatchEngineer'
+import dispatchReviewer from '~/tools/dispatchReviewer'
 import {githubTool} from '~/tools/github'
 import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
@@ -22,6 +23,7 @@ export async function maige({
 	customerId,
 	repoFullName,
 	issueNumber,
+	pullUrl,
 	allLabels
 }: {
 	input: string
@@ -29,23 +31,29 @@ export async function maige({
 	prisma: any
 	customerId: string
 	repoFullName: string
-	issueNumber: number
+	issueNumber?: number
+	pullUrl?: string
 	allLabels: any[]
 }) {
 	const tools = [
-		commentTool({octokit}),
+		labelTool({octokit, allLabels}),
 		updateInstructionsTool({octokit, prisma, customerId, repoFullName}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
 		dispatchEngineer({issueNumber, repoFullName, customerId}),
-		labelTool({octokit, allLabels})
+		...(issueNumber && [commentTool({octokit})]),
+		...(pullUrl && [
+			dispatchReviewer({octokit, pullUrl, repoFullName, customerId})
+		])
 	]
 
 	const prefix = `
 You are a project manager that is tagged when new issues come into GitHub.
 You are responsible for labelling the issues using the GitHub API.
 You also maintain a set of user instructions that can customize your behaviour; you can write to these instructions at the request of a user.
-`.replaceAll('\n', ' ')
+`
+		.replaceAll('\n', ' ')
+		.replaceAll('\t', ' ')
 
 	const executor = await initializeAgentExecutorWithOptions(tools, model, {
 		agentType: 'openai-functions',
@@ -57,8 +65,7 @@ You also maintain a set of user instructions that can customize your behaviour; 
 		}
 	})
 
-	const result = await executor.call({input})
-	const {output} = result
+	const {output} = await executor.call({input})
 
 	return output
 }

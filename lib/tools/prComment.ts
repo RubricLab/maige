@@ -1,5 +1,6 @@
 import {DynamicStructuredTool} from 'langchain/tools'
 import {z} from 'zod'
+import {COPY} from '~/constants'
 import {addComment} from '~/utils/github'
 
 /**
@@ -9,12 +10,12 @@ export function prComment({octokit, pullId}: {octokit: any; pullId: string}) {
 	return new DynamicStructuredTool({
 		description: 'Adds a comment to a PR',
 		func: async ({comment}) => {
-			const footer = `By [Maige](https://maige.app). How's my driving?`
 			const res = await addComment({
 				octokit,
 				issueId: pullId,
-				comment: `${comment}\n\n${footer}`
+				comment: `${comment}\n\n${COPY.FOOTER}`
 			})
+
 			return JSON.stringify(res)
 		},
 		name: 'prComment',

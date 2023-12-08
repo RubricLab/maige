@@ -1,6 +1,5 @@
 import {App} from '@octokit/app'
 import {maige} from '~/agents/maige'
-import {reviewer} from '~/agents/reviewer'
 import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
@@ -253,48 +252,6 @@ export const POST = async (req: Request) => {
 
 	await incrementUsage(prisma, owner)
 
-	if ((action == 'opened' || action == 'synchronize') && payload.pull_request) {
-		const {
-			pull_request: {diff_url: diffUrl}
-		} = payload
-
-		const res = await fetch(diffUrl)
-		if (!res.ok) return new Response('Could not fetch diff', {status: 503})
-		const diff = await res.text()
-
-		await reviewer({
-			customerId,
-			octokit,
-			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${diff}`,
-			pullNumber: payload.number,
-			repoFullName: `${owner}/${name}`,
-			commitId: payload.pull_request.head.sha
-		})
-
-		return new Response('Reviewed PR', {status: 200})
-	}
-
-	if (issue?.pull_request) {
-		const {
-			pull_request: {diff_url: diffUrl},
-			node_id: pullId
-		} = issue
-
-		const res = await fetch(diffUrl)
-		if (!res.ok) return new Response('Could not fetch diff', {status: 503})
-		const diff = await res.text()
-
-		await reviewer({
-			customerId,
-			octokit,
-			input: `Instruction: ${comment?.body}\n\nPR Diff:\n${diff}`,
-			pullId,
-			repoFullName: `${owner}/${name}`
-		})
-
-		return new Response('Replied to PR comment', {status: 200})
-	}
-
 	const {
 		issue: {
 			node_id: issueId,
@@ -397,6 +354,7 @@ ${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
 			customerId,
 			repoFullName: `${owner}/${name}`,
 			issueNumber,
+			pullUrl: issue?.pull_request?.url || payload?.pull_request?.url || null,
 			allLabels
 		})
 
