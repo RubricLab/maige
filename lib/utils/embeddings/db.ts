@@ -39,9 +39,17 @@ export default class Weaviate {
 		query: string,
 		repository: string,
 		numResults: number = 3,
-		filePath: string = ''
+		filePath: string = '',
+		branch: string = ''
 	) {
-		return await search(this.config, query, numResults, repository, filePath)
+		return await search(
+			this.config,
+			query,
+			numResults,
+			repository,
+			filePath,
+			branch
+		)
 	}
 
 	async deleteRepo(repoUrl: string) {

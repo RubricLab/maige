@@ -13,16 +13,21 @@ test.skip('Bun test runner - Weaviate', () => {
 test.skip(
 	'Embed repo',
 	async () => {
-		const customerId = Math.random().toString(36).substring(7)
+		const customerId = '2ceed'
 		const repoUrl = 'https://github.com/RubricLab/maige'
-		const branch = 'main'
+		const branch = 'staging'
+		const query = 'codeSearch'
 
 		const vectorDB = new Weaviate(customerId)
-		const docs = await vectorDB.embedRepo(repoUrl, branch, true)
-
-		console.log(`Loaded ${docs?.length} docs`)
+		const docs = await vectorDB.embedRepo(repoUrl, branch)
 
 		expect(docs.length).toBeGreaterThan(0)
+
+		const search = await vectorDB.searchCode(query, repoUrl, 1, undefined, branch)
+
+		expect(search.length).toBeGreaterThan(0)
+
+		if (search.length > 0) expect(search[0].text).toInclude('search')
 	},
 	15 * 1000
 )
