@@ -5,6 +5,7 @@ const keys = [
 	'source',
 	'text',
 	'ext',
+	'summary',
 	'repository',
 	'branch',
 	'userId',
