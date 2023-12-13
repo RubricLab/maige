@@ -155,7 +155,6 @@ export const POST = async (req: Request) => {
 	 */
 	const {
 		comment,
-		issue,
 		sender: {login: sender},
 		installation: {id: instanceId}
 	} = payload
@@ -252,11 +251,8 @@ export const POST = async (req: Request) => {
 
 	await incrementUsage(prisma, owner)
 
-	const {
-		issue: {title, number: issueNumber, body, labels: existingLabels}
-	} = payload
-
-	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
+	const {issue, pull_request: pr} = payload
+	const {pull_request: prComment} = issue
 
 	/**
 	 * Repo commands
@@ -269,33 +265,39 @@ export const POST = async (req: Request) => {
 		})
 
 		const isComment = action === 'created'
+		const labels = issue?.existingLabels?.map((l: Label) => l.name).join(', ')
 
-		const engPrompt = `
-Hey, here's an incoming ${isComment ? 'comment' : 'issue'}${
-			isComment ? ` by @${comment.user.login}: ${comment?.body}.` : ''
-		}.
+		const prompt = `
+Hey, here's an incoming ${isComment ? 'comment' : pr ? 'PR' : 'issue'}.
 First, some context:
+Repo full name: ${owner}/${name}.
 Repo description: ${repoDescription}.
-All repo labels: ${allLabels
-			.map(
-				({name, description}) => `${name}: ${description?.replaceAll(';', ',')}`
-			)
-			.join('; ')}.
-Issue number: ${issueNumber}.
-Issue title: ${title}.
-Issue body: ${body}.
-Issue labels: ${existingLabelNames.join(', ')}.
-Your instructions: ${instructions}.
+${
+	pr || prComment
+		? `
+PR number: ${pr?.number || issue.number}.
+PR title: ${pr?.title || issue.title}.
+PR body: ${pr?.body || issue.body}.
+	`
+		: `
+Issue number: ${issue.number}.
+Issue title: ${issue.title}.
+Issue body: ${issue.body}.
+Issue labels: ${labels}.
+`
+}
+${isComment ? `The comment by @${comment.user.login}: ${comment?.body}.` : ''}
+Your instructions: ${instructions || 'do nothing'}.
 `.replaceAll('\n', ' ')
 
 		await maige({
-			input: engPrompt,
+			input: prompt,
 			octokit,
 			prisma,
 			customerId,
 			repoFullName: `${owner}/${name}`,
-			issueNumber,
-			issueId: issue?.node_id || null,
+			issueNumber: issue?.number,
+			issueId: issue?.node_id,
 			pullUrl: issue?.pull_request?.url || payload?.pull_request?.url || null,
 			allLabels
 		})

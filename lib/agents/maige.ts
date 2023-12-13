@@ -55,7 +55,12 @@ ${
 	pullUrl ? '' : 'You are responsible for labelling issues using the GitHub API.'
 }
 You also maintain a set of user instructions that can customize your behaviour; you can write to these instructions at the request of a user.
-Repo full name: ${repoFullName}.
+All repo labels: ${allLabels
+		.map(
+			({name, description}) =>
+				`${name}${description ? `: ${description.replaceAll(';', ',')}` : ''}`
+		)
+		.join('; ')}.
 `
 		.replaceAll('\n', ' ')
 		.replaceAll('\t', ' ')
