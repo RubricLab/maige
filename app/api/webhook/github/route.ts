@@ -253,13 +253,7 @@ export const POST = async (req: Request) => {
 	await incrementUsage(prisma, owner)
 
 	const {
-		issue: {
-			node_id: issueId,
-			title,
-			number: issueNumber,
-			body,
-			labels: existingLabels
-		}
+		issue: {title, number: issueNumber, body, labels: existingLabels}
 	} = payload
 
 	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
@@ -301,7 +295,7 @@ Your instructions: ${instructions}.
 			customerId,
 			repoFullName: `${owner}/${name}`,
 			issueNumber,
-			issueId,
+			issueId: issue?.node_id || null,
 			pullUrl: issue?.pull_request?.url || payload?.pull_request?.url || null,
 			allLabels
 		})
