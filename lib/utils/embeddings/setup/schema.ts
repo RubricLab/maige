@@ -1,5 +1,5 @@
 export const schema = {
-	class: 'CodeSearch_TestTed',
+	class: 'CodeSearch_Test',
 	invertedIndexConfig: {
 		bm25: {
 			b: 0.75,
