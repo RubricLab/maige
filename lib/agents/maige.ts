@@ -38,7 +38,7 @@ export async function maige({
 	allLabels: any[]
 }) {
 	const tools = [
-		labelTool({octokit, allLabels}),
+		labelTool({octokit, allLabels, issueId}),
 		updateInstructionsTool({octokit, prisma, customerId, repoFullName}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
@@ -50,8 +50,10 @@ export async function maige({
 	]
 
 	const prefix = `
-You are a project manager that is tagged when new issues come into GitHub.
-You are responsible for labelling the issues using the GitHub API.
+You are a project manager that is tagged when new issues and PRs come into GitHub.
+${
+	pullUrl ? '' : 'You are responsible for labelling issues using the GitHub API.'
+}
 You also maintain a set of user instructions that can customize your behaviour; you can write to these instructions at the request of a user.
 Repo full name: ${repoFullName}.
 `
