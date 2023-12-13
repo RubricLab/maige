@@ -43,7 +43,7 @@ export default async function addRepo(
 			process.env.GITHUB_ACCESS_TOKEN || ''
 		)
 
-		const docs = Promise.all(repo.map(async doc => {
+		const docs = await Promise.all(repo.map(async doc => {
 			return {
 				...doc,
 				metadata: {
@@ -66,7 +66,7 @@ export default async function addRepo(
 		})
 
 		// returns the Weaviate ids of the added documents
-		return await store.addDocuments(await docs)
+		return await store.addDocuments(docs)
 	} catch (e) {
 		console.error(e)
 		return
