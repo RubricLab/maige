@@ -39,7 +39,7 @@ export async function maige({
 }) {
 	const tools = [
 		labelTool({octokit, allLabels, issueId}),
-		updateInstructionsTool({octokit, prisma, customerId, repoFullName}),
+		updateInstructionsTool({octokit, prisma, customerId, issueId, repoFullName}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
 		dispatchEngineer({issueNumber, repoFullName, customerId}),
