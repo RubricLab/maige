@@ -252,7 +252,7 @@ export const POST = async (req: Request) => {
 	await incrementUsage(prisma, owner)
 
 	const {issue, pull_request: pr} = payload
-	const {pull_request: prComment} = issue
+	const prComment = issue?.pull_request
 
 	/**
 	 * Repo commands
