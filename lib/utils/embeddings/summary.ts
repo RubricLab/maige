@@ -3,7 +3,7 @@ import {OpenAI} from 'langchain/llms/openai'
 import {PromptTemplate} from 'langchain/prompts'
 
 const prompt = PromptTemplate.fromTemplate(
-	`You are AI that writes description of code snippet. Follow format of example below. Lots of keywords, straight to the point, one line.
+	`You are AI that make desc of code snippet. Many keywords, straight to point, 1 line.
 
     Code:#!/bin/sh\ngroovyc src/*.groovy\ngroovy src/Main.groovy --cp src/
     AI:Compiles and runs a Groovy program using the source files in the \"src\" directory.
