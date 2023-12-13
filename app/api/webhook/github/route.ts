@@ -6,7 +6,7 @@ import {stripe} from '~/stripe'
 import {Label, Repository} from '~/types'
 import {validateSignature} from '~/utils'
 import Weaviate from '~/utils/embeddings/db'
-import {getMainBranch, openUsageIssue} from '~/utils/github'
+import {getMainBranch, getRepoMeta, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
 
 export const maxDuration = 90
@@ -155,7 +155,6 @@ export const POST = async (req: Request) => {
 	 */
 	const {
 		comment,
-		issue,
 		sender: {login: sender},
 		installation: {id: instanceId}
 	} = payload
@@ -252,108 +251,53 @@ export const POST = async (req: Request) => {
 
 	await incrementUsage(prisma, owner)
 
-	const {
-		issue: {
-			node_id: issueId,
-			title,
-			number: issueNumber,
-			body,
-			labels: existingLabels
-		}
-	} = payload
-
-	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
+	const {issue, pull_request: pr} = payload
+	const prComment = issue?.pull_request
 
 	/**
 	 * Repo commands
 	 */
 	try {
-		const queryRes: {
-			repository: {
-				description?: string
-			}
-		} = await octokit.graphql(
-			`
-        query Repo($name: String!, $owner: String!) {
-          repository(name: $name, owner: $owner) {
-            description
-          }
-        }
-      `,
-			{
-				name,
-				owner
-			}
-		)
-
-		if (!queryRes?.repository)
-			return new Response('Could not get repo', {status: 401})
-
-		const labelsRes: {
-			repository: {
-				description?: string
-				labels: {
-					nodes: Label[]
-				}
-			}
-		} = await octokit.graphql(
-			`
-        query Labels($name: String!, $owner: String!) {
-          repository(name: $name, owner: $owner) {
-            labels(first: 100) {
-              nodes {
-                id
-                name
-                description
-              }
-            }
-          }
-        }
-      `,
-			{
-				name,
-				owner
-			}
-		)
-
-		if (!labelsRes?.repository?.labels?.nodes)
-			throw new Error('Could not get labels')
-
-		const allLabels: Label[] = labelsRes.repository.labels.nodes
-
-		console.log(`Comment by ${comment?.author_association} in ${owner}/${name}`)
-
-		const {description: repoDescription} = queryRes.repository
+		const {labels: allLabels, description: repoDescription} = await getRepoMeta({
+			octokit,
+			owner,
+			name
+		})
 
 		const isComment = action === 'created'
+		const labels = issue?.existingLabels?.map((l: Label) => l.name).join(', ')
 
-		const engPrompt = `
-Hey, here's an incoming ${isComment ? 'comment' : 'issue'}.
+		const prompt = `
+Hey, here's an incoming ${isComment ? 'comment' : pr ? 'PR' : 'issue'}.
 First, some context:
-Repo owner: ${owner}.
-Repo name: ${name}.
+Repo full name: ${owner}/${name}.
 Repo description: ${repoDescription}.
-All repo labels: ${allLabels
-			.map(
-				({name, description}) => `${name}: ${description?.replaceAll(';', ',')}`
-			)
-			.join('; ')}.
-Issue ID: ${issueId}.
-Issue number: ${issueNumber}.
-Issue title: ${title}.
-Issue body: ${body}.
-Issue labels: ${existingLabelNames.join(', ')}.
-Your instructions: ${instructions}.
-${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
+${
+	pr || prComment
+		? `
+PR number: ${pr?.number || issue.number}.
+PR title: ${pr?.title || issue.title}.
+PR body: ${pr?.body || issue.body}.
+	`
+		: `
+Issue number: ${issue.number}.
+Issue title: ${issue.title}.
+Issue body: ${issue.body}.
+Issue labels: ${labels}.
+`
+}
+${isComment ? `The comment by @${comment.user.login}: ${comment?.body}.` : ''}
+Your instructions: ${instructions || 'do nothing'}.
 `.replaceAll('\n', ' ')
 
 		await maige({
-			input: engPrompt,
+			input: prompt,
 			octokit,
 			prisma,
 			customerId,
 			repoFullName: `${owner}/${name}`,
-			issueNumber,
+			issueNumber: issue?.number,
+			issueId: issue?.node_id,
 			pullUrl: issue?.pull_request?.url || payload?.pull_request?.url || null,
 			allLabels
 		})

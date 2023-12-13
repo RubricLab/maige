@@ -23,6 +23,7 @@ export async function maige({
 	customerId,
 	repoFullName,
 	issueNumber,
+	issueId,
 	pullUrl,
 	allLabels
 }: {
@@ -32,25 +33,34 @@ export async function maige({
 	customerId: string
 	repoFullName: string
 	issueNumber?: number
+	issueId?: string
 	pullUrl?: string
 	allLabels: any[]
 }) {
 	const tools = [
-		labelTool({octokit, allLabels}),
+		labelTool({octokit, allLabels, issueId}),
 		updateInstructionsTool({octokit, prisma, customerId, repoFullName}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
 		dispatchEngineer({issueNumber, repoFullName, customerId}),
-		...(issueNumber && [commentTool({octokit})]),
-		...(pullUrl && [
-			dispatchReviewer({octokit, pullUrl, repoFullName, customerId})
-		])
+		...(issueId ? [commentTool({octokit, issueId})] : []),
+		...(pullUrl
+			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId})]
+			: [])
 	]
 
 	const prefix = `
-You are a project manager that is tagged when new issues come into GitHub.
-You are responsible for labelling the issues using the GitHub API.
+You are a project manager that is tagged when new issues and PRs come into GitHub.
+${
+	pullUrl ? '' : 'You are responsible for labelling issues using the GitHub API.'
+}
 You also maintain a set of user instructions that can customize your behaviour; you can write to these instructions at the request of a user.
+All repo labels: ${allLabels
+		.map(
+			({name, description}) =>
+				`${name}${description ? `: ${description.replaceAll(';', ',')}` : ''}`
+		)
+		.join('; ')}.
 `
 		.replaceAll('\n', ' ')
 		.replaceAll('\t', ' ')
