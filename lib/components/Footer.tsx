@@ -6,7 +6,7 @@ export const Footer = () => {
 			<span className='text-xs text-white/40'>
 				<Link
 					className='font-medium text-white/60 transition-opacity hover:text-white/80'
-					href='https://github.com/tedspare/maige'
+					href='https://github.com/RubricLab/maige'
 					target='_blank'>
 					Open source
 				</Link>
