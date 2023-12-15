@@ -1,6 +1,6 @@
 # Maige
 
-AI-powered GitHub issue labeling made simple.
+Repo maintenance made simpler.
 
 Quickly set up Maige and let AI handle your issue labels with ease. Get started at [Maige.app](https://maige.app).
 
