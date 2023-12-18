@@ -4,7 +4,7 @@ import {z} from 'zod'
 /**
  * Call the GitHub REST API
  */
-export default function github({octokit}: {octokit: any}) {
+export function githubTool({octokit}: {octokit: any}) {
 	return new DynamicStructuredTool({
 		description: 'GitHub REST API',
 		func: async ({path, body, method}) => {
@@ -21,7 +21,8 @@ export default function github({octokit}: {octokit: any}) {
 				})
 
 				return res.data
-					? JSON.stringify(res.data).replaceAll(apiUrl, '')
+					? // TODO: find a better way to ignore most of the GitHub API response
+					  JSON.stringify(res.data).replaceAll(apiUrl, '').slice(0, 1000)
 					: 'Something went wrong. Read the docs.'
 			} catch (error: any) {
 				return `Something went wrong: ${error.message || 'unknown error'}`

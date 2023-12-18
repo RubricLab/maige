@@ -1,5 +1,5 @@
 export const schema = {
-	class: 'CodeSearch_TestTed',
+	class: 'CodeSearch',
 	invertedIndexConfig: {
 		bm25: {
 			b: 0.75,
@@ -35,6 +35,13 @@ export const schema = {
 			indexFilterable: true,
 			indexSearchable: true,
 			name: 'repository',
+			tokenization: 'word'
+		},
+		{
+			dataType: ['text'],
+			indexFilterable: true,
+			indexSearchable: true,
+			name: 'summary',
 			tokenization: 'word'
 		},
 		{

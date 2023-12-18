@@ -6,21 +6,22 @@ import {labelIssue} from '~/utils/github'
 /**
  * Label an issue using GitHub REST API tool
  */
-export default function label({
+export function labelTool({
 	octokit,
-	allLabels
+	allLabels,
+	issueId
 }: {
 	octokit: any
 	allLabels: Label[]
+	issueId: string
 }) {
 	return new DynamicStructuredTool({
 		description: 'Adds a label to an issue',
 		name: 'labelIssue',
 		schema: z.object({
-			issueId: z.string().describe('The ID of the issue'),
 			labelNames: z.array(z.string()).describe('The names of labels to apply')
 		}),
-		func: async ({issueId, labelNames}) => {
+		func: async ({labelNames}) => {
 			const res = await labelIssue({octokit, labelNames, allLabels, issueId})
 
 			return JSON.stringify(res)

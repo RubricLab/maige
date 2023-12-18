@@ -1,15 +1,15 @@
 import {App} from '@octokit/app'
-import maige from '~/agents/maige'
+import {maige} from '~/agents/maige'
 import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
 import {Label, Repository} from '~/types'
 import {validateSignature} from '~/utils'
 import Weaviate from '~/utils/embeddings/db'
-import {getMainBranch, openUsageIssue} from '~/utils/github'
+import {getMainBranch, getRepoMeta, openUsageIssue} from '~/utils/github'
 import {incrementUsage} from '~/utils/payment'
 
-export const maxDuration = 15
+export const maxDuration = 300
 
 /**
  * POST /api/webhook
@@ -153,30 +153,10 @@ export const POST = async (req: Request) => {
 	/**
 	 * Issue-related events. We care about new issues and comments.
 	 */
-	if (
-		!(
-			(action === 'opened' && payload?.issue) ||
-			(action === 'created' && payload?.comment)
-		)
-	)
-		return new Response('Webhook received', {status: 202})
-
 	const {
-		issue: {
-			node_id: issueId,
-			title,
-			number: issueNumber,
-			body,
-			labels: existingLabels
-		},
-		repository: {
-			node_id: repoId,
-			name,
-			owner: {login: owner}
-		},
+		comment,
 		sender: {login: sender},
-		installation: {id: instanceId},
-		comment
+		installation: {id: instanceId}
 	} = payload
 
 	if (sender.includes('maige'))
@@ -185,7 +165,23 @@ export const POST = async (req: Request) => {
 	if (comment && !comment.body.toLowerCase().includes('maige'))
 		return new Response('Irrelevant comment', {status: 202})
 
-	const existingLabelNames = existingLabels?.map((l: Label) => l.name)
+	if (
+		!(
+			(action === 'opened' && payload?.issue) ||
+			(action === 'created' && payload?.comment) ||
+			(action === 'opened' && payload?.pull_request) ||
+			(action === 'synchronize' && payload?.pull_request)
+		)
+	)
+		return new Response('Webhook received', {status: 202})
+
+	const {
+		repository: {
+			node_id: repoId,
+			name,
+			owner: {login: owner}
+		}
+	} = payload
 
 	const customer = await prisma.customer.findUnique({
 		where: {
@@ -255,96 +251,58 @@ export const POST = async (req: Request) => {
 
 	await incrementUsage(prisma, owner)
 
+	const {issue, pull_request: pr} = payload
+	const prComment = issue?.pull_request
+
 	/**
 	 * Repo commands
 	 */
 	try {
-		const queryRes: {
-			repository: {
-				description?: string
-			}
-		} = await octokit.graphql(
-			`
-        query Repo($name: String!, $owner: String!) {
-          repository(name: $name, owner: $owner) {
-            description
-          }
-        }
-      `,
-			{
-				name,
-				owner
-			}
-		)
-
-		if (!queryRes?.repository)
-			return new Response('Could not get repo', {status: 401})
-
-		const labelsRes: {
-			repository: {
-				description?: string
-				labels: {
-					nodes: Label[]
-				}
-			}
-		} = await octokit.graphql(
-			`
-        query Labels($name: String!, $owner: String!) {
-          repository(name: $name, owner: $owner) {
-            labels(first: 100) {
-              nodes {
-                id
-                name
-                description
-              }
-            }
-          }
-        }
-      `,
-			{
-				name,
-				owner
-			}
-		)
-
-		if (!labelsRes?.repository?.labels?.nodes)
-			throw new Error('Could not get labels')
-
-		const allLabels: Label[] = labelsRes.repository.labels.nodes
-
-		console.log(`Comment by ${comment?.author_association} in ${owner}/${name}`)
-
-		const {description: repoDescription} = queryRes.repository
+		const {labels: allLabels, description: repoDescription} = await getRepoMeta({
+			octokit,
+			owner,
+			name
+		})
 
 		const isComment = action === 'created'
+		const beta =
+			comment?.body && comment.body.toLowerCase().includes('maige beta')
+		const labels = issue?.existingLabels?.map((l: Label) => l.name).join(', ')
 
-		// Note: issue number has been omitted
-		const engPrompt = `
-Hey, here's an incoming ${isComment ? 'comment' : 'issue'}.
+		const prompt = `
+Hey, here's an incoming ${isComment ? 'comment' : pr ? 'PR' : 'issue'}.
 First, some context:
-Repo owner: ${owner}.
-Repo name: ${name}.
+Repo full name: ${owner}/${name}.
 Repo description: ${repoDescription}.
-All repo labels: ${allLabels
-			.map(
-				({name, description}) => `${name}: ${description?.replaceAll(';', ',')}`
-			)
-			.join('; ')}.
-Issue ID: ${issueId}.
-Issue number: ${issueNumber}.
-Issue title: ${title}.
-Issue body: ${body}.
-Issue labels: ${existingLabelNames.join(', ')}.
-Your instructions: ${instructions}.
-${isComment ? `Comment by @${comment.user.login}: ${comment?.body}.` : ''}
+${
+	pr || prComment
+		? `
+PR number: ${pr?.number || issue.number}.
+PR title: ${pr?.title || issue.title}.
+PR body: ${pr?.body || issue.body}.
+	`
+		: `
+Issue number: ${issue.number}.
+Issue title: ${issue.title}.
+Issue body: ${issue.body}.
+Issue labels: ${labels}.
+`
+}
+${isComment ? `The comment by @${comment.user.login}: ${comment?.body}.` : ''}
+Your instructions: ${instructions || 'do nothing'}.
 `.replaceAll('\n', ' ')
 
 		await maige({
-			input: engPrompt,
+			input: prompt,
 			octokit,
 			prisma,
 			customerId,
-			repoName: name
+			repoFullName: `${owner}/${name}`,
+			issueNumber: issue?.number,
+			issueId: issue?.node_id,
+			pullUrl: issue?.pull_request?.url || payload?.pull_request?.url || null,
+			allLabels,
+			beta
 		})
 
 		return new Response('ok', {status: 200})

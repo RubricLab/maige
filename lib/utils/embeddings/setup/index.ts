@@ -5,8 +5,9 @@ export async function main() {
 	console.log('Grabbing Weaviate schema template...')
 
 	console.log('Creating Weaviate schema...')
+
 	const client = weaviate.client({
-		scheme: 'https',
+		scheme: process.env.WEAVIATE_SCHEME,
 		host: process.env.WEAVIATE_HOST
 	})
 

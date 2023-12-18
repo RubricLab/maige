@@ -16,21 +16,61 @@ export async function addComment({
 }): Promise<string> {
 	const commentResult = await octokit.graphql(
 		`
-    mutation($issueId: ID!, $comment: String!) {
-      addComment(input: { subjectId: $issueId, body: $comment }) {
-        clientMutationId
-      }
-    }
+			mutation($issueId: ID!, $comment: String!) {
+				addComment(input: { subjectId: $issueId, body: $comment }) {
+					clientMutationId
+				}
+			}
     `,
-		{
-			issueId,
-			comment
-		}
+		{issueId, comment}
 	)
 
 	if (!commentResult) throw new Error('Could not add comment')
 
 	return commentResult
+}
+
+export async function getRepoMeta({
+	name,
+	owner,
+	octokit
+}: {
+	name: string
+	owner: string
+	octokit: any
+}): Promise<{
+	labels: Label[]
+	description: string
+}> {
+	const res = await octokit.graphql(
+		`
+			query Labels($name: String!, $owner: String!) {
+				repository(name: $name, owner: $owner) {
+					description
+					labels(first: 100) {
+						nodes {
+							id
+							name
+							description
+						}
+					}
+				}
+			}
+		`,
+		{name, owner}
+	)
+
+	if (!res?.repository) throw new Error('Could not get repo')
+
+	const {description, labels} = res.repository
+
+	if (!labels?.nodes) throw new Error('Could not get labels')
+	if (!description) throw new Error('Could not get description')
+
+	return {
+		description,
+		labels: labels.nodes
+	}
 }
 
 /**
@@ -53,24 +93,21 @@ export async function labelIssue({
 
 	const labelResult = await octokit.graphql(
 		`
-    mutation AddLabels($issueId: ID!, $labelIds: [ID!]!) {
-      addLabelsToLabelable(input: {
-        labelIds: $labelIds, labelableId: $issueId
-      }) {
-        labelable {
-          labels(first:10) {
-            nodes {
-              name
-            }
-          }
-        }
-      }
-    }
+			mutation AddLabels($issueId: ID!, $labelIds: [ID!]!) {
+				addLabelsToLabelable(input: {
+					labelIds: $labelIds, labelableId: $issueId
+				}) {
+					labelable {
+						labels(first:10) {
+							nodes {
+								name
+							}
+						}
+					}
+				}
+			}
     `,
-		{
-			issueId,
-			labelIds
-		}
+		{issueId, labelIds}
 	)
 
 	if (!labelResult) throw new Error('Could not add labels')
@@ -97,7 +134,7 @@ export async function openUsageIssue(
           }
         }
       }
-      `,
+		`,
 		{
 			repoId,
 			title: 'Maige Usage',

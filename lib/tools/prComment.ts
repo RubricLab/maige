@@ -6,25 +6,19 @@ import {addComment} from '~/utils/github'
 /**
  * Comment on an issue
  */
-export default function comment({
-	octokit,
-	issueId
-}: {
-	octokit: any
-	issueId: string
-}) {
+export function prComment({octokit, pullId}: {octokit: any; pullId: string}) {
 	return new DynamicStructuredTool({
-		description: 'Adds a comment to an issue',
+		description: 'Adds a comment to a PR',
 		func: async ({comment}) => {
 			const res = await addComment({
 				octokit,
-				issueId,
+				issueId: pullId,
 				comment: `${comment}\n\n${COPY.FOOTER}`
 			})
 
 			return JSON.stringify(res)
 		},
-		name: 'addComment',
+		name: 'prComment',
 		schema: z.object({
 			comment: z.string().describe('The comment to add')
 		})
