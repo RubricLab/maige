@@ -3,6 +3,9 @@ import deleteRepo from './delete'
 import addRepo from './embed'
 import {checkIndexExists} from './exists'
 import search from './query'
+import deleteFiles from './deleteFiles'
+import getFiles from './get'
+import updateRepo from './update'
 
 export type WeaviateClient = ReturnType<typeof weaviate.client>
 
@@ -56,8 +59,15 @@ export default class Weaviate {
 		return await deleteRepo(this.config, repoUrl)
 	}
 
-	// TODO: implement
-	async updateRepo(repoUrl: string, filenames: Array<string>) {
-		return
+	async updateRepo(repoUrl: string, filePaths: string[], branch: string) {
+		await updateRepo(this.config, repoUrl, branch, filePaths)
+	}
+
+	async deleteFiles(repoUrl: string, fileNames: string[], branch: string) {
+		await deleteFiles(this.config, repoUrl, fileNames, branch)
+	}
+
+	async getFiles(filePaths: string[], repoUrl: string, branch: string) {
+		await getFiles(filePaths, repoUrl, branch)
 	}
 }
