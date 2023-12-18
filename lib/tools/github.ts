@@ -21,7 +21,8 @@ export function githubTool({octokit}: {octokit: any}) {
 				})
 
 				return res.data
-					? JSON.stringify(res.data).replaceAll(apiUrl, '')
+					? // TODO: find a better way to ignore most of the GitHub API response
+					  JSON.stringify(res.data).replaceAll(apiUrl, '').slice(0, 1000)
 					: 'Something went wrong. Read the docs.'
 			} catch (error: any) {
 				return `Something went wrong: ${error.message || 'unknown error'}`

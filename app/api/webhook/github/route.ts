@@ -265,6 +265,8 @@ export const POST = async (req: Request) => {
 		})
 
 		const isComment = action === 'created'
+		const beta =
+			comment?.body && comment.body.toLowerCase().includes('maige beta')
 		const labels = issue?.existingLabels?.map((l: Label) => l.name).join(', ')
 
 		const prompt = `
@@ -299,7 +301,8 @@ Your instructions: ${instructions || 'do nothing'}.
 			issueNumber: issue?.number,
 			issueId: issue?.node_id,
 			pullUrl: issue?.pull_request?.url || payload?.pull_request?.url || null,
-			allLabels
+			allLabels,
+			beta
 		})
 
 		return new Response('ok', {status: 200})
