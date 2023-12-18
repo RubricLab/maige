@@ -12,8 +12,16 @@ const prompt = PromptTemplate.fromTemplate(
     AI:`
 )
 
-export async function AISummary(code: string, modelName: string = 'gpt-3.5-turbo', temperature: number = 0) {
+export async function AISummary(
+	code: string,
+	modelName: string = 'gpt-3.5-turbo',
+	temperature: number = 0
+) {
 	const model = new OpenAI({temperature, modelName})
-	const codeChain = new LLMChain({llm: model, prompt})
+	const codeChain = new LLMChain({
+		llm: model,
+		prompt
+	})
+
 	return await codeChain.call({code})
 }

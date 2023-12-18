@@ -1,6 +1,5 @@
 import {expect, test} from 'bun:test'
 import Weaviate from '~/utils/embeddings/db'
-import {schema} from '~/utils/embeddings/setup/schema'
 
 test.skip('Bun test runner - Weaviate', () => {
 	// This is arbitrary. Could just return true.
@@ -15,10 +14,10 @@ test(
 	async () => {
 		const customerId = 'clot5gx6a0000uvdovvfi1x9q'
 		const repoUrl = 'https://github.com/RubricLab/maige'
-		const branch = 'staging'
+		const branch = 'main'
 		const query = 'codeSearch' // arbitrary - should change over time
 
-		const vectorDB = new Weaviate(customerId, schema.class)
+		const vectorDB = new Weaviate(customerId, 'CodeSearch_Test')
 		const docs = await vectorDB.embedRepo(repoUrl, branch)
 
 		expect(docs?.length).toBeGreaterThan(0)
@@ -29,5 +28,5 @@ test(
 
 		if (search?.length > 0) expect(search[0].text).toInclude('search')
 	},
-	30 * 1000
+	300 * 1000 // the max timeout of an edge function
 )
