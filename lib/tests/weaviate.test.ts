@@ -4,17 +4,19 @@ import Weaviate from '~/utils/embeddings/db'
 test(
 	'Embed repo',
 	async () => {
-		const customerId = 'clot5gx6a0000uvdovvfi1x9q'
+		const customerId = 'ai4vo'
 		const repoUrl = 'https://github.com/RubricLab/maige'
 		const branch = 'main'
-		const query = 'search code' // arbitrary - should change over time
+		const query = 'code search' // arbitrary - should change over time
 
-		const vectorDB = new Weaviate(customerId, 'CodeSearch_Test')
+		const vectorDB = new Weaviate(customerId, 'CodeSearch')
 		const docs = await vectorDB.embedRepo(repoUrl, branch)
 
 		expect(docs?.length).toBeGreaterThan(0)
 
 		const search = await vectorDB.searchCode(query, repoUrl, 1, undefined, branch)
+
+		console.log(search)
 
 		expect(search?.length).toBeGreaterThan(0)
 
