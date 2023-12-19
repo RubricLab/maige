@@ -150,6 +150,31 @@ export const POST = async (req: Request) => {
 		}
 	}
 
+	if (payload?.head_commit && (payload?.ref === `refs/heads/${payload?.repository.master_branch}`)) {
+		console.log('New commit to master branch')
+
+		const customer = await prisma.customer.findUnique({
+			where: {
+				name: payload?.repository?.owner?.login || undefined
+			},
+			select: {
+				id: true,
+			}
+		})
+
+		if (!customer?.id)
+			return new Response(`Could not find customer`, {
+				status: 500
+		})
+
+
+		console.log('Updating repo')
+		const vectorDB = new Weaviate(customer.id)
+		console.log("files", payload.head_commit.modified)
+		await vectorDB.updateRepo(payload.repository.html_url, payload.head_commit.modified, payload.ref)
+		console.log('Repo updated')
+	}
+
 	/**
 	 * Issue-related events. We care about new issues and comments.
 	 */
