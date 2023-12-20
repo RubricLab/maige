@@ -17,21 +17,21 @@ export default function updateInstructions({
 	issueId: string
 	customerId: string
 	repoFullName: string
-	instructionCreator: string
-	instructionCommentLink: string
+	instructionCreator?: string
+	instructionCommentLink?: string
 }) {
 	return new DynamicStructuredTool({
 		description:
 			'User will explicitly ask for custom instructions to be updated.',
 		func: async ({newInstructions}) => {
-			const project = (
-				await prisma.project.findMany({
-					where: {
+			const project = await prisma.project.findUnique({
+				where: {
+					customerId_name: {
 						customerId,
 						name: repoFullName.split('/')[1]
 					}
-				})
-			)[0]
+				}
+			})
 			const res = await prisma.instruction.create({
 				data: {
 					projectId: project.id,

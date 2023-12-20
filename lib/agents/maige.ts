@@ -49,8 +49,8 @@ export async function maige({
 			customerId,
 			issueId,
 			repoFullName,
-			instructionCreator: comment.user.login,
-			instructionCommentLink: comment.html_url
+			instructionCreator: comment?.user?.login,
+			instructionCommentLink: comment?.html_url
 		}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
