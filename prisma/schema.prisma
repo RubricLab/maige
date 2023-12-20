@@ -29,13 +29,28 @@ model Project {
   id   String @id @default(cuid())
   name String
 
-  customInstructions String @default("") @db.Text
+  customInstructions String @default("")
 
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  runs Run[]
 
   createdAt DateTime @default(now())
 
   @@unique([customerId, name])
   @@index([customerId])
+}
+
+model Run {
+  id String @id @default(cuid())
+
+  output String
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
 }
