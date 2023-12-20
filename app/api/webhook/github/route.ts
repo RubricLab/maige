@@ -207,7 +207,8 @@ export const POST = async (req: Request) => {
 	if (!customer) return new Response('Could not find customer', {status: 500})
 
 	const {id: customerId, usage, usageLimit, usageWarned, projects} = customer
-	const instructions = projects?.[0]?.customInstructions || ''
+	const instructions =
+		projects?.[0]?.customInstructions.map(ci => ci.content).join('. ') || ''
 
 	// Get GitHub app instance access token
 	const app = new App({
@@ -305,6 +306,7 @@ Your instructions: ${instructions || 'do nothing'}.
 			issueId: issue?.node_id,
 			pullUrl: issue?.pull_request?.url || pr?.url || null,
 			allLabels,
+			comment,
 			beta
 		})
 
