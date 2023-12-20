@@ -254,6 +254,9 @@ export const POST = async (req: Request) => {
 	const {issue, pull_request: pr} = payload
 	const prComment = issue?.pull_request
 
+	// TODO: remove this once we optimize PR reviewing
+	if (pr) return new Response('PR received', {status: 202})
+
 	/**
 	 * Repo commands
 	 */
@@ -300,7 +303,7 @@ Your instructions: ${instructions || 'do nothing'}.
 			repoFullName: `${owner}/${name}`,
 			issueNumber: issue?.number,
 			issueId: issue?.node_id,
-			pullUrl: issue?.pull_request?.url || payload?.pull_request?.url || null,
+			pullUrl: issue?.pull_request?.url || pr?.url || null,
 			allLabels,
 			beta
 		})
