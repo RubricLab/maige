@@ -26,6 +26,7 @@ export async function maige({
 	issueId,
 	pullUrl,
 	allLabels,
+	comment,
 	beta
 }: {
 	input: string
@@ -37,11 +38,20 @@ export async function maige({
 	issueId?: string
 	pullUrl?: string
 	allLabels: any[]
+	comment: any
 	beta?: boolean
 }) {
 	const tools = [
 		labelTool({octokit, allLabels, issueId}),
-		updateInstructionsTool({octokit, prisma, customerId, issueId, repoFullName}),
+		updateInstructionsTool({
+			octokit,
+			prisma,
+			customerId,
+			issueId,
+			repoFullName,
+			instructionCreator: comment?.user?.login,
+			instructionCommentLink: comment?.html_url
+		}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
 		...(beta ? [dispatchEngineer({issueNumber, repoFullName, customerId})] : []),

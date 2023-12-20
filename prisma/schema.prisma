@@ -29,13 +29,25 @@ model Project {
   id   String @id @default(cuid())
   name String
 
-  customInstructions String @default("") @db.Text
-
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  createdAt          DateTime      @default(now())
+  customInstructions Instruction[]
 
   @@unique([customerId, name])
   @@index([customerId])
+}
+
+model Instruction {
+  id                String  @id @default(cuid())
+  projectId         String
+  content           String  @db.Text
+  creatorUsername   String?
+  githubCommentLink String?
+
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
 }
