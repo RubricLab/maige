@@ -45,7 +45,9 @@ export async function maige({
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
 		...(beta ? [dispatchEngineer({issueNumber, repoFullName, customerId})] : []),
-		...(issueId ? [commentTool({octokit, issueId})] : []),
+		...(issueId
+			? [commentTool({octokit, issueId, repoFullName, customerId})]
+			: []),
 		...(pullUrl && beta
 			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId})]
 			: [])
@@ -71,7 +73,7 @@ All repo labels: ${allLabels
 		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
-		// verbose: true,
+		verbose: true,
 		agentArgs: {
 			prefix
 		}
