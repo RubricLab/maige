@@ -5,7 +5,7 @@
 			"~/*": ["./lib/*"]
 		},
 		"plugins": [{"name": "next"}],
-		"types": ["bun-types"]
+		"types": ["bun-types"],
 	},
 	"exclude": ["node_modules"],
 	"extends": "@rubriclab/typescript-config/nextjs.json",
@@ -15,6 +15,7 @@
 		"./lib/**/*.ts",
 		"./lib/**/*.tsx",
 		".next/types/**/*.ts",
-		"next-env.d.ts"
-	]
+		"next-env.d.ts",
+		"types/next-auth.d.ts"
+	],
 }

@@ -11,6 +11,7 @@ generator client {
 model Customer {
   id                   String  @id @default(cuid())
   name                 String  @unique
+  githubUserId         String? @unique
   stripeSubscriptionId String? @unique
   stripeCustomerId     String? @unique
 

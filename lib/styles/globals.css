@@ -4,6 +4,6 @@
 
 @layer base {
 	a {
-		@apply transition-all focus:underline focus:outline-none;
+		@apply transition-all focus:outline-none;
 	}
 }

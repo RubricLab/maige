@@ -1,0 +1,6 @@
+export {LargeBody} from './LargeBody'
+export {LargeHeading} from './LargeHeading'
+export {MediumBody} from './MediumBody'
+export {SmallBody} from './SmallBody'
+export {SmallHeading} from './SmallHeading'
+export {Subtext} from './Subtext'
