@@ -6,7 +6,6 @@ export async function updateInstruction(
 	instructionId: string,
 	instructionContent: string
 ) {
-	console.log({instructionId, instructionContent})
 	try {
 		await prisma.instruction.update({
 			where: {id: instructionId},

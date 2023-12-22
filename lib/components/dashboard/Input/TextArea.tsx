@@ -7,9 +7,8 @@ export function TextArea({
 }) {
 	return (
 		<textarea
-			name={name}
 			className='bg-panel border-panel-border rounded-lg border-2 p-2 text-white focus:outline-none'
 			value={value}
-			onChange={e => onTextChange(e.target.value)}></textarea>
+			onChange={e => onTextChange((e.target as any).value)}></textarea>
 	)
 }
