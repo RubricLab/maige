@@ -150,31 +150,6 @@ export const POST = async (req: Request) => {
 		}
 	}
 
-	if (payload?.head_commit && (payload?.ref === `refs/heads/${payload?.repository.master_branch}`)) {
-		console.log('New commit to master branch')
-
-		const customer = await prisma.customer.findUnique({
-			where: {
-				name: payload?.repository?.owner?.login || undefined
-			},
-			select: {
-				id: true,
-			}
-		})
-
-		if (!customer?.id)
-			return new Response(`Could not find customer`, {
-				status: 500
-		})
-
-
-		console.log('Updating repo')
-		const vectorDB = new Weaviate(customer.id)
-		console.log("files", payload.head_commit.modified)
-		await vectorDB.updateRepo(payload.repository.html_url, payload.head_commit.modified, payload.ref)
-		console.log('Repo updated')
-	}
-
 	/**
 	 * Issue-related events. We care about new issues and comments.
 	 */
@@ -195,7 +170,7 @@ export const POST = async (req: Request) => {
 			(action === 'opened' && payload?.issue) ||
 			(action === 'created' && payload?.comment) ||
 			(action === 'opened' && payload?.pull_request) ||
-			(action === 'synchronize' && payload?.pull_request)
+			(action === 'synchronize' && payload?.pull_request) || payload?.head_commit
 		)
 	)
 		return new Response('Webhook received', {status: 202})
@@ -223,7 +198,7 @@ export const POST = async (req: Request) => {
 				},
 				select: {
 					name: true,
-					customInstructions: true
+					// customInstructions: true
 				}
 			}
 		}
@@ -232,7 +207,7 @@ export const POST = async (req: Request) => {
 	if (!customer) return new Response('Could not find customer', {status: 500})
 
 	const {id: customerId, usage, usageLimit, usageWarned, projects} = customer
-	const instructions = projects?.[0]?.customInstructions || ''
+	// const instructions = projects?.[0]?.customInstructions || ''
 
 	// Get GitHub app instance access token
 	const app = new App({
@@ -241,6 +216,18 @@ export const POST = async (req: Request) => {
 	})
 
 	const octokit = await app.getInstallationOctokit(instanceId)
+
+	if (payload?.head_commit && (payload?.ref === `refs/heads/${payload?.repository.master_branch}`)) {
+		console.log('New commit to master branch')
+		console.log(payload)
+
+		console.log('Updating repo')
+		const vectorDB = new Weaviate(customer.id)
+		console.log("files", payload.head_commit.modified)
+		await vectorDB.updateRepo(payload.repository.html_url, payload.head_commit.id, payload?.repository.master_branch, octokit)
+		console.log('Repo updated')
+	}
+	return
 
 	/**
 	 * Usage limit-gating:

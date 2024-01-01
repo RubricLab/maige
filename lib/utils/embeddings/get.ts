@@ -1,27 +1,29 @@
 export default async function getFiles(
-	filePaths: string[],
+	// filePaths: string[],
 	repoUrl: string,
-	branch: string = 'main'
+	files: any,
+	branch: string
 ) {
-    const repoPath = repoUrl.split('https://github.com/')[1].split('/')
-	const repoName = repoPath[1]
-	const repoOwner = repoPath[0]
+    // const repoPath = repoUrl.split('https://github.com/')[1].split('/')
+	// const repoName = repoPath[1]
+	// const repoOwner = repoPath[0]
 
     //TODO: Add Type
 	const promises: any[] = []
-	for (const filePath of filePaths) {
-		const res = await fetch(
-			`https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/${filePath}`
-		)
+	for (const file of files) {
+		// const res = await fetch(
+		// 	`https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/${filePath}`
+		// )
+		const res = await fetch(file.raw_url)
 		if (res.ok === false) {
-			console.error(`File ${filePath} not found in ${repoUrl} on branch ${branch}`)
+			console.error(`Could not fetch contents of ${file.filename} on main branch`)
 			continue
 		}
 		const fileContent = await res.text()
 		promises.push({
 			contents: fileContent || '',
 			metadata: {
-				source: filePath,
+				source: file.filename,
 				repository: repoUrl,
 				branch: branch
 			}

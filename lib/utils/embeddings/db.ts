@@ -59,8 +59,8 @@ export default class Weaviate {
 		return await deleteRepo(this.config, repoUrl)
 	}
 
-	async updateRepo(repoUrl: string, filePaths: string[], branch: string) {
-		await updateRepo(this.config, repoUrl, branch, filePaths)
+	async updateRepo(repoUrl: string, commitId: string, branch: string, octokit: any) {
+		await updateRepo(this.config, repoUrl, commitId, branch, octokit)
 	}
 
 	async deleteFiles(repoUrl: string, fileNames: string[], branch: string) {
