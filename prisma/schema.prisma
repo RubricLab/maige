@@ -1,41 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Customer {
-  id                   String  @id @default(cuid())
-  name                 String  @unique
-  stripeSubscriptionId String? @unique
-  stripeCustomerId     String? @unique
-
-  projects Project[]
-
-  usage          Int      @default(0)
-  totalUsage     Int      @default(0)
-  usageLimit     Int      @default(20)
-  usageUpdatedAt DateTime @default(now())
-
-  usageWarned Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id                   String    @id @default(cuid())
+  name                 String    @unique
+  stripeSubscriptionId String?   @unique
+  usage                Int       @default(0)
+  usageLimit           Int       @default(20)
+  usageUpdatedAt       DateTime  @default(now())
+  createdAt            DateTime  @default(now())
+  stripeCustomerId     String?   @unique
+  usageWarned          Boolean   @default(false)
+  totalUsage           Int       @default(0)
+  githubUserId         String?   @unique
+  projects             Project[]
 }
 
 model Project {
-  id   String @id @default(cuid())
-  name String
-
-  customInstructions String @default("") @db.Text
-
+  id         String   @id @default(cuid())
+  name       String
   customerId String
+  createdAt  DateTime @default(now())
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
 
   @@unique([customerId, name])
   @@index([customerId])
+}
+
+model Instruction {
+  id                String   @id
+  projectId         String
+  content           String   @db.Text
+  creatorUsername   String?
+  githubCommentLink String?
+  createdAt         DateTime @default(now())
+
+  @@index([projectId])
 }
