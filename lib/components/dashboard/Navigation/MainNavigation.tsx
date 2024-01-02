@@ -26,7 +26,7 @@ const routes = [
 export function MainNavigation() {
 	const pathname = usePathname()
 	return (
-		<div className='flex gap-2'>
+		<div className='flex gap-2 pb-8'>
 			{routes.map((page, index) => (
 				<div
 					key={index}
