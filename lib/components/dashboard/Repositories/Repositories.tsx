@@ -1,5 +1,5 @@
 import {Project} from '@prisma/client'
-import {DotsHorizontalIcon} from '@radix-ui/react-icons'
+import RepositoryOptions from './options'
 import Link from 'next/link'
 
 export function Repositories({projects}: {projects: Project[]}) {
@@ -8,7 +8,7 @@ export function Repositories({projects}: {projects: Project[]}) {
 			{projects.map(project => (
 				<>
 					<Link
-						className='flex cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 p-6 py-50 w-full'
+						className='flex cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 p-5 py-4 w-full'
 						href={`/dashboard/${project.id}`}
 						key={project.id}>
 						<div className='flex w-full items-center justify-between'>
@@ -33,7 +33,7 @@ export function Repositories({projects}: {projects: Project[]}) {
 								</div>
 								<p className='text-lg'>{project.name}</p>
 							</div>
-							<DotsHorizontalIcon />
+							<RepositoryOptions projectId={project.id}/>
 						</div>
 						<div className='flex flex-col text-sm'>
 							<span>Merge pull request #2 from arihanv/Dev Merge Dev [example lol]</span>
