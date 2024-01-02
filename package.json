@@ -3,6 +3,7 @@
     "@e2b/sdk": "^0.11.0",
     "@octokit/app": "^14.0.2",
     "@prisma/client": "^5.6.0",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-icons": "^1.3.0",
     "@t3-oss/env-nextjs": "^0.7.1",
     "bufferutil": "^4.0.8",
