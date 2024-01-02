@@ -22,10 +22,6 @@ export default async function Layout({
 
 	return (
 		<div className='flex flex-col p-8'>
-			<MainNavigation
-				session={session}
-				avatarUrl={session.user.image}
-			/>
 			<ProjectNavigation projectName={project.name} />
 			{children}
 		</div>

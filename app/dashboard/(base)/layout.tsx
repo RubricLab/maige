@@ -1,9 +1,9 @@
 import {ApplicationProvider} from 'lib/components/dashboard/ApplicationProvider'
-import {Toaster} from 'sonner'
-import { MainNavigation } from '~/components/dashboard/Navigation'
-import { DashboardHeader } from '~/components/dashboard/Navigation/Header'
 import {getServerSession} from 'next-auth'
+import {Toaster} from 'sonner'
 import {authOptions} from '~/authOptions'
+import {MainNavigation} from '~/components/dashboard/Navigation'
+import {DashboardHeader} from '~/components/dashboard/Navigation/Header'
 
 export default async function RootLayout({
 	children
@@ -12,15 +12,15 @@ export default async function RootLayout({
 }) {
 	const session = await getServerSession(authOptions)
 	return (
-		<div className='min-h-screen w-full bg-black text-white px-6'>
+		<div className='min-h-screen w-full bg-black px-8 text-white'>
 			<Toaster />
 			<ApplicationProvider>
-			<DashboardHeader
-				session={session}
-				avatarUrl={session.user.image}
-			/>
-				<MainNavigation/>
-				{children}
+				<DashboardHeader
+					session={session}
+					avatarUrl={session.user.image}
+				/>
+				<MainNavigation />
+				<div className='xl:px-24'>{children}</div>
 			</ApplicationProvider>
 		</div>
 	)
