@@ -20,7 +20,7 @@ export function DashboardHeader({
 	avatarUrl: string
 }) {
 	return (
-		<div className='sticky top-0 flex w-full select-none flex-row items-center justify-between pb-10 pt-4'>
+		<div className='sticky top-0 flex w-full select-none flex-row items-center justify-between pb-5 pt-4'>
 			<Image
 				src={MaigeLogo}
 				width={40}
