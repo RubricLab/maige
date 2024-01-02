@@ -1,10 +1,7 @@
 import {getServerSession} from 'next-auth'
 import {redirect} from 'next/navigation'
 import {authOptions} from '~/authOptions'
-import {
-	MainNavigation,
-	ProjectNavigation
-} from '~/components/dashboard/Navigation'
+import { RepoNavigation } from '~/components/dashboard/Navigation/RepoNavigation'
 
 export default async function Layout({
 	params,
@@ -21,8 +18,8 @@ export default async function Layout({
 	})
 
 	return (
-		<div className='flex flex-col p-8'>
-			<ProjectNavigation projectName={project.name} />
+		<div>
+			<RepoNavigation projectName={project.name} />
 			{children}
 		</div>
 	)

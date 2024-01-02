@@ -12,13 +12,9 @@ export default async function RootLayout({
 }) {
 	const session = await getServerSession(authOptions)
 	return (
-		<div className='min-h-screen w-full bg-black px-8 text-white'>
+		<div>
 			<Toaster />
 			<ApplicationProvider>
-				<DashboardHeader
-					session={session}
-					avatarUrl={session.user.image}
-				/>
 				<MainNavigation />
 				<div className='xl:px-24'>{children}</div>
 			</ApplicationProvider>
