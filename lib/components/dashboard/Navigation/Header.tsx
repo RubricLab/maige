@@ -10,6 +10,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
+import { CommandMenu } from '~/components/command-bar'
 import MaigeLogo from '../../../../public/logo.png'
 
 export function DashboardHeader({
@@ -28,6 +29,8 @@ export function DashboardHeader({
 				className='rounded-full object-cover'
 				alt='Maige Logo'
 			/>
+			<div className='flex gap-4 items-center'>
+			<CommandMenu/>
 			<DropdownMenu>
 				<DropdownMenuTrigger className='focus-visible:outline-none'>
 					<Image
@@ -48,6 +51,7 @@ export function DashboardHeader({
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
+			</div>
 		</div>
 	)
 }
