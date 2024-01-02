@@ -1,11 +1,15 @@
 /** @type {import('tailwindcss').Config} */
+import config from '@rubriclab/tailwind-config'
+
 module.exports = {
   darkMode: ["class"],
+  presets: [config],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './lib/**/*.tsx',
   ],
   prefix: "",
   theme: {
@@ -18,6 +22,9 @@ module.exports = {
     },
     extend: {
       colors: {
+        panel: '#0A0A0A',
+        'panel-border': '#171717',
+        grey: '#555555',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
