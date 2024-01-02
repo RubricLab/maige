@@ -1,23 +1,13 @@
-'use client'
-
 import {Project} from '@prisma/client'
-import {motion} from 'framer-motion'
-import {useRouter} from 'next/navigation'
+import Link from 'next/link'
 
 export function Repositories({projects}: {projects: Project[]}) {
-	const router = useRouter()
 	return (
 		<div className='flex flex-wrap items-center gap-4'>
 			{projects.map(project => (
-				<motion.div
-					whileHover={{
-						scale: 1.05,
-						transition: {
-							duration: 0.5
-						}
-					}}
-					className='bg-panel border-panel-border flex cursor-pointer flex-row items-center gap-4  rounded-md border-2 p-8'
-					onClick={() => router.push(`/dashboard/${project.id}`)}
+				<Link
+					className='flex cursor-pointer flex-row items-center gap-4 rounded-md border-2  border-panel-border bg-panel p-8'
+					href={`/dashboard/${project.id}`}
 					key={project.id}>
 					<div className='relative'>
 						<svg
@@ -38,7 +28,7 @@ export function Repositories({projects}: {projects: Project[]}) {
 						</p>
 					</div>
 					<p className='text-[32px]'>{project.name}</p>
-				</motion.div>
+				</Link>
 			))}
 		</div>
 	)
