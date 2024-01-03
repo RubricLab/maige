@@ -17,7 +17,7 @@ import { Button } from '~/components/ui/button'
 export function Instructions({instructions}: {instructions: Instruction[]}) {
 	return (
 		<div className='flex flex-col items-center gap-8 w-full'>
-			<div className='text-2xl'>Custom Instructions</div>
+			<div className='text-2xl font-medium'>Custom Instructions</div>
 			{instructions.map((instruction, i) => (
 				<>
 				<Instruction
