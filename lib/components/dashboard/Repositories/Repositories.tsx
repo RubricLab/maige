@@ -9,7 +9,7 @@ export function Repositories({projects}: {projects: Project[]}) {
 				<>
 					<Link
 						className='flex cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 p-5 py-4 w-full'
-						href={`/dashboard/${project.id}`}
+						href={`/dashboard/repo/${project.id}`}
 						key={project.id}>
 						<div className='flex w-full items-center justify-between'>
 							<div className='flex items-center gap-3'>
