@@ -65,7 +65,9 @@ export async function getRepoMeta({
 	const {description, labels} = res.repository
 
 	if (!labels?.nodes) throw new Error('Could not get labels')
-	if (!description) throw new Error('Could not get description')
+
+	// TODO: handle missing description by opening new issue
+	// if (!description) throw new Error('Could not get description')
 
 	return {
 		description,
