@@ -8,7 +8,7 @@ import dispatchReviewer from '~/tools/dispatchReviewer'
 import {githubTool} from '~/tools/github'
 import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
-import {isDev} from '~/utils'
+import {isDev} from '~/utils/index'
 
 const model = new ChatOpenAI({
 	modelName: 'gpt-4-1106-preview',

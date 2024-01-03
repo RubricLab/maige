@@ -19,7 +19,7 @@ export default async function Layout({
 
 	return (
 		<div>
-			<RepoNavigation projectName={project.name} />
+			<RepoNavigation />
 			{children}
 		</div>
 	)

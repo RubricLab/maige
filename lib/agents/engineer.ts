@@ -8,7 +8,7 @@ import commitCode from '~/tools/commitCode'
 import listFiles from '~/tools/listFiles'
 import readFile from '~/tools/readFile'
 import writeFile from '~/tools/writeFile'
-import {isDev} from '~/utils'
+import {isDev} from '~/utils/index'
 
 const model = new ChatOpenAI({
 	modelName: 'gpt-4-1106-preview',
