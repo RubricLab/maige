@@ -4,25 +4,22 @@ import {SpinnerLoader} from 'app/dashboard/Loader'
 import {motion} from 'framer-motion'
 import {ReactNode} from 'react'
 import {SmallBody} from '../Text'
+import { cn } from '~/utils'
 
 export function PrimaryButton({
 	onClick,
 	loading = false,
+	className,
 	children
 }: {
 	onClick?: () => void
 	loading?: boolean
 	children: ReactNode
+	className: string
 }) {
 	return (
 		<motion.button
-			whileHover={{
-				scale: 1.05,
-				transition: {
-					duration: 0.5
-				}
-			}}
-			className='rounded-[10px] bg-white px-4 py-2 text-black'
+			className={cn(className)}
 			onClick={onClick}>
 			{loading && <SpinnerLoader />}
 			{!loading && <SmallBody>{children}</SmallBody>}
