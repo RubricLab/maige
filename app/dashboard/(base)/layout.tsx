@@ -1,7 +1,6 @@
 import {ApplicationProvider} from 'lib/components/dashboard/ApplicationProvider'
-import {getServerSession} from 'next-auth'
 import {Toaster} from 'sonner'
-import {authOptions} from '~/authOptions'
+import BackgroundGrid from '~/components/background-grid'
 import {MainNavigation} from '~/components/dashboard/Navigation'
 
 export default async function RootLayout({
@@ -14,7 +13,9 @@ export default async function RootLayout({
 			<Toaster />
 			<ApplicationProvider>
 				<MainNavigation />
-				<div className='xl:px-24'>{children}</div>
+				<div className='relative h-full w-full flex flex-col'>
+				<BackgroundGrid className='fixed opacity-40 h-full w-full' />
+				<div className='xl:px-24 bg-transparent z-10 grid w-full'>{children}</div></div>
 			</ApplicationProvider>
 		</div>
 	)

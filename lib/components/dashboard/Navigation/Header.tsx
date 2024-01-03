@@ -37,7 +37,7 @@ export function DashboardHeader({
 				/>
 				<span className='inline-flex items-center gap-1.5'>
 					<Link href={"/dashboard"} className='px-2.5 py-0.5 rounded-sm hover:bg-white hover:bg-opacity-20'>{session.user.name}</Link>
-					{pathname.split('/dashboard/')[1] && (
+					{pathname.split('/dashboard/repo/')[1] && (
 						<>
 							<span className='mb-1 text-xl text-gray-500'>/</span>{' '}
 							<Link className='px-2.5 py-0.5 rounded-sm hover:bg-white hover:bg-opacity-20' href={"/dashboard/repo/" + pathname.split('/dashboard/repo/')[1].split('/')[0]}><ProjectRoute projectId={pathname.split('/dashboard/repo/')[1].split('/')[0]} /></Link>
