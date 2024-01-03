@@ -4,11 +4,11 @@ import Link from 'next/link'
 
 export function Repositories({projects}: {projects: Project[]}) {
 	return (
-		<div className='repo-cont w-full gap-4'>
+		<div className='repo-cont w-full'>
 			{projects.map(project => (
 				<>
 					<Link
-						className='flex cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 p-5 py-4 w-full'
+						className='flex cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 p-5 py-4 w-full hover:bg-zinc-800 hover:bg-opacity-70 hover:transition-all'
 						href={`/dashboard/repo/${project.id}`}
 						key={project.id}>
 						<div className='flex w-full items-center justify-between'>
