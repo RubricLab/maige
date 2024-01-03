@@ -16,8 +16,7 @@ import { Button } from '~/components/ui/button'
 
 export function Instructions({instructions}: {instructions: Instruction[]}) {
 	return (
-		<div className='flex flex-col items-center gap-8 w-full'>
-			<div className='text-2xl font-medium'>Custom Instructions</div>
+		<>
 			{instructions.map((instruction, i) => (
 				<>
 				<Instruction
@@ -28,7 +27,7 @@ export function Instructions({instructions}: {instructions: Instruction[]}) {
 				<div className={cn('w-full bg-zinc-900 max-w-2xl h-0.5', i+1 === instructions.length && "hidden")}></div>
 				</>
 			))}
-		</div>
+		</>
 	)
 }
 

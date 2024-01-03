@@ -30,8 +30,8 @@ export function DashboardHeader({
 			<div className='flex items-center gap-4'>
 				<Image
 					src={MaigeLogo}
-					width={40}
-					height={40}
+					width={35}
+					height={35}
 					className='rounded-full object-cover'
 					alt='Maige Logo'
 				/>
@@ -51,8 +51,8 @@ export function DashboardHeader({
 					<DropdownMenuTrigger className='focus-visible:outline-none'>
 						<Image
 							src={avatarUrl}
-							width={40}
-							height={40}
+							width={35}
+							height={35}
 							className='rounded-full object-cover'
 							alt='User avatar'
 						/>

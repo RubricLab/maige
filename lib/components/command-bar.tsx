@@ -28,17 +28,17 @@ export function CommandMenu() {
 				asChild
 				variant='outline'
 				onClick={() => setOpen(true)}
-				className='w-full pl-4 pr-2 md:w-80'>
+				className='w-full pl-4 pr-2 md:w-80 hover:bg-zinc-900 text-zinc-300'>
 				<div className='flex h-10 flex-row justify-between'>
 					<div className='flex flex-row gap-2'>
 						<SearchIcon className='my-auto h-4 w-4' />
 						Search...
 					</div>
 					<kbd className='hidden items-center gap-1 px-[0.2rem] py-[0.2rem] font-mono sm:inline-flex'>
-						<span className='flex h-[25px] w-[25px] items-center justify-center rounded bg-muted'>
+						<span className='flex h-[25px] w-[25px] items-center justify-center rounded bg-zinc-800'>
 							<CommandIcon width={12} />
 						</span>{' '}
-						<span className='flex h-[25px] w-[25px] items-center justify-center rounded bg-muted text-sm'>
+						<span className='flex h-[25px] w-[25px] items-center justify-center rounded bg-zinc-800 text-sm'>
              {/* Attempts to center the K */}
 							<span className='mt-[0.05rem]'>K</span>
 						</span>
