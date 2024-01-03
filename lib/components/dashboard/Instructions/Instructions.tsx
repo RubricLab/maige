@@ -1,6 +1,6 @@
 'use client'
 
-import {Instruction} from '@prisma/client'
+import {type Instruction} from '@prisma/client'
 import {PenSquare} from 'lucide-react'
 import Link from 'next/link'
 import {useState} from 'react'
