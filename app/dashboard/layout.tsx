@@ -11,10 +11,10 @@ export default async function RootLayout({
 
     return (
         <div className='min-h-screen w-full bg-black px-8 text-white'>
-            <DashboardHeader
+            {session && <DashboardHeader
 					session={session}
 					avatarUrl={session.user.image}
-				/>
+				/>}
             {children}
         </div>
     )
