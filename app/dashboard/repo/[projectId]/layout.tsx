@@ -13,10 +13,6 @@ export default async function Layout({
 	const session = await getServerSession(authOptions)
 	if (!session) redirect('/dashboard')
 
-	const project = await prisma.project.findUnique({
-		where: {id: params.projectId}
-	})
-
 	return (
 		<div>
 			<RepoNavigation />

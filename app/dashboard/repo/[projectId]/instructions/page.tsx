@@ -1,6 +1,7 @@
 import {PanelSkeletons} from 'app/dashboard/Loader'
 import {Suspense} from 'react'
 import {Instructions} from '~/components/dashboard/Instructions'
+import prisma from '~/prisma'
 
 export default async function Page({params}: {params: {projectId: string}}) {
 	return (

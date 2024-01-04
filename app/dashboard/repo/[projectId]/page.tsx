@@ -2,6 +2,7 @@ import {redirect} from 'next/navigation'
 import {getServerSession} from 'next-auth'
 import {authOptions} from '~/authOptions'
 import { ChevronLeftIcon } from '@radix-ui/react-icons'
+import prisma from '~/prisma'
 import Link from 'next/link'
 
 export default async function Page({params}: {params: {projectId: string}}) {
