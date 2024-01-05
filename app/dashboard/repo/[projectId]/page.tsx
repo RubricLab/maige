@@ -18,7 +18,7 @@ export default async function Page({params}: {params: {projectId: string}}) {
 			<span className='inline-flex items-center gap-2'><Link href="/dashboard"><ChevronLeftIcon width="20" height="20"/></Link> {project.name}</span>
 			</div>
 			<div className='flex flex-col xl:px-24'>
-				Some stuff finna be here about the repo ig
+				Coming soon...
 			</div>
 		</div>
 	)

@@ -4,6 +4,6 @@ type Props = {}
 
 export default function Usage({}: Props) {
   return (
-    <div>Nothing, for now...</div>
+    <div>Coming Soon...</div>
   )
 }

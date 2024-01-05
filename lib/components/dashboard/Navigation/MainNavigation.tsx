@@ -13,14 +13,14 @@ const routes = [
 		name: 'Usage',
 		path: '/usage'
 	},
-	{
-		name: 'Agents',
-		path: '/agents'
-	},
-	{
-		name: 'Runs',
-		path: '/runs'
-	}
+	// {
+	// 	name: 'Agents',
+	// 	path: '/agents'
+	// },
+	// {
+	// 	name: 'Runs',
+	// 	path: '/runs'
+	// }
 ]
 
 export function MainNavigation() {

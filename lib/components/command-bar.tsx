@@ -52,8 +52,7 @@ export function CommandMenu() {
 				<CommandList>
 					<CommandEmpty>No results found.</CommandEmpty>
 					<CommandGroup heading='Suggestions'>
-						<CommandItem>Need to add stuff</CommandItem>
-						<CommandItem>example</CommandItem>
+						<CommandItem>Coming soon...</CommandItem>
 					</CommandGroup>
 				</CommandList>
 			</CommandDialog>

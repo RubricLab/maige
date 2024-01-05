@@ -21,6 +21,12 @@ export default async function Page() {
 	const projects = await prisma.project.findMany({
 		where: {
 			customerId: customer.id
+		},
+		select: {
+			id: true,
+			name: true,
+			createdAt: true,
+			customInstructions: true,
 		}
 	})
 
