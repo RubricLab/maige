@@ -1,6 +1,6 @@
 import {Document} from 'langchain/document'
 import {GithubRepoLoader} from 'langchain/document_loaders/web/github'
-import {isDev} from '..'
+import {isDev} from '../index'
 
 export const ignoreFiles: RegExp[] = [
 	// File

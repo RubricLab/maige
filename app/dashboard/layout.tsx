@@ -1,15 +1,21 @@
-import {ApplicationProvider} from 'lib/components/dashboard/ApplicationProvider'
-import {Toaster} from 'sonner'
+import {DashboardHeader} from '~/components/dashboard/Navigation/Header'
+import {authOptions} from '~/authOptions'
+import {getServerSession} from 'next-auth'
 
 export default async function RootLayout({
 	children
 }: {
 	children: React.ReactNode
 }) {
-	return (
-		<div className='min-h-screen w-full bg-black text-white'>
-			<Toaster />
-			<ApplicationProvider>{children}</ApplicationProvider>
-		</div>
-	)
+    const session = await getServerSession(authOptions)
+
+    return (
+        <div className='min-h-screen w-full bg-black px-8 text-white'>
+            {session && <DashboardHeader
+					session={session}
+					avatarUrl={session.user.image}
+				/>}
+            {children}
+        </div>
+    )
 }

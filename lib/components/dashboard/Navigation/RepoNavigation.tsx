@@ -1,45 +1,46 @@
 'use client'
 
 import Link from 'next/link'
-import {usePathname} from 'next/navigation'
+import {useParams, usePathname} from 'next/navigation'
 import {cn} from '~/utils'
 
 const routes = [
-	{
-		name: 'Repositories',
+    {
+		name: 'Overview',
 		path: ''
 	},
 	{
-		name: 'Usage',
-		path: '/usage'
+		name: 'Instructions',
+		path: '/instructions'
 	},
-	{
-		name: 'Agents',
-		path: '/agents'
-	},
-	{
+    {
 		name: 'Runs',
 		path: '/runs'
-	}
+	},
+	{
+		name: 'Settings',
+		path: '/settings'
+	},
 ]
 
-export function MainNavigation() {
+export function RepoNavigation() {
 	const pathname = usePathname()
+    const {projectId} = useParams()
 	return (
-		<div className='flex gap-2 pb-8 z-10'>
+		<div className='flex gap-2 pb-8'>
 			{routes.map((page, index) => (
 				<div
 					key={index}
 					className='relative flex flex-col items-center pb-2'>
 					<Link
 						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
-						href={`/dashboard${page.path}`}>
+						href={`/dashboard/repo/${projectId}${page.path}`}>
 						{page.name}
 					</Link>
 					<div
 						className={cn(
 							'invisible w-[90%] border-b-[2px] border-b-white',
-							pathname == `/dashboard${page.path}` && 'visible'
+							pathname == `/dashboard/repo/${projectId}${page.path}` && 'visible'
 						)}></div>
 				</div>
 			))}

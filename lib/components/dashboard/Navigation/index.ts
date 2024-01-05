@@ -1,2 +1,2 @@
-export {MainNavigation} from './MainNavigation'
-export {ProjectNavigation} from './ProjectNavigation'
+export {MainNavigation} from './MainNavigation';
+export {DashboardHeader} from './Header'
