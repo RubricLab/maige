@@ -17,7 +17,9 @@ export default async function RootLayout({
 					session={session}
 					avatarUrl={session.user.image}
 				/>}
+                <div className='z-10 fixed w-full'>
             {children}
+            </div>
         </div>
     )
 }

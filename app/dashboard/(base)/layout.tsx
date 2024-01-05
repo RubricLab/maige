@@ -13,8 +13,7 @@ export default async function RootLayout({
 			<Toaster />
 			<ApplicationProvider>
 				<MainNavigation />
-				{/* <BackgroundGrid className='absolute opacity-40 h-full w-full' /> */}
-				<div className='relative h-full w-full flex flex-col'>
+				<div className='h-full w-full flex flex-col'>
 				<div className='xl:px-24 bg-transparent z-10 grid w-full'>{children}</div></div>
 			</ApplicationProvider>
 		</div>
