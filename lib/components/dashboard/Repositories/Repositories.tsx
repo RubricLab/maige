@@ -8,7 +8,7 @@ export function Repositories({projects}: {projects: Project[]}) {
 			{projects.map(project => (
 				<>
 					<Link
-						className='flex cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 p-5 py-4 w-full hover:bg-zinc-800 hover:bg-opacity-70 hover:transition-all h-[150px]'
+						className='flex cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 p-5 py-4 w-full bg-black bg-opacity-20 hover:bg-zinc-800 hover:bg-opacity-70 hover:transition-all h-[150px]'
 						href={`/dashboard/repo/${project.id}`}
 						key={project.id}>
 						<div className='flex w-full items-center justify-between'>

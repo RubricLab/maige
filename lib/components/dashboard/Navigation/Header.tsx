@@ -26,7 +26,7 @@ export function DashboardHeader({
 	const pathname = usePathname()
 
 	return (
-		<div className='sticky top-0 flex w-full select-none flex-row items-center justify-between pb-5 pt-4'>
+		<div className='sticky top-0 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 z-50 backdrop-blur-sm'>
 			<div className='flex items-center gap-4'>
 				<Image
 					src={MaigeLogo}

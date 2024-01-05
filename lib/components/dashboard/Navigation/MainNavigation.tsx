@@ -30,7 +30,7 @@ export function MainNavigation() {
 			{routes.map((page, index) => (
 				<div
 					key={index}
-					className='relative flex flex-col items-center pb-2'>
+					className='relative flex flex-col items-center pb-2 group'>
 					<Link
 						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
 						href={`/dashboard${page.path}`}>
@@ -38,8 +38,8 @@ export function MainNavigation() {
 					</Link>
 					<div
 						className={cn(
-							'invisible w-[90%] border-b-[2px] border-b-white',
-							pathname == `/dashboard${page.path}` && 'visible'
+							'invisible w-[90%] border-b-[2px] group-hover:visible border-b-white border-opacity-50',
+							pathname == `/dashboard${page.path}` && 'visible border-opacity-100'
 						)}></div>
 				</div>
 			))}

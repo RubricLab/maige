@@ -4,7 +4,6 @@ import {authOptions} from '~/authOptions'
 import { RepoNavigation } from '~/components/dashboard/Navigation/RepoNavigation'
 
 export default async function Layout({
-	params,
 	children
 }: {
 	params: {projectId: string}
