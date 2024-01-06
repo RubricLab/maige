@@ -1,3 +1,3 @@
 export default async function Page() {
-	return <div>Coming soon</div>
+	return <div>Coming soon...</div>
 }

@@ -16,11 +16,17 @@ export default async function Page() {
 		}
 	})
 
-	if (!customer) return <></> // need 404 here
+	if (!customer) redirect('/not-found')
 
 	const projects = await prisma.project.findMany({
 		where: {
 			customerId: customer.id
+		},
+		select: {
+			id: true,
+			name: true,
+			createdAt: true,
+			customInstructions: true,
 		}
 	})
 

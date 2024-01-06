@@ -33,6 +33,8 @@ model Project {
   customerId String
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
+  usage Usage[]
+
   createdAt          DateTime      @default(now())
   customInstructions Instruction[]
 
@@ -49,6 +51,19 @@ model Instruction {
 
   createdAt DateTime @default(now())
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model Usage {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  action    String
+  agent     String
+  tokens    String
+  model     String
+  createdAt DateTime @default(now())
 
   @@index([projectId])
 }
