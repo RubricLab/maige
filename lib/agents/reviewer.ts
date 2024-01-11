@@ -5,7 +5,7 @@ import env from '~/env.mjs'
 import {codeComment} from '~/tools/codeComment'
 import {codebaseSearch} from '~/tools/codeSearch'
 import {prComment} from '~/tools/prComment'
-import {isDev} from '~/utils'
+import {isDev} from '~/utils/index'
 
 const model = new ChatOpenAI({
 	modelName: 'gpt-4-1106-preview',
