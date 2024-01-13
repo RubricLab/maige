@@ -158,7 +158,9 @@ export async function openUsageIssue(
  * Get main branch of a repo
  */
 export const getMainBranch = async (repoFullName: string) => {
-	const repoRes = await fetch(`https://api.github.com/repos/${repoFullName}`)
+	const repoRes = (await fetch(
+		`https://api.github.com/repos/${repoFullName}`
+	)) as Response
 	const repo = (await repoRes.json()) as any
 	const branchName = repo.default_branch
 

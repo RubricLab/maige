@@ -21,7 +21,7 @@ export default function dispatchReviewer({
 		func: async ({task}) => {
 			console.log(`Dispatching reviewer for ${repoFullName}`)
 
-			const prRes = await fetch(pullUrl)
+			const prRes = (await fetch(pullUrl)) as Response
 			if (!prRes.ok) return 'Could not fetch PR'
 
 			const {
@@ -31,7 +31,7 @@ export default function dispatchReviewer({
 				diff_url: diffUrl
 			} = (await prRes.json()) as any
 
-			const diffRes = await fetch(diffUrl)
+			const diffRes = (await fetch(diffUrl)) as Response
 			if (!diffRes.ok) return 'Could not fetch diff'
 
 			const diff = await diffRes.text()
