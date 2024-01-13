@@ -31,12 +31,10 @@ export default async function Page() {
 	})
 
 	return (
-		<div className='flex flex-col'>
-			<div className='flex flex-col items-center gap-8'>
-				<Suspense fallback={<p>Loading...</p>}>
-					<Repositories projects={projects} />
-				</Suspense>
-			</div>
+		<div className='flex flex-col items-center gap-8'>
+			<Suspense fallback={<p>Loading...</p>}>
+				<Repositories projects={projects} />
+			</Suspense>
 		</div>
 	)
 }

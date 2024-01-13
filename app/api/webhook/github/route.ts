@@ -119,13 +119,6 @@ export const POST = async (req: Request) => {
 			// Clone, vectorize, and save public code to database
 			const vectorDB = new Weaviate(customer.id)
 
-			for (const repo of addedRepos) {
-				const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
-				const branch = await getMainBranch(repo.full_name)
-
-				await vectorDB.embedRepo(repoUrl, branch)
-			}
-
 			const createProjects = prisma.project.createMany({
 				data: newRepos.map((repo: Repository) => ({
 					name: repo.name,
@@ -145,6 +138,13 @@ export const POST = async (req: Request) => {
 
 			// Sync repos to database in a single transaction
 			await prisma.$transaction([createProjects, deleteProjects])
+
+			for (const repo of addedRepos) {
+				const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
+				const branch = await getMainBranch(repo.full_name)
+
+				await vectorDB.embedRepo(repoUrl, branch)
+			}
 
 			return new Response(`Successfully updated repos for ${login}`)
 		}
