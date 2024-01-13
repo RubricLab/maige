@@ -1,7 +1,7 @@
 import {Project} from '@prisma/client'
 import {useEffect, useState} from 'react'
-import { getProject } from './actions'
-import { Skeleton } from '~/components/ui/skeleton'
+import {Skeleton} from '~/components/ui/skeleton'
+import {getProject} from './actions'
 
 type Props = {
 	projectId: string
@@ -15,5 +15,7 @@ export default function ProjectRoute({projectId}: Props) {
 		}
 		setProj()
 	}, [projectId])
-	return <>{project ? <> {project.name}</> : <Skeleton className='h-5 w-28'/>}</>
+	return (
+		<>{project ? <> {project.name}</> : <Skeleton className='h-5 w-28' />}</>
+	)
 }

@@ -19,7 +19,7 @@ export function SecondaryButton({
 					duration: 0.5
 				}
 			}}
-			className='bg-panel border-panel-border rounded-[10px] border-2 px-4 py-2'
+			className='rounded-[10px] border-2 border-panel-border bg-panel px-4 py-2'
 			onClick={onClick}>
 			<SmallBody>{children}</SmallBody>
 		</motion.button>

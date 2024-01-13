@@ -1,5 +1,5 @@
 import {getServerSession} from 'next-auth'
-import { redirect } from 'next/navigation'
+import {redirect} from 'next/navigation'
 import {Suspense} from 'react'
 import {authOptions} from '~/authOptions'
 import {Repositories} from '~/components/dashboard/Repositories'
@@ -26,7 +26,7 @@ export default async function Page() {
 			id: true,
 			name: true,
 			createdAt: true,
-			customInstructions: true,
+			customInstructions: true
 		}
 	})
 

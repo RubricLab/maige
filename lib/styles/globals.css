@@ -46,7 +46,7 @@
 	a {
 		@apply transition-all focus:outline-none;
 	}
-	.repo-cont{
+	.repo-cont {
 		display: grid;
 		gap: 1rem;
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

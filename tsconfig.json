@@ -1,12 +1,12 @@
 {
 	"compilerOptions": {
 		"baseUrl": ".",
-		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"lib": [ "DOM", "DOM.Iterable","ESNext"],
 		"paths": {
 			"~/*": ["./lib/*"]
 		},
 		"plugins": [{"name": "next"}],
-		"types": ["web", "bun-types"]
+		"types": [ "bun-types","web"]
 	},
 	"exclude": ["node_modules"],
 	"extends": "@rubriclab/typescript-config/nextjs.json",
@@ -18,5 +18,5 @@
 		".next/types/**/*.ts",
 		"next-env.d.ts",
 		"types/next-auth.d.ts"
-	],
+	]
 }

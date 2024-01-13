@@ -3,6 +3,7 @@
 import {Session} from 'next-auth'
 import {signOut} from 'next-auth/react'
 import Image from 'next/image'
+import Link from 'next/link'
 import {usePathname} from 'next/navigation'
 import {CommandMenu} from '~/components/command-bar'
 import {
@@ -14,7 +15,6 @@ import {
 } from '~/components/ui/dropdown-menu'
 import MaigeLogo from '../../../../public/logo.png'
 import ProjectRoute from './projectHeader'
-import Link from 'next/link'
 
 export function DashboardHeader({
 	session,
@@ -26,7 +26,7 @@ export function DashboardHeader({
 	const pathname = usePathname()
 
 	return (
-		<div className='sticky top-0 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 z-50 backdrop-blur-sm'>
+		<div className='sticky top-0 z-50 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 backdrop-blur-sm'>
 			<div className='flex items-center gap-4'>
 				<Image
 					src={MaigeLogo}
@@ -36,11 +36,24 @@ export function DashboardHeader({
 					alt='Maige Logo'
 				/>
 				<span className='inline-flex items-center gap-1.5'>
-					<Link href={"/dashboard"} className='px-2.5 py-0.5 rounded-sm hover:bg-white hover:bg-opacity-20'>{session.user.name}</Link>
+					<Link
+						href={'/dashboard'}
+						className='rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'>
+						{session.user.name}
+					</Link>
 					{pathname.split('/dashboard/repo/')[1] && (
 						<>
 							<span className='mb-1 text-xl text-gray-500'>/</span>{' '}
-							<Link className='px-2.5 py-0.5 rounded-sm hover:bg-white hover:bg-opacity-20' href={"/dashboard/repo/" + pathname.split('/dashboard/repo/')[1].split('/')[0]}><ProjectRoute projectId={pathname.split('/dashboard/repo/')[1].split('/')[0]} /></Link>
+							<Link
+								className='rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
+								href={
+									'/dashboard/repo/' +
+									pathname.split('/dashboard/repo/')[1].split('/')[0]
+								}>
+								<ProjectRoute
+									projectId={pathname.split('/dashboard/repo/')[1].split('/')[0]}
+								/>
+							</Link>
 						</>
 					)}
 				</span>

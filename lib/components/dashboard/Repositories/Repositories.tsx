@@ -1,15 +1,12 @@
-import {Project} from '@prisma/client'
-import RepositoryOptions from './options'
 import Link from 'next/link'
 
 export function Repositories({projects}: {projects: any[]}) {
-
 	return (
 		<div className='repo-cont w-full'>
 			{projects.map(project => (
 				<>
 					<Link
-						className='flex cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 p-5 py-4 w-full bg-black bg-opacity-20 hover:bg-zinc-800 hover:bg-opacity-70 hover:transition-all h-[150px]'
+						className='flex h-[150px] w-full cursor-pointer flex-col justify-between rounded-lg border-2 border-zinc-800 border-opacity-70 bg-black bg-opacity-20 p-5 py-4 hover:bg-zinc-800 hover:bg-opacity-70 hover:transition-all'
 						href={`/dashboard/repo/${project.id}`}
 						key={project.id}>
 						<div className='flex w-full items-center justify-between'>
@@ -37,8 +34,20 @@ export function Repositories({projects}: {projects: any[]}) {
 							{/* <RepositoryOptions projectId={project.id}/> */}
 						</div>
 						<div className='flex flex-col'>
-							<span className='font-semibold text-base'>{project.customInstructions.length} Custom Instructions</span>
-							<span className='text-zinc-500 text-sm'>{(() => { const date = new Date(project.createdAt); const daysAgo = Math.floor((new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24)); return daysAgo === 0 ? 'today' : `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`; })()}</span>
+							<span className='text-base font-semibold'>
+								{project.customInstructions.length} Custom Instructions
+							</span>
+							<span className='text-sm text-zinc-500'>
+								{(() => {
+									const date = new Date(project.createdAt)
+									const daysAgo = Math.floor(
+										(new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
+									)
+									return daysAgo === 0
+										? 'today'
+										: `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`
+								})()}
+							</span>
 						</div>
 					</Link>
 				</>
