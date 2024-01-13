@@ -5,16 +5,22 @@ test(
 	'Embed repo',
 	async () => {
 		const customerId = 'ai4vo'
-		const repoUrl = 'https://github.com/RubricLab/maige'
+		const repoFullName = 'RubricLab/maige'
 		const branch = 'main'
 		const query = 'code search' // arbitrary - should change over time
 
 		const vectorDB = new Weaviate(customerId, 'CodeSearch')
-		const docs = await vectorDB.embedRepo(repoUrl, branch)
+		const docs = await vectorDB.embedRepo(repoFullName, branch, true)
 
 		expect(docs?.length).toBeGreaterThan(0)
 
-		const search = await vectorDB.searchCode(query, repoUrl, 1, undefined, branch)
+		const search = await vectorDB.searchCode(
+			query,
+			repoFullName,
+			1,
+			undefined,
+			branch
+		)
 
 		console.log(search)
 

@@ -32,8 +32,12 @@ export default class Weaviate {
 		}
 	}
 
-	async embedRepo(repoUrl: string, branch: string, replace: boolean = false) {
-		return await addRepo(this.config, repoUrl, branch, replace)
+	async embedRepo(
+		repoFullName: string,
+		branch: string,
+		replace: boolean = false
+	) {
+		return await addRepo(this.config, repoFullName, branch, replace)
 	}
 
 	async searchCode(

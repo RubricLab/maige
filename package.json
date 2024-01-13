@@ -80,6 +80,7 @@
 		"postinstall": "prisma generate",
 		"start": "next start",
 		"test:engineer": "dotenv -e .env.local -- bun test engineer",
+		"test:weaviate": "dotenv -e .env.local -- bun test weaviate",
 		"vector:schema:push": "bun run ./lib/utils/embeddings/setup"
 	},
 	"version": "0.1.0"
