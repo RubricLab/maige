@@ -79,6 +79,7 @@
 		"lint:fix": "eslint . --ext .js,.jsx,.cjs,.mjs,.json,.ts,.tsx --fix",
 		"postinstall": "prisma generate",
 		"start": "next start",
+		"test:engineer": "dotenv -e .env.local -- bun test engineer",
 		"vector:schema:push": "bun run ./lib/utils/embeddings/setup"
 	},
 	"version": "0.1.0"

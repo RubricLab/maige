@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken'
 import Stripe from 'stripe'
 import {Label} from '~/types'
 import {createPaymentLink} from '~/utils/payment'
@@ -165,4 +166,67 @@ export const getMainBranch = async (repoFullName: string) => {
 	const branchName = repo.default_branch
 
 	return branchName
+}
+
+/**
+ * Get JWT for app
+ */
+export const getAppJwt = async () => {
+	const now = Math.floor(Date.now() / 1000)
+	const payload = {
+		iat: now,
+		exp: now + 60,
+		iss: process.env.GITHUB_APP_ID
+	}
+
+	const token = jwt.sign(payload, process.env.GITHUB_PRIVATE_KEY, {
+		algorithm: 'RS256'
+	})
+
+	return token
+}
+
+/**
+ * Get installation ID from repo
+ */
+export const getInstallationId = async (repoFullName: string) => {
+	const token = await getAppJwt()
+
+	const res = (await fetch(
+		`https://api.github.com/repos/${repoFullName}/installation`,
+		{
+			method: 'GET',
+			headers: {
+				Accept: 'application/vnd.github.v3+json',
+				Authorization: `Bearer ${token}`
+			}
+		}
+	)) as Response
+
+	const json = await res.json()
+
+	return json.id
+}
+
+/**
+ * Get installation token from repo
+ */
+
+export const getInstallationToken = async (installationId: string) => {
+	const token = await getAppJwt()
+
+	const res = (await fetch(
+		`https://api.github.com/app/installations/${installationId}/access_tokens`,
+		{
+			method: 'POST',
+			headers: {
+				Accept: 'application/vnd.github.v3+json',
+				Authorization: `Bearer ${token}`
+			}
+		}
+	)) as Response
+
+	const json = await res.json()
+
+	return json.token
 }

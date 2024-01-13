@@ -8,6 +8,7 @@ import commitCode from '~/tools/commitCode'
 import listFiles from '~/tools/listFiles'
 import readFile from '~/tools/readFile'
 import writeFile from '~/tools/writeFile'
+import {getInstallationId, getInstallationToken} from '~/utils/github'
 import {isDev} from '~/utils/index'
 import prisma from '~/prisma'
 
@@ -57,11 +58,16 @@ export async function engineer({
 		cwd: '/code'
 	})
 
-	const tokenB64 = btoa(`pat:${env.GITHUB_ACCESS_TOKEN}`)
-	const authFlag = `-c http.extraHeader="AUTHORIZATION: basic ${tokenB64}"`
+	const installationToken = await getInstallationToken(
+		await getInstallationId(repoFullName)
+	)
+
 	const branch = `maige/${issueNumber}-${Date.now()}`
 	const [owner, repo] = repoFullName.split('/')
-	const repoSetup = `git config --global user.email "${env.GITHUB_EMAIL}" && git config --global user.name "${env.GITHUB_USERNAME}" && git ${authFlag} clone https://github.com/${repoFullName}.git && cd ${repo} && git checkout -b ${branch}`
+	const botUserName = `${env.GITHUB_APP_NAME}[bot]` // Replace with your GitHub App's bot user name
+	const botUserEmail = `${env.GITHUB_APP_ID}+${env.GITHUB_APP_NAME}[bot]@users.noreply.github.com` // Replace with your GitHub App's bot user email
+
+	const repoSetup = `git config --global user.email "${botUserEmail}" && git config --global user.name "${botUserName}" && git clone https://x-access-token:${installationToken}@github.com/${repoFullName}.git && cd ${repo} && git checkout -b ${branch}`
 
 	await shell.process.startAndWait({
 		cmd: repoSetup
@@ -123,10 +129,10 @@ Your final output message should be the message that will be included in the pul
 
 	// Must cd again because each process starts from ~/
 	await shell.process.startAndWait({
-		cmd: `cd ${repo} && git ${authFlag} push -u origin ${branch}`
+		cmd: `cd ${repo} && git push -u origin ${branch}`
 	})
 
-	const octokit = new Octokit({auth: env.GITHUB_ACCESS_TOKEN})
+	const octokit = new Octokit({auth: installationToken})
 
 	await octokit.request(`POST /repos/${repoFullName}/pulls`, {
 		owner,
