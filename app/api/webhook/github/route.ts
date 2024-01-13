@@ -1,6 +1,7 @@
 import {App} from '@octokit/app'
 import {maige} from '~/agents/maige'
 import {GITHUB} from '~/constants'
+import env from '~/env.mjs'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
 import {Label, Repository} from '~/types'
@@ -215,8 +216,8 @@ export const POST = async (req: Request) => {
 
 	// Get GitHub app instance access token
 	const app = new App({
-		appId: process.env.GITHUB_APP_ID || '',
-		privateKey: process.env.GITHUB_PRIVATE_KEY || ''
+		appId: env.GITHUB_APP_ID || '',
+		privateKey: env.GITHUB_PRIVATE_KEY || ''
 	})
 
 	const octokit = await app.getInstallationOctokit(instanceId)

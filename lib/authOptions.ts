@@ -1,12 +1,13 @@
 import {AuthOptions, Profile} from 'next-auth'
 import GithubProvider, {GithubProfile} from 'next-auth/providers/github'
 import prisma from '~/prisma'
+import env from './env.mjs'
 
 export const authOptions: AuthOptions = {
 	providers: [
 		GithubProvider({
-			clientId: process.env.DASHBOARD_GITHUB_ID as string,
-			clientSecret: process.env.DASHBOARD_GITHUB_SECRET as string,
+			clientId: env.DASHBOARD_GITHUB_ID as string,
+			clientSecret: env.DASHBOARD_GITHUB_SECRET as string,
 			profile(profile: GithubProfile) {
 				return {
 					id: profile.id.toString(),

@@ -1,6 +1,7 @@
 import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
 import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
 import {WeaviateStore} from 'langchain/vectorstores/weaviate'
+import env from '~/env.mjs'
 import {cloneRepo} from './cloneRepo'
 import {type WeaviateConfig} from './db'
 import deleteRepo from './delete'
@@ -41,7 +42,7 @@ export default async function addRepo(
 			repoUrl,
 			branch,
 			textSplitter,
-			process.env.GITHUB_ACCESS_TOKEN || ''
+			env.GITHUB_ACCESS_TOKEN || ''
 		)
 
 		console.timeEnd(cloneTimer)
@@ -68,7 +69,7 @@ export default async function addRepo(
 		console.time(embedTimer)
 
 		const embeddings = new OpenAIEmbeddings({
-			openAIApiKey: process.env.OPENAI_API_KEY
+			openAIApiKey: env.OPENAI_API_KEY
 		})
 
 		const store = await WeaviateStore.fromExistingIndex(embeddings, {
