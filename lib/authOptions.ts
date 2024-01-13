@@ -6,8 +6,8 @@ import env from './env.mjs'
 export const authOptions: AuthOptions = {
 	providers: [
 		GithubProvider({
-			clientId: env.DASHBOARD_GITHUB_ID as string,
-			clientSecret: env.DASHBOARD_GITHUB_SECRET as string,
+			clientId: env.GITHUB_CLIENT_ID as string,
+			clientSecret: env.GITHUB_CLIENT_SECRET as string,
 			profile(profile: GithubProfile) {
 				return {
 					id: profile.id.toString(),
