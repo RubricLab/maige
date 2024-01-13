@@ -12,14 +12,14 @@ export default async function RootLayout({
 
 	return (
 		<div className='relative min-h-screen w-full bg-black px-8 text-white'>
-			<BackgroundGrid className='absolute left-0 right-0 z-0 h-full w-full opacity-40' />
-			{session && (
+			<BackgroundGrid className='absolute left-0 right-0 z-0 h-full w-full opacity-10' />
+			{session ? (
 				<DashboardHeader
 					session={session}
 					avatarUrl={session.user.image}
 				/>
-			)}
-			<div className='fixed z-10 w-full'>{children}</div>
+			) : null}
+			<div className='w-full'>{children}</div>
 		</div>
 	)
 }
