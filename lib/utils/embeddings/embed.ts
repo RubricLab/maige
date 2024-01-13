@@ -1,7 +1,9 @@
 import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
 import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
 import {WeaviateStore} from 'langchain/vectorstores/weaviate'
+import {GITHUB} from '~/constants'
 import env from '~/env.mjs'
+import {getInstallationId, getInstallationToken} from '../github'
 import {cloneRepo} from './cloneRepo'
 import {type WeaviateConfig} from './db'
 import deleteRepo from './delete'
@@ -10,10 +12,11 @@ import {AISummary} from './summary'
 
 export default async function addRepo(
 	weaviateConfig: WeaviateConfig,
-	repoUrl: string,
+	repoFullName: string,
 	branch: string,
 	replace: boolean
 ) {
+	const repoUrl = `${GITHUB.BASE_URL}/${repoFullName}`
 	const textSplitter = new RecursiveCharacterTextSplitter({
 		chunkSize: 4000,
 		chunkOverlap: 250
@@ -38,11 +41,15 @@ export default async function addRepo(
 		const cloneTimer = `Cloning repo ${repoUrl} @ ${branch}`
 		console.time(cloneTimer)
 
+		const installationToken = await getInstallationToken(
+			await getInstallationId(repoFullName)
+		)
+
 		const repo = await cloneRepo(
 			repoUrl,
 			branch,
 			textSplitter,
-			env.GITHUB_ACCESS_TOKEN || ''
+			installationToken || ''
 		)
 
 		console.timeEnd(cloneTimer)

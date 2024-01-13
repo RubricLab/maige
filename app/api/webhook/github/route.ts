@@ -61,10 +61,9 @@ export const POST = async (req: Request) => {
 			const vectorDB = new Weaviate(customer.id)
 
 			for (const repo of repositories) {
-				const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
 				const branch = await getMainBranch(repo.full_name)
 
-				await vectorDB.embedRepo(repoUrl, branch)
+				await vectorDB.embedRepo(repo.full_name, branch)
 			}
 
 			return new Response(`Added customer ${login}`)
