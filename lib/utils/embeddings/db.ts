@@ -1,4 +1,5 @@
 import weaviate from 'weaviate-ts-client'
+import env from '~/env.mjs'
 import deleteRepo from './delete'
 import addRepo from './embed'
 import {checkIndexExists} from './exists'
@@ -18,8 +19,8 @@ export default class Weaviate {
 
 	constructor(userId: string, indexName: string = 'CodeSearch') {
 		this.client = weaviate.client({
-			scheme: process.env.WEAVIATE_SCHEME,
-			host: process.env.WEAVIATE_HOST
+			scheme: env.WEAVIATE_SCHEME,
+			host: env.WEAVIATE_HOST
 		})
 
 		checkIndexExists(this.client, indexName)

@@ -1,6 +1,7 @@
 import {PrismaClient} from '@prisma/client'
 import Stripe from 'stripe'
 import {STRIPE, TIERS} from '~/constants'
+import env from '~/env.mjs'
 import {Tier} from '~/types'
 
 /**
@@ -41,13 +42,9 @@ export const createPaymentLink = async (
 			mode: 'subscription',
 			payment_method_types: ['card'],
 			success_url:
-				process.env.VERCEL === '1'
-					? 'https://maige.app/success'
-					: 'http://localhost:3000',
+				env.VERCEL === '1' ? 'https://maige.app/success' : 'http://localhost:3000',
 			cancel_url:
-				process.env.VERCEL === '1'
-					? 'https://maige.app/success'
-					: 'http://localhost:3000',
+				env.VERCEL === '1' ? 'https://maige.app/success' : 'http://localhost:3000',
 			line_items: [
 				{
 					price: TIERS[tier].priceId,

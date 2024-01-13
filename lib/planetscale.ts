@@ -1,7 +1,8 @@
 import {connect} from '@planetscale/database'
+import env from './env.mjs'
 
 export const config = {
-	url: process.env.DATABASE_URL
+	url: env.DATABASE_URL
 }
 
 export const conn = connect(config)

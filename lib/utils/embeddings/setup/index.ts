@@ -1,4 +1,5 @@
 import weaviate from 'weaviate-ts-client'
+import env from '~/env.mjs'
 import {schema} from './schema'
 
 export async function main() {
@@ -7,8 +8,8 @@ export async function main() {
 	console.log('Creating Weaviate schema...')
 
 	const client = weaviate.client({
-		scheme: process.env.WEAVIATE_SCHEME,
-		host: process.env.WEAVIATE_HOST
+		scheme: env.WEAVIATE_SCHEME,
+		host: env.WEAVIATE_HOST
 	})
 
 	try {
