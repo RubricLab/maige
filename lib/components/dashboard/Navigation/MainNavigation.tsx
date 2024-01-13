@@ -18,11 +18,11 @@ const routes = [
 export function MainNavigation() {
 	const pathname = usePathname()
 	return (
-		<div className='flex gap-2 pb-8 z-10'>
+		<div className='z-10 flex gap-2 pb-8'>
 			{routes.map((page, index) => (
 				<div
 					key={index}
-					className='relative flex flex-col items-center pb-2 group'>
+					className='group relative flex flex-col items-center pb-2'>
 					<Link
 						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
 						href={`/dashboard${page.path}`}>

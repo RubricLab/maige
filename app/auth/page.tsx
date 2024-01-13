@@ -1,10 +1,11 @@
-import React from 'react'
-import { Landing } from '~/components/dashboard/Landing'
+import {Landing} from '~/components/dashboard/Landing'
 
 type Props = {}
 
 export default function SignIN({}: Props) {
-  return (
-    <div><Landing/></div>
-  )
+	return (
+		<div>
+			<Landing />
+		</div>
+	)
 }

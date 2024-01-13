@@ -3,8 +3,8 @@
 import {SpinnerLoader} from 'app/dashboard/Loader'
 import {motion} from 'framer-motion'
 import {ReactNode} from 'react'
+import {cn} from '~/utils'
 import {SmallBody} from '../Text'
-import { cn } from '~/utils'
 
 export function PrimaryButton({
 	onClick,

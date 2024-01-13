@@ -5,7 +5,7 @@ import {useParams, usePathname} from 'next/navigation'
 import {cn} from '~/utils'
 
 const routes = [
-    {
+	{
 		name: 'Overview',
 		path: ''
 	},
@@ -16,12 +16,12 @@ const routes = [
 	{
 		name: 'Settings',
 		path: '/settings'
-	},
+	}
 ]
 
 export function RepoNavigation() {
 	const pathname = usePathname()
-    const {projectId} = useParams()
+	const {projectId} = useParams()
 	return (
 		<div className='flex gap-2 pb-8'>
 			{routes.map((page, index) => (

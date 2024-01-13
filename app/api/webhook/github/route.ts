@@ -4,9 +4,9 @@ import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {stripe} from '~/stripe'
 import {Label, Repository} from '~/types'
-import {validateSignature} from '~/utils/index'
 import Weaviate from '~/utils/embeddings/db'
 import {getMainBranch, getRepoMeta, openUsageIssue} from '~/utils/github'
+import {validateSignature} from '~/utils/index'
 import {incrementUsage} from '~/utils/payment'
 
 export const maxDuration = 300

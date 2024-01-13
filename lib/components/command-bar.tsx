@@ -28,7 +28,7 @@ export function CommandMenu() {
 				asChild
 				variant='outline'
 				onClick={() => setOpen(true)}
-				className='w-full pl-4 pr-2 md:w-80 hover:bg-zinc-900 text-zinc-300'>
+				className='w-full pl-4 pr-2 text-zinc-300 hover:bg-zinc-900 md:w-80'>
 				<div className='flex h-10 flex-row justify-between'>
 					<div className='flex flex-row gap-2'>
 						<SearchIcon className='my-auto h-4 w-4' />
@@ -39,7 +39,7 @@ export function CommandMenu() {
 							<CommandIcon width={12} />
 						</span>{' '}
 						<span className='flex h-[25px] w-[25px] items-center justify-center rounded bg-zinc-800 text-sm'>
-             {/* Attempts to center the K */}
+							{/* Attempts to center the K */}
 							<span className='mt-[0.05rem]'>K</span>
 						</span>
 					</kbd>
