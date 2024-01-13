@@ -1,37 +1,11 @@
-import {Sandbox} from '@e2b/sdk'
 import {expect, test} from 'bun:test'
 import {SerpAPI} from 'langchain/tools'
 import {z} from 'zod'
-import env from '~/env.mjs'
-import exec from '~/tools/exec'
 
 test('Bun test runner', () => {
 	// This is arbitrary. Could just return true.
 	expect(Bun.version).toInclude('1.0')
 })
-
-test.skip(
-	'GH CLI',
-	async () => {
-		const shell = await Sandbox.create({
-			apiKey: env.E2B_API_KEY,
-			id: 'Nodejs'
-		})
-
-		const cli = await exec({
-			description:
-				'Executes a shell command with the GH CLI installed and logged in',
-			name: 'gh_cli',
-			setupCmd: `sudo apt install gh && gh auth login --with-token <<< "${env.GITHUB_ACCESS_TOKEN}"`,
-			shell
-		})
-
-		const authStatus = await cli.func({cmd: 'gh auth status'})
-
-		expect(authStatus).toInclude('Logged in to github.com')
-	},
-	15 * 1000 // extend default 5s timeout
-)
 
 test('SERP API', async () => {
 	const serp = new SerpAPI()

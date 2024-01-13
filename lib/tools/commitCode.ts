@@ -1,6 +1,7 @@
 import Sandbox from '@e2b/sdk'
 import {DynamicStructuredTool} from 'langchain/tools'
 import {z} from 'zod'
+import env from '~/env.mjs'
 
 export default function commitCode({
 	shell,
@@ -12,8 +13,13 @@ export default function commitCode({
 	return new DynamicStructuredTool({
 		description: '',
 		func: async ({message, files}) => {
+			const botUserName = `${env.GITHUB_APP_NAME}[bot]` // Replace with your GitHub App's bot user name
+			const botUserEmail = `${env.GITHUB_APP_ID}+${env.GITHUB_APP_NAME}[bot]@users.noreply.github.com` // Replace with your GitHub App's bot user email
+
 			await shell.process.startAndWait({
-				cmd: `cd ${dir} && git add ${files.join(' ')} && git commit -m "${message}"`
+				cmd: `cd ${dir} && git config user.name "${botUserName}" && git config user.email "${botUserEmail}" && git add ${files.join(
+					' '
+				)} && git commit -m "${message}"`
 			})
 
 			return 'committed'
