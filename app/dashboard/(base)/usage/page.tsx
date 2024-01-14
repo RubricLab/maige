@@ -28,7 +28,7 @@ export type UsageRow = {
 const UsageParamsSchema = z.object({
   q: z.string().optional(),
   p: z.coerce.number().min(1).optional().default(1),
-  column: z.enum(["createdAt", "tokens", "action", "agent", "model"]).optional(),
+  col: z.enum(["createdAt", "tokens", "action", "agent", "model"]).optional(),
   dir: z.enum(["asc", "desc"]).optional(),
 });
 
@@ -58,9 +58,10 @@ export default async function Usage({
 
   usageFilter["action"] = { contains: usageQuery.data.q}
 
- const usageOrder = {
-    // "agent": 'asc',
- }
+  const filCol = usageQuery.data.col
+ const usageOrder = {}
+ if(filCol) usageOrder[filCol] = usageQuery.data.dir
+
   const start = performance.now();
   const usage: UsageRow[] = await prisma.usage.findMany({
     take: pageSize,
@@ -85,12 +86,14 @@ export default async function Usage({
 
   const params = new URLSearchParams({
     ...(usageQuery.data.q ? { q: usageQuery.data.q } : {}),
+    ...(usageQuery.data.col ? { col: usageQuery.data.col } : {}),
+    ...(usageQuery.data.dir ? { dir: usageQuery.data.dir } : {}),
   }).toString();
 
   return (
     <div className='flex flex-col gap-2'>
       <div className='inline-flex items-center justify-between'><div className='inline-flex gap-2 text-xs font-mono bg-green-800 bg-opacity-50 px-2 py-0.5 rounded-md'> <span><span className='text-green-400'>{usageNum}</span> Total Results</span>/<span>Fetched Page in <span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms</span></div><TableSearch searchValue={usageQuery.data.q ? usageQuery.data.q : ""}/></div>
-      <CustomTable data={usage}/>
+      <CustomTable params={usageQuery.data} data={usage}/>
       <div className="space-x-2 flex justify-end">
       {
         Array.from({length: Math.ceil(usageNum / pageSize)}, (_, i) => i).map((i) => (
