@@ -8,6 +8,7 @@ import Link from 'next/link'
 import z from 'zod'
 import { cn } from '~/utils'
 import { Button } from '~/components/ui/button'
+import TableSearch from '~/components/dashboard/usage/search'
 
 type UsageProject = {
   name: string;
@@ -55,7 +56,7 @@ export default async function Usage({
     projectId: {in: ['clp8s056r001awirtqv7rocff', "clq4dp0k700043imqk197aoc7"]},
   }
 
-  usageFilter["agent"] = { contains: 'agent' }
+  usageFilter["action"] = { contains: usageQuery.data.q}
 
  const usageOrder = {
     // "agent": 'asc',
@@ -83,17 +84,17 @@ export default async function Usage({
 	})
 
   const params = new URLSearchParams({
-    ...(usageQuery.data.q ? { query: usageQuery.data.q } : {}),
+    ...(usageQuery.data.q ? { q: usageQuery.data.q } : {}),
   }).toString();
 
   return (
     <div className='flex flex-col gap-2'>
-      <div className='inline-flex gap-2 text-xs font-mono'> <span><span className='text-green-400'>{usageNum}</span> Total Results</span>/<span>Fetched Page in <span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms</span></div>
+      <div className='inline-flex items-center justify-between'><div className='inline-flex gap-2 text-xs font-mono bg-green-800 bg-opacity-50 px-2 py-0.5 rounded-md'> <span><span className='text-green-400'>{usageNum}</span> Total Results</span>/<span>Fetched Page in <span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms</span></div><TableSearch searchValue={usageQuery.data.q ? usageQuery.data.q : ""}/></div>
       <CustomTable data={usage}/>
       <div className="space-x-2 flex justify-end">
       {
         Array.from({length: Math.ceil(usageNum / pageSize)}, (_, i) => i).map((i) => (
-          <Link prefetch={true} href={`/dashboard/usage?${params}&p=${i+1}`} key={i}><Button className={cn({ 'bg-neutral-700': i+1 === pageNum })} size="sm" variant='outline'>{i+1}</Button></Link>
+          <Link replace={true} prefetch={true} href={`/dashboard/usage?${params}&p=${i+1}`} key={i}><Button className={cn({ 'bg-neutral-700': i+1 === pageNum })} size="sm" variant='outline'>{i+1}</Button></Link>
         ))
       }</div>
     </div>
