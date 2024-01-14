@@ -3,104 +3,99 @@ import prisma from '~/prisma'
 import {getServerSession} from 'next-auth'
 import { redirect } from 'next/navigation'
 import {authOptions} from '~/authOptions'
-import { DataTableDemo } from '~/components/dashboard/usage/data-table'
+import { CustomTable } from '~/components/dashboard/usage/custom-table';
+import Link from 'next/link'
+import z from 'zod'
+import { cn } from '~/utils'
+import { Button } from '~/components/ui/button'
 
-type Props = {}
+type UsageProject = {
+  name: string;
+  id: string;
+}
 
-export default async function Usage({}: Props) {
+export type UsageRow = {
+  id: string;
+  createdAt: Date;
+  action: string;
+  agent: string;
+  tokens: string;
+  model: string;
+  project: UsageProject;
+};
+
+const UsageParamsSchema = z.object({
+  q: z.string().optional(),
+  p: z.coerce.number().min(1).optional().default(1),
+  column: z.enum(["createdAt", "tokens", "action", "agent", "model"]).optional(),
+  dir: z.enum(["asc", "desc"]).optional(),
+});
+
+
+export default async function Usage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const session = await getServerSession(authOptions)
+
+  const usageQuery = UsageParamsSchema.safeParse(searchParams);
+
+  if (!usageQuery.success) return <p>Bad request</p>;
 
 	if (!session) redirect('/auth')
 
-  // const usage = await prisma.project.findMany({
-	// 	where: {
-	// 		// customer: {
-  //     //   githubUserId: session.user.githubUserId
-  //     // }
-  //     id: {in: ['project_1', 'project_2', 'project_3']},
-  //   },
-  //   select: {
-  //     id: true,
-  //     // project: {
-  //     //   select: {
-  //     //     id: true,
-  //     //     name: true,
-  //     //     createdAt: true,
-  //     //     customInstructions: true,
-  //     //   }
-  //     // }
-  //     name: true,
-  //     usage: {
-  //       select : {
-  //         id: true,
-  //         createdAt: true,
-  //         action: true,
-  //         agent: true,
-  //         tokens: true,
-  //         model: true,
-  //       }
-  //     }
-  //   },
-	// })
+  const pageSize = 3
+  const pageNum = usageQuery.data.p
 
-  const data: any[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-]
+  const usageFilter = {
+    // customer: {
+    //   githubUserId: session.user.githubUserId
+    // }
+    projectId: {in: ['clp8s056r001awirtqv7rocff', "clq4dp0k700043imqk197aoc7"]},
+  }
+
+  usageFilter["agent"] = { contains: 'agent' }
+
+ const usageOrder = {
+    // "agent": 'asc',
+ }
+  const start = performance.now();
+  const usage: UsageRow[] = await prisma.usage.findMany({
+    take: pageSize,
+    skip: pageSize * (pageNum - 1),
+    where: usageFilter,
+    orderBy: usageOrder as any,
+    include: {
+      project: {
+        select: {
+          name: true,
+          id: true,
+        },
+      },
+    },
+	})
+  const end = performance.now();
+  const timeTaken = end - start;
+
+  const usageNum: number = await prisma.usage.count({
+		where: usageFilter,
+	})
+
+  const params = new URLSearchParams({
+    ...(usageQuery.data.q ? { query: usageQuery.data.q } : {}),
+  }).toString();
 
   return (
-    <div><DataTableDemo data={data}/></div>
+    <div className='flex flex-col gap-2'>
+      <div className='inline-flex gap-2 text-xs font-mono'> <span><span className='text-green-400'>{usageNum}</span> Total Results</span>/<span>Fetched Page in <span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms</span></div>
+      <CustomTable data={usage}/>
+      <div className="space-x-2 flex justify-end">
+      {
+        Array.from({length: Math.ceil(usageNum / pageSize)}, (_, i) => i).map((i) => (
+          <Link prefetch={true} href={`/dashboard/usage?${params}&p=${i+1}`} key={i}><Button className={cn({ 'bg-neutral-700': i+1 === pageNum })} size="sm" variant='outline'>{i+1}</Button></Link>
+        ))
+      }</div>
+    </div>
   )
 }
