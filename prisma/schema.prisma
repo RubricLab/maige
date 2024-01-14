@@ -6,6 +6,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 model Customer {
@@ -66,4 +67,7 @@ model Usage {
   createdAt DateTime @default(now())
 
   @@index([projectId])
+  @@fulltext([action])
+  @@fulltext([agent])
+  @@fulltext([action, agent])
 }
