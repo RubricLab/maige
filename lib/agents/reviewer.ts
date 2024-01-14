@@ -7,16 +7,11 @@ import {codebaseSearch} from '~/tools/codeSearch'
 import {prComment} from '~/tools/prComment'
 import {isDev} from '~/utils/index'
 
-const model = new ChatOpenAI({
-	modelName: 'gpt-4-1106-preview',
-	openAIApiKey: env.OPENAI_API_KEY,
-	temperature: 0.3
-})
-
 export async function reviewer({
 	customerId,
 	task,
 	diff,
+	projectId,
 	octokit,
 	repoFullName,
 	pullNumber,
@@ -26,6 +21,7 @@ export async function reviewer({
 	customerId: string
 	task: string
 	diff: string
+	projectId: string
 	octokit: any
 	repoFullName: string
 	pullNumber: number
@@ -35,6 +31,21 @@ export async function reviewer({
 	/**
 	 * New or updated PR
 	 */
+	let tokens = 0
+
+	const model = new ChatOpenAI({
+		modelName: 'gpt-4-1106-preview',
+		openAIApiKey: env.OPENAI_API_KEY,
+		temperature: 0.3,
+		callbacks: [
+			{
+				async handleLLMEnd(data) {
+					tokens += data.llmOutput.tokenUsage.totalTokens
+				},
+			}
+		]
+	})
+
 	const prefix = `
 		You are a 1000x senior engineer looking at a pull request on GitHub.
 		Follow these instructions: ${task}.
@@ -83,7 +94,22 @@ export async function reviewer({
 		// verbose: true,
 		agentArgs: {
 			prefix
-		}
+		},
+		callbacks: [
+			{
+				async handleChainEnd() {
+					await prisma.usage.create({
+						data: {
+							projectId: projectId,
+							tokens: tokens.toString(),
+							action: "Review a PR with reviewer",
+							agent: "reviewer",
+							model: "gpt-4-1106-preview",
+						}
+					})
+				},
+			}
+		]
 	})
 
 	const {output} = await executor.call({input: diffString})

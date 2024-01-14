@@ -9,24 +9,36 @@ import listFiles from '~/tools/listFiles'
 import readFile from '~/tools/readFile'
 import writeFile from '~/tools/writeFile'
 import {isDev} from '~/utils/index'
-
-const model = new ChatOpenAI({
-	modelName: 'gpt-4-1106-preview',
-	openAIApiKey: env.OPENAI_API_KEY,
-	temperature: 0.3
-})
+import prisma from '~/prisma'
 
 export async function engineer({
 	task,
 	repoFullName,
 	issueNumber,
-	customerId
+	customerId,
+	projectId
 }: {
 	task: string
 	repoFullName: string
 	issueNumber: number
 	customerId: string
+	projectId: string
 }) {
+	let tokens = 0
+
+	const model = new ChatOpenAI({
+		modelName: 'gpt-4-1106-preview',
+		openAIApiKey: env.OPENAI_API_KEY,
+		temperature: 0.3,
+		callbacks: [
+			{
+				async handleLLMEnd(data) {
+					tokens += data.llmOutput.tokenUsage.totalTokens
+				},
+			}
+		]
+	})
+
 	const {content: title} = await model.call([
 		'Could you output a very concise PR title for this request?',
 		`Task: ${task}`
@@ -76,6 +88,21 @@ Your final output message should be the message that will be included in the pul
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
 		// verbose: true,
+		callbacks: [
+			{
+				async handleChainEnd() {
+					await prisma.usage.create({
+						data: {
+							projectId: projectId,
+							tokens: tokens.toString(),
+							action: "Create some stuff with engineer",
+							agent: "engineer",
+							model: "gpt-4-1106-preview",
+						}
+					})
+				},
+			}
+		],
 		agentArgs: {
 			prefix
 		}

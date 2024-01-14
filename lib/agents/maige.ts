@@ -9,18 +9,14 @@ import {githubTool} from '~/tools/github'
 import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
 import {isDev} from '~/utils/index'
-
-const model = new ChatOpenAI({
-	modelName: 'gpt-4-1106-preview',
-	openAIApiKey: env.OPENAI_API_KEY,
-	temperature: 0
-})
+import prisma from '~/prisma'
 
 export async function maige({
 	input,
 	octokit,
-	prisma,
+	// prisma,
 	customerId,
+	projectId,
 	repoFullName,
 	issueNumber,
 	issueId,
@@ -31,8 +27,9 @@ export async function maige({
 }: {
 	input: string
 	octokit: any
-	prisma: any
+	// prisma: any
 	customerId: string
+	projectId: string,
 	repoFullName: string
 	issueNumber?: number
 	issueId?: string
@@ -41,6 +38,22 @@ export async function maige({
 	comment: any
 	beta?: boolean
 }) {
+	let tokens = 0
+
+	const model = new ChatOpenAI({
+		modelName: 'gpt-4-1106-preview',
+		openAIApiKey: env.OPENAI_API_KEY,
+		temperature: 0,
+		streaming: false,
+		callbacks: [
+			{
+				async handleLLMEnd(data) {
+					tokens += data.llmOutput.tokenUsage.totalTokens
+				},
+			}
+		]
+	})
+
 	const tools = [
 		labelTool({octokit, allLabels, issueId}),
 		updateInstructionsTool({
@@ -54,10 +67,10 @@ export async function maige({
 		}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
-		...(beta ? [dispatchEngineer({issueNumber, repoFullName, customerId})] : []),
+		...(beta ? [dispatchEngineer({issueNumber, repoFullName, customerId, projectId})] : []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
 		...(pullUrl && beta
-			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId})]
+			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId, projectId})]
 			: [])
 	]
 
@@ -84,7 +97,22 @@ All repo labels: ${allLabels
 		// verbose: true,
 		agentArgs: {
 			prefix
-		}
+		},
+		callbacks: [
+			{
+				async handleChainEnd() {
+					await prisma.usage.create({
+						data: {
+							projectId: projectId,
+							tokens: tokens.toString(),
+							action: "Review an issue with maige",
+							agent: "maige",
+							model: "gpt-4-1106-preview",
+						}
+					})
+				},
+			}
+		]
 	})
 
 	const {output} = await executor.call({input})
