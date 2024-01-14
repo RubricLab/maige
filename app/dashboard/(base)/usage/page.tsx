@@ -9,6 +9,7 @@ import z from 'zod'
 import { cn } from '~/utils'
 import { Button } from '~/components/ui/button'
 import TableSearch from '~/components/dashboard/usage/search'
+import TestChart from '~/components/dashboard/usage/test-chart'
 
 type UsageProject = {
   name: string;
@@ -26,7 +27,7 @@ export type UsageRow = {
 };
 
 const UsageParamsSchema = z.object({
-  q: z.string().optional(),
+  q: z.coerce.string().optional(),
   p: z.coerce.number().min(1).optional().default(1),
   col: z.enum(["createdAt", "tokens", "action", "agent", "model"]).optional(),
   dir: z.enum(["asc", "desc"]).optional(),
@@ -46,14 +47,12 @@ export default async function Usage({
 
 	if (!session) redirect('/auth')
 
-  const pageSize = 3
+  const pageSize = 5
   const pageNum = usageQuery.data.p
 
   const usageFilter = {
-    // customer: {
-    //   githubUserId: session.user.githubUserId
-    // }
-    projectId: {in: ['clp8s056r001awirtqv7rocff', "clq4dp0k700043imqk197aoc7"]},
+    // projectId: {in: ['clp8s056r001awirtqv7rocff', "clq4dp0k700043imqk197aoc7"]},
+    project: {customer: {githubUserId: session.user.githubUserId}},
   }
 
   usageFilter["action"] = { contains: usageQuery.data.q}
@@ -92,6 +91,10 @@ export default async function Usage({
 
   return (
     <div className='flex flex-col gap-2'>
+      <div className='gap-5 flex'>
+      <TestChart category={"tokens"} color={"green"} data={usage}/>
+      <TestChart category={"cost"} color={"orange"} data={usage}/>
+      </div>
       <div className='inline-flex items-center justify-between'><div className='inline-flex gap-2 text-xs font-mono bg-green-800 bg-opacity-50 px-2 py-0.5 rounded-md'> <span><span className='text-green-400'>{usageNum}</span> Total Results</span>/<span>Fetched Page in <span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms</span></div><TableSearch searchValue={usageQuery.data.q ? usageQuery.data.q : ""}/></div>
       <CustomTable params={usageQuery.data} data={usage}/>
       <div className="space-x-2 flex justify-end">
