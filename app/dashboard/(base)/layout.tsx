@@ -1,6 +1,5 @@
 import {ApplicationProvider} from 'lib/components/dashboard/ApplicationProvider'
 import {Toaster} from 'sonner'
-import BackgroundGrid from '~/components/background-grid'
 import {MainNavigation} from '~/components/dashboard/Navigation'
 
 export default async function RootLayout({
@@ -13,8 +12,9 @@ export default async function RootLayout({
 			<Toaster />
 			<ApplicationProvider>
 				<MainNavigation />
-				<div className='h-full w-full flex flex-col'>
-				<div className='xl:px-24 bg-transparent z-10 grid w-full'>{children}</div></div>
+				<div className='flex h-full w-full flex-col'>
+					<div className='z-10 grid w-full bg-transparent xl:px-24'>{children}</div>
+				</div>
 			</ApplicationProvider>
 		</div>
 	)
