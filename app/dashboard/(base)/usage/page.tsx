@@ -90,13 +90,14 @@ export default async function Usage({
   }).toString();
 
   return (
-    <div className='flex flex-col gap-2'>
-      <div className='gap-5 flex'>
+    <div className='flex flex-col gap-2 w-full'>
+      <div className='gap-5 flex md:flex-row flex-col'>
       <TestChart category={"tokens"} color={"green"} data={usage}/>
       <TestChart category={"cost"} color={"orange"} data={usage}/>
       </div>
-      <div className='inline-flex items-center justify-between'><div className='inline-flex gap-2 text-xs font-mono bg-green-800 bg-opacity-50 px-2 py-0.5 rounded-md'> <span><span className='text-green-400'>{usageNum}</span> Total Results</span>/<span>Fetched Page in <span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms</span></div><TableSearch searchValue={usageQuery.data.q ? usageQuery.data.q : ""}/></div>
-      <CustomTable params={usageQuery.data} data={usage}/>
+      <div className='inline-flex lg:items-center justify-between lg:flex-row flex-col gap-3'><div className='inline-flex gap-2 text-xs font-mono bg-green-800 bg-opacity-50 px-2 py-0.5 rounded-md w-fit'> <span><span className='text-green-400'>{usageNum}</span> Total Results</span>/<span>Fetched Page in <span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms</span></div><TableSearch searchValue={usageQuery.data.q ? usageQuery.data.q : ""}/></div>
+      <div className='overflow-hidden max-w-full flex'>
+      <CustomTable params={usageQuery.data} data={usage}/></div>
       <div className="space-x-2 flex justify-end">
       {
         Array.from({length: Math.ceil(usageNum / pageSize)}, (_, i) => i).map((i) => (
