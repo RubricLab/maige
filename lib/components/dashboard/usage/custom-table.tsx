@@ -24,7 +24,7 @@ const TableColNames = [
 	},
 	{
 		key: 'tokens',
-		value: 'Cost',
+		value: 'Tokens',
 		align: 'left'
 	},
 	{
