@@ -8,7 +8,7 @@ Quickly set up Maige and let AI handle your issue labels with ease. Get started 
 
 - Install dependencies: `bun i`
 - Set up environment: `cp .env.example .env`
-- Start the app: `bun run dev` & `ngrok http 3000`
+- Start the app: `bun run dev` & in a separate terminal run, `ngrok http 3000`
 
 ## GitHub App Integration
 
