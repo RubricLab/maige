@@ -28,10 +28,10 @@ export async function reviewer({
 	pullId?: string
 	commitId: string
 }) {
-	/**
-	 * New or updated PR
-	 */
-	let tokens = 0
+	let tokens = {
+		prompt: 0,
+		completion: 0,
+	}
 
 	const model = new ChatOpenAI({
 		modelName: 'gpt-4-1106-preview',
@@ -40,7 +40,10 @@ export async function reviewer({
 		callbacks: [
 			{
 				async handleLLMEnd(data) {
-					tokens += data.llmOutput.tokenUsage.totalTokens
+					tokens = { 
+						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0), 
+						completion: tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0) 
+					};
 				},
 			}
 		]
@@ -101,7 +104,8 @@ export async function reviewer({
 					await prisma.usage.create({
 						data: {
 							projectId: projectId,
-							tokens: tokens.toString(),
+							promptTokens: tokens.prompt,
+							completionTokens: tokens.completion,
 							action: "Review a PR with reviewer",
 							agent: "reviewer",
 							model: "gpt-4-1106-preview",

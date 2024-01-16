@@ -24,7 +24,10 @@ export async function engineer({
 	customerId: string
 	projectId: string
 }) {
-	let tokens = 0
+	let tokens = {
+		prompt: 0,
+		completion: 0,
+	}
 
 	const model = new ChatOpenAI({
 		modelName: 'gpt-4-1106-preview',
@@ -33,7 +36,10 @@ export async function engineer({
 		callbacks: [
 			{
 				async handleLLMEnd(data) {
-					tokens += data.llmOutput.tokenUsage.totalTokens
+					tokens = { 
+						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0), 
+						completion: tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0) 
+					};					
 				},
 			}
 		]
@@ -94,7 +100,8 @@ Your final output message should be the message that will be included in the pul
 					await prisma.usage.create({
 						data: {
 							projectId: projectId,
-							tokens: tokens.toString(),
+							promptTokens: tokens.prompt,
+							completionTokens: tokens.completion,
 							action: "Create some stuff with engineer",
 							agent: "engineer",
 							model: "gpt-4-1106-preview",

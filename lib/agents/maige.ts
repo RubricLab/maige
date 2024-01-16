@@ -38,7 +38,10 @@ export async function maige({
 	comment: any
 	beta?: boolean
 }) {
-	let tokens = 0
+	let tokens = {
+		prompt: 0,
+		completion: 0,
+	}
 
 	const model = new ChatOpenAI({
 		modelName: 'gpt-4-1106-preview',
@@ -48,7 +51,10 @@ export async function maige({
 		callbacks: [
 			{
 				async handleLLMEnd(data) {
-					tokens += data.llmOutput.tokenUsage.totalTokens
+					tokens = { 
+						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0), 
+						completion: tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0) 
+					};
 				},
 			}
 		]
@@ -104,7 +110,8 @@ All repo labels: ${allLabels
 					await prisma.usage.create({
 						data: {
 							projectId: projectId,
-							tokens: tokens.toString(),
+							promptTokens: tokens.prompt,
+							completionTokens: tokens.completion,
 							action: "Review an issue with maige",
 							agent: "maige",
 							model: "gpt-4-1106-preview",
