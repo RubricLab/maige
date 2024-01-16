@@ -1,6 +1,6 @@
 'use client'
 
-import {useRouter} from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation';
 import {useEffect, useState} from 'react'
 import {Input} from '~/components/ui/input'
 import {useDebounce} from '~/hooks/debounce'
@@ -11,18 +11,19 @@ type Props = {
 
 export default function TableSearch({searchValue}: Props) {
 	const router = useRouter()
+	const pathname = usePathname()
 	const [search, setSearch] = useState<string>(searchValue)
 	const debouncedSearchTerm = useDebounce(search, 200)
 
 	useEffect(() => {
-		router.replace(`/dashboard/usage?q=${encodeURIComponent(debouncedSearchTerm)}`)
-	}, [router, debouncedSearchTerm])
+		router.replace(`${pathname}?q=${encodeURIComponent(debouncedSearchTerm)}`)
+	}, [pathname, router, debouncedSearchTerm])
 
 	return (
 		<Input
 			placeholder='Search actions...'
 			value={search}
-			onChange={e => setSearch(e.currentTarget.value)}
+			onChange={e => {setSearch(e.currentTarget.value)}}
 			className='max-w-sm'
 		/>
 	)
