@@ -20,7 +20,7 @@ Create a GitHub App for webhooks and repo access. Populate your **.env** with th
 3. Callback URL: nGrok URL + GitHub auth endpoint eg. `https://abc.ngrok.app/api/auth/callback/github`
 4. Webhook URL: nGrok URL + handler path eg. `https://abc.ngrok.app/api/webhook/github`.
 6. Webhook secret: generate this with `openssl rand -hex 32`. Add it to your **.env**.
-7. Permissions: toggle **Issue: Read & Write** and **Pull Request: Read & Write**.
+7. Permissions: toggle **Read & Write** for **Contents**, **Issues**, **Pull Requests**.
 8. Events: toggle **issues**, **issue comments**, and **pull requests**.
 9. Private key: generate a private key. Download it. Run the following command ([source](https://github.com/gr2m/universal-github-app-jwt?tab=readme-ov-file#converting-pkcs1-to-pkcs8)) to convert it to the right format:
 
