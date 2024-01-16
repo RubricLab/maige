@@ -29,7 +29,7 @@ export default function TestChart({
             <div className="space-y-1">
               <p className="text-tremor-content">{category.dataKey}</p>
               <p className="font-medium text-tremor-content-emphasis">
-                {category.value}
+                {category.value} {category.payload.day}
               </p>
             </div>
           </div>
@@ -37,44 +37,15 @@ export default function TestChart({
       </div>
     );
   };
-
-  const exData = [
-    {
-      year: 1970,
-      tokens: 1,
-      cost: 10,
-    },
-    {
-      year: 1971,
-      tokens: 1,
-      cost: 100,
-    },
-    {
-      year: 1972,
-      tokens: 10,
-      cost: 20
-    },
-    {
-      year: 1973,
-      tokens: 1,
-      cost: 30
-    },
-    {
-      year: 1974,
-      tokens: 1,
-      cost: 40
-    },
-    //...
-  ];
-
+  
   return (
     <>
    <LineChart
      className="h-72"
-     data={exData}
-     index="step"
+     data={data}
+     index="date"
      showAnimation={true}
-     autoMinValue={true}
+    showLegend={false}
      categories={[category]}
      customTooltip={customTooltip}
      colors={[color]}
