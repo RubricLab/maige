@@ -5,7 +5,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
@@ -57,14 +57,15 @@ model Instruction {
 }
 
 model Usage {
-  id        String   @id @default(cuid())
-  projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  action    String
-  agent     String
-  tokens    String
-  model     String
-  createdAt DateTime @default(now())
+  id               String   @id @default(cuid())
+  projectId        String
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  action           String
+  agent            String
+  promptTokens     Int
+  completionTokens Int
+  model            String
+  createdAt        DateTime @default(now())
 
   @@index([projectId])
   @@fulltext([action])
