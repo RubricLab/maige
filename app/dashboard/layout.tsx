@@ -1,6 +1,6 @@
 import {getServerSession} from 'next-auth'
 import {authOptions} from '~/authOptions'
-import BackgroundGrid from '~/components/background-grid'
+import BackgroundGrid from '~/components/BackgroundGrid'
 import {DashboardHeader} from '~/components/dashboard/Navigation/Header'
 
 export default async function RootLayout({

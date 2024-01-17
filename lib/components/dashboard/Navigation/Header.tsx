@@ -5,7 +5,7 @@ import {signOut} from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
-import {CommandMenu} from '~/components/command-bar'
+import {CommandMenu} from '~/components/CommandBar'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
