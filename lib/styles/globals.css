@@ -34,14 +34,11 @@
 
 		--radius: 0.5rem;
 	}
-}
-
-@layer base {
 	* {
 		@apply border-border;
 	}
-	body {
-		@apply bg-background text-foreground;
+	html {
+		@apply bg-white text-black dark:bg-black dark:text-white;
 	}
 	a {
 		@apply transition-all focus:outline-none;

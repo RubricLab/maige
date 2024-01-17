@@ -2,7 +2,6 @@
 import config from '@rubriclab/tailwind-config'
 
 module.exports = {
-	darkMode: ['class'],
 	presets: [config],
 	content: [
 		'./pages/**/*.{ts,tsx}',
@@ -77,6 +76,12 @@ module.exports = {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
+			},
+			dropShadow: {
+				glow: [
+					'0 0px 20px rgba(255,255, 255, 0.35)',
+					'0 0px 65px rgba(255, 255,255, 0.2)'
+				]
 			}
 		}
 	},
