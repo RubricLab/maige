@@ -1,5 +1,5 @@
 datasource db {
-  provider     = "postgres"
+  provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
@@ -17,6 +17,7 @@ model Customer {
   stripeCustomerId     String? @unique
 
   projects Project[]
+  feedback Feedback[]
 
   usage          Int      @default(0)
   totalUsage     Int      @default(0)
@@ -72,4 +73,13 @@ model Usage {
   @@fulltext([action])
   @@fulltext([agent])
   @@fulltext([action, agent])
+}
+
+model Feedback {
+  id       String   @id @default(cuid())
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  content  String
+
+  @@index([customerId])
 }
