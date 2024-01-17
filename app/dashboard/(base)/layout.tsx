@@ -1,6 +1,7 @@
 import {ApplicationProvider} from 'lib/components/dashboard/ApplicationProvider'
 import {Toaster} from 'sonner'
 import {MainNavigation} from '~/components/dashboard/Navigation'
+import Feedback from '~/components/feedback/feedback'
 
 export default async function RootLayout({
 	children
@@ -16,6 +17,7 @@ export default async function RootLayout({
 					<div className='z-10 grid w-full bg-transparent xl:px-24'>{children}</div>
 				</div>
 			</ApplicationProvider>
+			<Feedback />
 		</div>
 	)
 }

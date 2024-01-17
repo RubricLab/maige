@@ -22,6 +22,7 @@ model Customer {
   usageWarned          Boolean   @default(false)
   createdAt            DateTime  @default(now())
   projects             Project[]
+  feedback             Feedback[]
 }
 
 model Project {
@@ -60,4 +61,13 @@ model Usage {
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
+}
+
+model Feedback {
+  id       String   @id @default(cuid())
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  content  String
+
+  @@index([customerId])
 }
