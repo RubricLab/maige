@@ -10,7 +10,7 @@ export default async function RootLayout({
 }) {
 	return (
 		<div>
-			<Toaster />
+			<Toaster position='top-right' />
 			<ApplicationProvider>
 				<MainNavigation />
 				<div className='flex h-full w-full flex-col'>
