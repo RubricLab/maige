@@ -50,7 +50,7 @@ export default function Feedback({}: Props) {
 						</div>
 						<div className='flex w-full flex-col gap-2'>
 							<Textarea
-								className='h-24 w-full cursor-text border-none p-0 text-slate-400'
+								className='h-24 w-full cursor-text border-none p-0 text-slate-400 placeholder:opacity-50'
 								value={content}
 								placeholder='I wish that ...'
 								onChange={e => setContent(e.target.value)}
