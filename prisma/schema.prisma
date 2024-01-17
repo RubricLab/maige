@@ -16,6 +16,7 @@ model Customer {
   stripeCustomerId     String? @unique
 
   projects Project[]
+  feedback Feedback[]
 
   usage          Int      @default(0)
   totalUsage     Int      @default(0)
@@ -66,4 +67,13 @@ model Usage {
   createdAt DateTime @default(now())
 
   @@index([projectId])
+}
+
+model Feedback {
+  id       String   @id @default(cuid())
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  content  String
+
+  @@index([customerId])
 }
