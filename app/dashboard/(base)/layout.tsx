@@ -13,7 +13,7 @@ export default async function RootLayout({
 			<ApplicationProvider>
 				<MainNavigation />
 				<div className='flex h-full w-full flex-col'>
-					<div className='z-10 grid w-full bg-transparent xl:px-24'>{children}</div>
+					<div className='z-10 grid w-full bg-transparent'>{children}</div>
 				</div>
 			</ApplicationProvider>
 		</div>
