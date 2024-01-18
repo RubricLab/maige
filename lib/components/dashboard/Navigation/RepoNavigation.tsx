@@ -13,10 +13,6 @@ const routes = [
 		name: 'Instructions',
 		path: '/instructions'
 	},
-    // {
-	// 	name: 'Runs',
-	// 	path: '/runs'
-	// },
 	{
 		name: 'Settings',
 		path: '/settings'
