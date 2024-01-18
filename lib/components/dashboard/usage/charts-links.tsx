@@ -27,18 +27,13 @@ export default function ChartsLinks({route}: Props) {
                 routes.map((page, index) => (
                     <div
                         key={index}
-                        className='relative flex flex-col items-center pb-2 group'>
+                        className='relative flex flex-col items-center pb-2 group font-medium text-sm'>
                         <Link
                             prefetch={false}
-                            className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
+                            className={cn('mb-1 rounded-sm px-2.5 py-0.5 bg-slate-600 border border-slate-500 border-opacity-50 bg-opacity-50 hover:bg-purple-400 hover:bg-opacity-50 hover:border-purple-300', {"bg-purple-500 border border-purple-400" : route == page.path})}
                             href={`/dashboard/usage/${page.path}`}>
                             {page.name}
                         </Link>
-                        <div
-                            className={cn(
-                                'invisible w-[90%] border-b-[2px] group-hover:visible border-b-white border-opacity-50',
-                                route == `${page.path}` && 'visible border-opacity-100'
-                            )}></div>
                     </div>
                 ))
             }
