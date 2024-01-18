@@ -4,11 +4,7 @@ import {authOptions} from '~/authOptions'
 
 export default async function Layout({
 	children,
-    charts,
-	table,
 }: {
-    charts: React.ReactNode,
-    table: React.ReactNode,
 	children: React.ReactNode
 }) {
 	const session = await getServerSession(authOptions)
@@ -16,8 +12,6 @@ export default async function Layout({
 
 	return (
 		<div>
-            {charts}
-            {table}
 			{children}
 		</div>
 	)

@@ -1,42 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
-  provider     = "mysql"
+  provider     = "postgresql"
   url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
   relationMode = "prisma"
 }
 
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
-}
-
 model Customer {
-  id                   String  @id @default(cuid())
-  name                 String  @unique
-  githubUserId         String? @unique
-  stripeSubscriptionId String? @unique
-  stripeCustomerId     String? @unique
-
-  projects Project[]
-
-  usage          Int      @default(0)
-  totalUsage     Int      @default(0)
-  usageLimit     Int      @default(20)
-  usageUpdatedAt DateTime @default(now())
-
-  usageWarned Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id                   String    @id @default(cuid())
+  name                 String    @unique
+  githubUserId         String?   @unique
+  stripeSubscriptionId String?   @unique
+  stripeCustomerId     String?   @unique
+  usage                Int       @default(0)
+  totalUsage           Int       @default(0)
+  usageLimit           Int       @default(20)
+  usageUpdatedAt       DateTime  @default(now())
+  usageWarned          Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  projects             Project[]
+  feedback             Feedback[]
 }
 
 model Project {
-  id   String @id @default(cuid())
-  name String
-
-  customerId String
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  usage Usage[]
-
+  id                 String        @id @default(cuid())
+  name               String
+  customerId         String
   createdAt          DateTime      @default(now())
+  customer           Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  usage              Usage[]
   customInstructions Instruction[]
 
   @@unique([customerId, name])
@@ -44,31 +39,36 @@ model Project {
 }
 
 model Instruction {
-  id                String  @id @default(cuid())
+  id                String   @id @default(cuid())
   projectId         String
-  content           String  @db.Text
+  content           String
   creatorUsername   String?
   githubCommentLink String?
+  createdAt         DateTime @default(now())
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  @@index([projectId])
+}
+
+model Usage {
+  id        String   @id @default(cuid())
+  projectId String
+  action    String
+  agent     String
+  promptTokens     Int
+  completionTokens Int
+  model     String
   createdAt DateTime @default(now())
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
 }
 
-model Usage {
-  id               String   @id @default(cuid())
-  projectId        String
-  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  action           String
-  agent            String
-  promptTokens     Int
-  completionTokens Int
-  model            String
-  createdAt        DateTime @default(now())
+model Feedback {
+  id       String   @id @default(cuid())
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId String
+  content  String
 
-  @@index([projectId])
-  @@fulltext([action])
-  @@fulltext([agent])
-  @@fulltext([action, agent])
+  @@index([customerId])
 }

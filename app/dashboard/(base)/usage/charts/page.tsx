@@ -1,21 +1,15 @@
-import { revalidateTag } from "next/cache"
-import ButTest from './but';
-import TestTab from "./testtab";
+import Link from 'next/link'
+import {CustomTable} from '~/components/dashboard/usage/custom-table'
 
 type Props = {}
 
 export default async function Usage() {
-  const hello = await fetch('http://localhost:3000/api/hello', {method: "POST", body: JSON.stringify("eh"), next: {tags: ['hello']}}).then(
-    res => res.json()
-  )
-  console.log(hello)
 
+  // const usage = await fetch("localhost:3000/api/usage").then(res => res.json())
+  
 	return (
 		<div className='flex w-full flex-col gap-2'>
-			{/* {JSON.stringify(usage)} */}
-      <TestTab/>
-        <ButTest/>
-
+      {/* {JSON.stringify(usage)} */}
 			{/* <div className='inline-flex flex-col justify-between gap-3 lg:flex-row lg:items-center'>
 				<div className='inline-flex w-fit gap-2 rounded-md bg-green-800 bg-opacity-50 px-2 py-0.5 font-mono text-xs'>
 					{' '}
