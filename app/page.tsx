@@ -26,7 +26,7 @@ const CTAButton = () => (
 	</Link>
 )
 
-export const Page = () => {
+const Page = () => {
 	return (
 		<div className='relative w-screen bg-black'>
 			<Header />
