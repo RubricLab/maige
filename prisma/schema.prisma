@@ -76,10 +76,10 @@ model Usage {
 }
 
 model Feedback {
-  id       String   @id @default(cuid())
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String
-  content  String
+  content    String
 
   @@index([customerId])
 }

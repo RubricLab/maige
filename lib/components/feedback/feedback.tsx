@@ -28,7 +28,7 @@ export default function Feedback({}: Props) {
 
 	return (
 		<div className='absolute bottom-0 right-0 m-5 flex items-center justify-center rounded-full border border-white p-2.5 shadow-sm'>
-			<Popover open={openModal}>
+			<Popover open={openModal} onOpenChange={() => setContent('')}>
 				<PopoverTrigger
 					onClick={() => setOpenModal(!openModal)}
 					asChild
@@ -46,11 +46,11 @@ export default function Feedback({}: Props) {
 				<PopoverContent className='mb-7 mr-6 w-[235px]'>
 					<div className='flex flex-col gap-2'>
 						<div className='w-full border-b border-b-accent pb-2 text-sm font-semibold text-slate-400'>
-							Send Us Some Feedback! {openModal}
+							Send Us Some Feedback!
 						</div>
 						<div className='flex w-full flex-col gap-2'>
 							<Textarea
-								className='h-24 w-full cursor-text border-none p-0 text-slate-400'
+								className='h-24 w-full cursor-text border-none p-0 text-slate-400 placeholder:opacity-50'
 								value={content}
 								placeholder='I wish that ...'
 								onChange={e => setContent(e.target.value)}

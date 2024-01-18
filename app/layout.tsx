@@ -1,5 +1,4 @@
 import {Metadata, Viewport} from 'next'
-import { Toaster } from 'sonner'
 import '~/styles/globals.css'
 
 const title = 'Maige'
@@ -47,7 +46,6 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
 		<html lang='en'>
 			<body>
 				<main>{children}</main>
-				<Toaster position='top-right' />
 			</body>
 		</html>
 	)

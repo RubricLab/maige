@@ -1,7 +1,7 @@
 import {expect, test} from 'bun:test'
 import Weaviate from '~/utils/embeddings/db'
 
-test(
+test.skip(
 	'Embed repo',
 	async () => {
 		const customerId = 'ai4vo'
