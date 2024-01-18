@@ -11,7 +11,7 @@ export default async function RootLayout({
 	const session = await getServerSession(authOptions)
 
 	return (
-		<div className='relative min-h-screen w-full bg-black px-8 text-white'>
+		<div className='relative min-h-screen w-full px-8'>
 			<BackgroundGrid className='absolute left-0 right-0 z-0 h-full w-full opacity-10' />
 			{session && (
 				<DashboardHeader
