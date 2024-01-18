@@ -7,16 +7,22 @@ import {useDebounce} from '~/hooks/debounce'
 
 type Props = {
 	searchValue: string
+	route: string
 }
 
-export default function TableSearch({searchValue}: Props) {
+export default function TableSearch({searchValue, route}: Props) {
 	const router = useRouter()
 	const [search, setSearch] = useState<string>(searchValue)
 	const debouncedSearchTerm = useDebounce(search, 200)
 
 	useEffect(() => {
-		router.replace(`/dashboard/usage?q=${encodeURIComponent(debouncedSearchTerm)}`)
-	}, [router, debouncedSearchTerm])
+		if (debouncedSearchTerm === '')
+			return router.replace(`/dashboard/usage/${route}`)
+		else
+			router.replace(
+				`/dashboard/usage/${route}?q=${encodeURIComponent(debouncedSearchTerm)}`
+			)
+	}, [router, debouncedSearchTerm, route])
 
 	return (
 		<Input

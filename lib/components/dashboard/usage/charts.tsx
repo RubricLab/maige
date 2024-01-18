@@ -9,7 +9,7 @@ type UsageDay = {
 	totalTokens: number
 }
 
-export default async function Charts() {
+export default async function Charts({route}: {route: string}) {
 	const session = await getServerSession(authOptions)
 
 	if (!session) return <div>Not authenticated</div>
@@ -44,21 +44,32 @@ export default async function Charts() {
 		tokens: Number(row.totalTokens)
 	}))
 
-    console.log(groupUsage)
+	console.log("Rendering Chart", new Date)
 
-	return (
-		<div className='gap-5 flex md:flex-row flex-col'>
+	if (route === 'runs')
+		return (
 			<TestChart
 				data={convertedUsage}
 				category='runs'
 				color='green'
 			/>
+		)
 
+	if (route === 'tokens')
+		return (
 			<TestChart
 				data={tokensUsage}
 				category='tokens'
 				color='orange'
 			/>
-		</div>
-	)
+		)
+
+	if (route === '')
+		return (
+			<TestChart
+				data={tokensUsage}
+				category='tokens'
+				color='purple'
+			/>
+		)
 }

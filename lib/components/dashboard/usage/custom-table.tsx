@@ -4,7 +4,7 @@ import {
 	ChevronDownIcon,
 	ChevronUpIcon
 } from '@radix-ui/react-icons'
-import {UsageRow} from 'app/dashboard/(base)/usage/page'
+import { UsageRow } from './table-wrapper';
 import Link from 'next/link'
 import {
 	Table,
@@ -23,7 +23,7 @@ const TableColNames = [
 		align: 'left'
 	},
 	{
-		key: 'tokens',
+		key: 'promptTokens',
 		value: 'Tokens',
 		align: 'left'
 	},
@@ -49,7 +49,8 @@ const TableColNames = [
 	}
 ]
 
-export function CustomTable({data, params}: {data: UsageRow[]; params: any}) {
+export function CustomTable({data, params, route}: {data: UsageRow[]; params: any, route:string}) {
+
 	return (
 		<Table>
 			<TableHeader className='bg-neutral-700 bg-opacity-80'>
@@ -63,7 +64,7 @@ export function CustomTable({data, params}: {data: UsageRow[]; params: any}) {
 							)
 							searchParams.set('col', col.key)
 						}
-						const href = `/dashboard/usage?${searchParams.toString()}`
+						const href = `/dashboard/usage/${route}?${searchParams.toString()}`
 
 						return (
 							<TableHead
@@ -72,6 +73,7 @@ export function CustomTable({data, params}: {data: UsageRow[]; params: any}) {
 									col.align === 'right' ? 'text-right' : ''
 								}`}>
 								<Link
+									prefetch={false}
 									href={href}
 									className={cn('inline-flex items-center', {
 										'pointer-events-none': col.key === 'project'
@@ -104,7 +106,7 @@ export function CustomTable({data, params}: {data: UsageRow[]; params: any}) {
 								<ArrowRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
 							</Link>
 						</TableCell>
-						<TableCell>{usage.tokens}</TableCell>
+						<TableCell>{usage.promptTokens}</TableCell>
 						<TableCell>{usage.action}</TableCell>
 						<TableCell className='text-right'>{usage.agent}</TableCell>
 						<TableCell className='text-right'>{usage.model}</TableCell>

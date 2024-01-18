@@ -41,7 +41,7 @@ export default function TestChart({
   return (
     <>
    <LineChart
-     className="h-72"
+     className="h-72 w-full"
      data={data}
      index="date"
      showAnimation={true}
