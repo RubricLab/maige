@@ -17,7 +17,7 @@ export default async function Charts({route}: {route: string}) {
 	const groupUsage: UsageDay[] = await prisma.$queryRaw`
       SELECT DATE(U.createdAt) AS usageDay, 
            COUNT(U.id) AS usageCount,
-           SUM(U.promptTokens + U.completionTokens) AS totalTokens
+           SUM(U.totalTokens) AS totalTokens
     FROM Usage U
     INNER JOIN Project P ON U.projectId = P.id
     INNER JOIN Customer C ON P.customerId = C.id

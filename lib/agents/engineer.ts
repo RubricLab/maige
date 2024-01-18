@@ -100,6 +100,7 @@ Your final output message should be the message that will be included in the pul
 					await prisma.usage.create({
 						data: {
 							projectId: projectId,
+							totalTokens: tokens.prompt + tokens.completion,
 							promptTokens: tokens.prompt,
 							completionTokens: tokens.completion,
 							action: "Create some stuff with engineer",

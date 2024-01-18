@@ -19,6 +19,7 @@ export type UsageRow = {
 	createdAt: Date
 	action: string
 	agent: string
+	totalTokens: number
 	promptTokens: number
 	completionTokens: number
 	model: string
@@ -28,7 +29,7 @@ export type UsageRow = {
 const UsageParamsSchema = z.object({
 	q: z.coerce.string().optional(),
 	p: z.coerce.number().min(1).optional().default(1),
-	col: z.enum(['createdAt', 'promptTokens', 'action', 'agent', 'model']).optional(),
+	col: z.enum(['createdAt', 'totalTokens', 'action', 'agent', 'model']).optional(),
 	dir: z.enum(['asc', 'desc']).optional()
 })
 

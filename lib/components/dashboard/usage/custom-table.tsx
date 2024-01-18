@@ -23,7 +23,7 @@ const TableColNames = [
 		align: 'left'
 	},
 	{
-		key: 'promptTokens',
+		key: 'totalTokens',
 		value: 'Tokens',
 		align: 'left'
 	},
@@ -106,7 +106,7 @@ export function CustomTable({data, params, route}: {data: UsageRow[]; params: an
 								<ArrowRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
 							</Link>
 						</TableCell>
-						<TableCell>{usage.promptTokens}</TableCell>
+						<TableCell>{usage.totalTokens}</TableCell>
 						<TableCell>{usage.action}</TableCell>
 						<TableCell className='text-right'>{usage.agent}</TableCell>
 						<TableCell className='text-right'>{usage.model}</TableCell>

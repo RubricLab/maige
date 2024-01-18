@@ -110,6 +110,7 @@ All repo labels: ${allLabels
 					await prisma.usage.create({
 						data: {
 							projectId: projectId,
+							totalTokens: tokens.prompt + tokens.completion,
 							promptTokens: tokens.prompt,
 							completionTokens: tokens.completion,
 							action: "Review an issue with maige",

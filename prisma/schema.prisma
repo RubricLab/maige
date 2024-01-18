@@ -64,6 +64,7 @@ model Usage {
   agent            String
   promptTokens     Int
   completionTokens Int
+  totalTokens      Int
   model            String
   createdAt        DateTime @default(now())
 
