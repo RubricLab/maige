@@ -3,24 +3,23 @@ generator client {
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  directUrl    = env("DIRECT_URL")
-  relationMode = "prisma"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Customer {
-  id                   String    @id @default(cuid())
-  name                 String    @unique
-  githubUserId         String?   @unique
-  stripeSubscriptionId String?   @unique
-  stripeCustomerId     String?   @unique
-  usage                Int       @default(0)
-  totalUsage           Int       @default(0)
-  usageLimit           Int       @default(20)
-  usageUpdatedAt       DateTime  @default(now())
-  usageWarned          Boolean   @default(false)
-  createdAt            DateTime  @default(now())
+  id                   String     @id @default(cuid())
+  name                 String     @unique
+  githubUserId         String?    @unique
+  stripeSubscriptionId String?    @unique
+  stripeCustomerId     String?    @unique
+  usage                Int        @default(0)
+  totalUsage           Int        @default(0)
+  usageLimit           Int        @default(20)
+  usageUpdatedAt       DateTime   @default(now())
+  usageWarned          Boolean    @default(false)
+  createdAt            DateTime   @default(now())
   projects             Project[]
   feedback             Feedback[]
 }
@@ -64,10 +63,10 @@ model Usage {
 }
 
 model Feedback {
-  id       String   @id @default(cuid())
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String
-  content  String
+  content    String
 
   @@index([customerId])
 }
