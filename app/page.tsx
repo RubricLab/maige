@@ -1,87 +1,86 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import {env} from 'process'
 import {Footer} from '~/components/Footer'
 import {Header} from '~/components/Header'
-import Cal from '~/components/logos/Cal'
-import Highlight from '~/components/logos/Highlight'
-import Precedent from '~/components/logos/Precedent'
-import Trigger from '~/components/logos/Trigger'
-import env from '~/env.mjs'
-import demoSrc from '../public/assets/demo.png'
+import {Line1} from '~/components/assets/lines/1'
+import desert from '../lib/assets/desert-tall.png'
 
-const Page = () => {
+const loomConfig = {
+	hide_owner: 'true',
+	hideEmbedTopBar: 'true',
+	hide_share: 'true',
+	hide_title: 'true',
+	default_speed: 'true',
+	skip_embed_eovn: 'true'
+}
+const loomQueryParams = new URLSearchParams(loomConfig).toString()
+
+const CTAButton = () => (
+	<Link
+		href={`https://github.com/apps/${env.GITHUB_APP_NAME}`}
+		rel='noopener noreferrer'>
+		<button className='w-72 rounded-lg bg-green-700 p-3 text-xl font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80'>
+			Add to your repo
+		</button>
+	</Link>
+)
+
+export const Page = () => {
 	return (
-		<div className='bg-black'>
+		<div className='relative w-screen bg-black'>
 			<Header />
-			<main className='relative flex h-screen w-screen flex-col items-center'>
-				<div className='flex grow flex-col items-center justify-center space-y-2'>
-					<div className='flex flex-row items-center justify-center gap-2 sm:flex-col'>
-						<h1 className='bg-gradient-to-l from-orange-200 to-indigo-800 bg-clip-text text-lg font-bold leading-normal tracking-tight text-transparent sm:pb-4 sm:text-8xl'>
-							Maige
-						</h1>
-						<h2 className='text:lg font-medium leading-3 tracking-tight text-white/80 sm:pb-8 sm:text-3xl'>
-							Have AI label your issues.
+			<section className='center rounded-b-5xl !z-10 h-[150vh] w-full !justify-start bg-black'>
+				<div className='center min-h-screen w-full space-y-12 pt-40 text-center'>
+					<h1 className='max-w-5xl bg-gradient-to-b from-white to-gray-400 bg-clip-text text-center text-5xl text-transparent sm:text-8xl'>
+						Flexible, intelligent action runner
+					</h1>
+					<h2 className='max-w-3xl text-secondary'>
+						Maige allows you to run natural-language workflows on your codebase.
+					</h2>
+					<CTAButton />
+					<div className='z-10 w-full'>
+						<div className='mx-[10%] rounded-xl'>
+							<iframe
+								src={`https://www.loom.com/embed/1f8fc747459d44659dc508460cf44208?sid=5820036c-e4fc-4343-b9ad-7f350af10dee?${loomQueryParams}`}
+								allowFullScreen
+								className='relative -mx-1 my-auto block aspect-video h-auto w-full overflow-hidden rounded-xl border-2 border-white'
+							/>
+						</div>
+					</div>
+					<div>
+						<h2>
+							Maige allows you to run natural-language workflows on your codebase.
 						</h2>
 					</div>
-					<div className='flex max-w-full flex-col items-center space-y-10 py-8'>
-						<div className='flex h-auto w-full flex-col items-center gap-2'>
-							<Image
-								alt='Demo of Maige labelling an issue'
-								src={demoSrc}
-								className='h-full w-auto rounded-md object-cover ring-4 ring-green-700 ring-opacity-50'
-							/>
-							<p className='text-sm text-white/60'>
-								That&apos;s it. That&apos;s all it does for now.
-							</p>
-						</div>
-						<div className='flex flex-col items-center space-y-1'>
-							<Link
-								href={`https://github.com/apps/${env.GITHUB_APP_NAME}`}
-								rel='noopener noreferrer'>
-								<button className='w-72 rounded-md bg-green-700 p-3 text-xl font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80'>
-									Add to your repo
-								</button>
-							</Link>
-							<p className='text-xs text-white/60'>Free to try.</p>
-						</div>
-						<div className='flex flex-col items-center space-y-2 text-center text-white/60'>
-							<p className='text-xs sm:text-sm'>
-								New issues will be labelled automatically.
-							</p>
-							<p className='text-xs sm:text-sm'>
-								Comment{' '}
-								<span className='font-medium text-white'>
-									&quot;Maige label this&quot;
-								</span>{' '}
-								to label an existing issue.
-							</p>
-							<p className='text-xs sm:text-sm'>
-								Comment{' '}
-								<span className='font-medium text-white'>
-									&quot;Maige [instructions]&quot;
-								</span>{' '}
-								to add custom instructions.
-							</p>
-							<p className='text-xs sm:text-sm'>
-								Comment{' '}
-								<span className='font-medium text-white'>
-									&quot;Maige [question]&quot;
-								</span>{' '}
-								to ask a question about a codebase.
-							</p>
-						</div>
-					</div>
-					<div className='flex flex-col items-center gap-2 py-8'>
-						<p className='text-sm text-white/60'>Used by 1.7k+ repos</p>
-						<div className='flex flex-row flex-wrap items-center justify-center gap-5 text-white/60'>
-							<Highlight className='h-6 hover:text-white' />
-							<Precedent className='group h-6 hover:text-white' />
-							<Cal className='h-5 hover:text-white' />
-							<Trigger className='h-6 hover:text-white' />
+				</div>
+			</section>
+			<section className='center h-[300vh] w-full bg-gradient-to-b from-black via-orange-900 to-blue-200 pb-40'>
+				<Line1 className='absolute top-[70vh] z-0 w-screen' />
+				<div className='h-screen w-full'>
+					<div className='rounded-r-4xl mr-auto h-96 border-2 border-white bg-black/30 backdrop-blur-3xl sm:w-1/2'></div>
+					<div className='rounded-l-4xl ml-auto h-96 border-2 border-white bg-black/30 backdrop-blur-3xl sm:w-1/2'></div>
+					<div className='rounded-r-4xl mr-auto h-96 border-2 border-white bg-black/30 backdrop-blur-3xl sm:w-1/2'></div>
+				</div>
+			</section>
+			<section className='min-h-screen w-full bg-gradient-to-b from-blue-200 to-black pb-20'>
+				<div className='relative h-screen'>
+					<Image
+						src={desert}
+						alt='Future desert scene'
+						className='rounded-5xl h-full object-cover'
+					/>
+					<div className='absolute left-0 top-0 h-full w-full p-10 sm:p-20'>
+						<div className='rounded-5xl h-full w-full border-2 border-white bg-black/30 backdrop-blur-3xl'>
+							<div className='center h-full gap-4'>
+								<h1 className='text-5xl'>Maige is free to try.</h1>
+								<CTAButton />
+								<div>Free to get started.</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</main>
+			</section>
 			<Footer />
 		</div>
 	)

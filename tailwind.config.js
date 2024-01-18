@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 import config from '@rubriclab/tailwind-config'
+import colors from 'tailwindcss/colors'
 
 module.exports = {
 	presets: [config],
@@ -22,8 +23,9 @@ module.exports = {
 		extend: {
 			colors: {
 				panel: '#0A0A0A',
-				'panel-border': '#171717',
-				grey: '#555555',
+				gray: {
+					...colors.neutral
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -61,10 +63,12 @@ module.exports = {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'4xl': '2rem',
+				'5xl': '2.5rem'
 			},
 			fontFamily: {
-				italiana: ['var(--font-italiana)']
+				jakarta: ['var(--font-jakarta)']
 			},
 			keyframes: {
 				'accordion-down': {

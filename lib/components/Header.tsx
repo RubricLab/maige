@@ -1,16 +1,16 @@
-import Image from 'next/image'
 import Link from 'next/link'
-import wizardHatLogo from '../../public/logo.png'
+import {Maige} from './logos'
 
 export const Header = () => {
 	return (
-		<header className='absolute top-0 z-10 flex w-screen items-center justify-start p-2'>
-			<Link href='/'>
-				<Image
-					src={wizardHatLogo}
-					alt='Wizard hat logo'
-					className='h-12 w-12 rounded-full object-cover'
-				/>
+		<header className='rounded-b-4xl fixed top-0 z-20 flex w-screen items-center justify-start p-4 backdrop-blur-xl'>
+			<Link
+				href='/'
+				className='flex items-baseline gap-2 text-orange-100 transition-colors hover:text-orange-200'>
+				<Maige className='h-8' />
+				<div className='font-jakarta text-2xl font-bold !tracking-tighter'>
+					Maige
+				</div>
 			</Link>
 			<div />
 		</header>

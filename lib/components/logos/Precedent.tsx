@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import precedentLogo from 'public/assets/logos/precedent.png'
 
-function Precedent({className}: {className?: string}) {
+export const Precedent = ({className}: {className?: string}) => {
 	return (
 		<a
 			href='https://precedent.dev'
@@ -18,5 +18,3 @@ function Precedent({className}: {className?: string}) {
 		</a>
 	)
 }
-
-export default Precedent

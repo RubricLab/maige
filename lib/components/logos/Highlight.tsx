@@ -1,4 +1,4 @@
-const Highlight = ({className = ''}: {className?: string}) => {
+export const Highlight = ({className = ''}: {className?: string}) => {
 	return (
 		<a
 			href='https://highlight.io'
@@ -30,5 +30,3 @@ const Highlight = ({className = ''}: {className?: string}) => {
 		</a>
 	)
 }
-
-export default Highlight

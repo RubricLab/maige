@@ -1,11 +1,11 @@
-import {Italiana, Roboto} from 'next/font/google'
+import {Plus_Jakarta_Sans, Roboto} from 'next/font/google'
 
 // Applied using variable name
-export const italiana = Italiana({
+export const jakarta = Plus_Jakarta_Sans({
 	subsets: ['latin'],
 	display: 'swap',
-	weight: '400',
-	variable: '--font-italiana'
+	weight: ['400', '700'],
+	variable: '--font-jakarta'
 })
 
 // Applied globally

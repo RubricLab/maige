@@ -4,8 +4,8 @@
 
 @layer base {
 	:root {
-		--background: 224 71.4% 4.1%;
-		--foreground: 210 20% 98%;
+		--background: #000;
+		--foreground: #555;
 
 		--card: 224 71.4% 4.1%;
 		--card-foreground: 210 20% 98%;
@@ -13,11 +13,10 @@
 		--popover: 224 80.4% 4.1%;
 		--popover-foreground: 210 20% 98%;
 
-		--primary: 210 20% 98%;
-		--primary-foreground: 220.9 39.3% 11%;
-
-		--secondary: 215 27.9% 16.9%;
-		--secondary-foreground: 210 20% 98%;
+		--primary: #fff;
+		--primary-foreground: #ddd;
+		--secondary: #bbb;
+		--secondary-foreground: #999;
 
 		--muted: 215 27.9% 16.9%;
 		--muted-foreground: 217.9 10.6% 64.9%;
@@ -41,6 +40,21 @@
 		@apply bg-white text-black dark:bg-black dark:text-white;
 	}
 	a {
-		@apply transition-all focus:outline-none;
+		@apply transition-all focus:outline-none active:outline-none;
+	}
+	h1 {
+		@apply font-jakarta text-5xl font-bold !leading-[5.5rem] !tracking-tighter sm:text-7xl;
+	}
+	h2 {
+		@apply font-jakarta text-3xl font-bold !leading-[2.5rem] !tracking-tight;
+	}
+	.center {
+		@apply flex flex-col items-center justify-center;
+	}
+	.text-primary {
+		@apply text-white dark:text-black;
+	}
+	.text-secondary {
+		@apply !text-gray-300 dark:text-gray-600;
 	}
 }
