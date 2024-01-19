@@ -19,7 +19,7 @@ export default function Feedback({}: Props) {
 		setContent('')
 		toast.promise(promise, {
 			loading: 'Loading...',
-			success: (data) => {
+			success: () => {
 			  return `Feedback successfully sent!`;
 			},
 			error: 'Oops, something went wrong!',
@@ -27,10 +27,9 @@ export default function Feedback({}: Props) {
 	}
 
 	return (
-		<div className='absolute bottom-0 right-0 m-5 flex items-center justify-center rounded-full border border-white p-2.5 shadow-sm'>
+		<div onClick={() => setOpenModal(!openModal)} className='fixed cursor-pointer bottom-0 right-0 m-5 flex items-center justify-center rounded-full border border-white p-2.5 shadow-sm z-10'>
 			<Popover open={openModal} onOpenChange={() => setContent('')}>
 				<PopoverTrigger
-					onClick={() => setOpenModal(!openModal)}
 					asChild
 					className='focus-visible:outline-none'>
 					{!openModal ? (
