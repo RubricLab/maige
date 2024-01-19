@@ -21,14 +21,15 @@ Create a GitHub App for webhooks and repo access. Populate your **.env** with th
 2. Copy your app name, ID, and client secret. Add these to your **.env**.
 3. Callback URL: nGrok URL + GitHub auth endpoint eg. `https://abc.ngrok.app/api/auth/callback/github`
 4. Webhook URL: nGrok URL + handler path eg. `https://abc.ngrok.app/api/webhook/github`.
-6. Webhook secret: generate this with `openssl rand -hex 32`. Add it to your **.env**.
-7. Permissions: toggle **Issue: Read & Write** and **Pull Request: Read & Write**.
-8. Events: toggle **issues**, **issue comments**, and **pull requests**.
-9. Private key: generate a private key. Download it. Run the following command ([source](https://github.com/gr2m/universal-github-app-jwt?tab=readme-ov-file#converting-pkcs1-to-pkcs8)) to convert it to the right format:
+5. Webhook secret: generate this with `openssl rand -hex 32`. Add it to your **.env**.
+6. Permissions: toggle **Issue: Read & Write** and **Pull Request: Read & Write**.
+7. Events: toggle **issues**, **issue comments**, and **pull requests**.
+8. Private key: generate a private key. Download it. Run the following command ([source](https://github.com/gr2m/universal-github-app-jwt?tab=readme-ov-file#converting-pkcs1-to-pkcs8)) to convert it to the right format:
 
    ```sh
    openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in private-key.pem -out private-key-pkcs8.key
    ```
+
    then copy **private-key-pkcs8.key**'s text contents to your **.env**.
 
 ## Dive In

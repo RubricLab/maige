@@ -1,11 +1,11 @@
 'use client'
 import {MessageCircle, XIcon} from 'lucide-react'
 import {useState} from 'react'
+import {toast} from 'sonner'
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover'
 import {Button} from '../ui/button'
 import {Textarea} from '../ui/textarea'
 import {submitFeedback} from './actions'
-import { toast } from 'sonner'
 
 type Props = {}
 
@@ -20,15 +20,19 @@ export default function Feedback({}: Props) {
 		toast.promise(promise, {
 			loading: 'Loading...',
 			success: () => {
-			  return `Feedback successfully sent!`;
+				return `Feedback successfully sent!`
 			},
-			error: 'Oops, something went wrong!',
-		  });
+			error: 'Oops, something went wrong!'
+		})
 	}
 
 	return (
-		<div onClick={() => setOpenModal(!openModal)} className='fixed cursor-pointer bottom-0 right-0 m-5 flex items-center justify-center rounded-full border border-white p-2.5 shadow-sm z-10'>
-			<Popover open={openModal} onOpenChange={() => setContent('')}>
+		<div
+			onClick={() => setOpenModal(!openModal)}
+			className='fixed bottom-0 right-0 z-10 m-5 flex cursor-pointer items-center justify-center rounded-full border border-white p-2.5 shadow-sm'>
+			<Popover
+				open={openModal}
+				onOpenChange={() => setContent('')}>
 				<PopoverTrigger
 					asChild
 					className='focus-visible:outline-none'>

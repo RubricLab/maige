@@ -66,17 +66,19 @@ function Instruction({
 				'group relative flex w-full max-w-xl flex-col gap-4 rounded-lg border-2 border-panel-border bg-panel p-8 opacity-100 transition-opacity duration-200',
 				{'pointer-events-none opacity-50': isDelete}
 			)}>
-			{!isDelete && <button
-				onClick={() => {
-					setDelete(true)
-					deleteInstruction(instruction.projectId, instruction.id)
-				}}
-				className='absolute -right-3 -top-3 hidden rounded-lg bg-red-500 p-1 opacity-0 transition-opacity duration-200 ease-in-out group-hover:block group-hover:opacity-100'>
-				<XIcon
-					size={15}
-					strokeWidth={3}
-				/>
-			</button>}
+			{!isDelete && (
+				<button
+					onClick={() => {
+						setDelete(true)
+						deleteInstruction(instruction.projectId, instruction.id)
+					}}
+					className='absolute -right-3 -top-3 hidden rounded-lg bg-red-500 p-1 opacity-0 transition-opacity duration-200 ease-in-out group-hover:block group-hover:opacity-100'>
+					<XIcon
+						size={15}
+						strokeWidth={3}
+					/>
+				</button>
+			)}
 			<div className='flex items-center justify-between'>
 				<div className='text flex items-center justify-center rounded-sm bg-zinc-800 px-2.5 text-zinc-500'>
 					{index + 1}

@@ -3,6 +3,7 @@ import {Octokit} from '@octokit/core'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commitCode from '~/tools/commitCode'
 import listFiles from '~/tools/listFiles'
@@ -10,7 +11,6 @@ import readFile from '~/tools/readFile'
 import writeFile from '~/tools/writeFile'
 import {getInstallationId, getInstallationToken} from '~/utils/github'
 import {isDev} from '~/utils/index'
-import prisma from '~/prisma'
 
 export async function engineer({
 	task,
@@ -27,7 +27,7 @@ export async function engineer({
 }) {
 	let tokens = {
 		prompt: 0,
-		completion: 0,
+		completion: 0
 	}
 
 	const model = new ChatOpenAI({
@@ -37,11 +37,12 @@ export async function engineer({
 		callbacks: [
 			{
 				async handleLLMEnd(data) {
-					tokens = { 
-						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0), 
-						completion: tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0) 
-					};					
-				},
+					tokens = {
+						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0),
+						completion:
+							tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0)
+					}
+				}
 			}
 		]
 	})
@@ -109,12 +110,12 @@ Your final output message should be the message that will be included in the pul
 							totalTokens: tokens.prompt + tokens.completion,
 							promptTokens: tokens.prompt,
 							completionTokens: tokens.completion,
-							action: "Create some stuff with engineer",
-							agent: "engineer",
-							model: "gpt-4-1106-preview",
+							action: 'Create some stuff with engineer',
+							agent: 'engineer',
+							model: 'gpt-4-1106-preview'
 						}
 					})
-				},
+				}
 			}
 		],
 		agentArgs: {

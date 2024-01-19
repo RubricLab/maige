@@ -27,7 +27,7 @@ export function RepoNavigation() {
 			{routes.map((page, index) => (
 				<div
 					key={index}
-					className='relative flex flex-col items-center pb-2 group'>
+					className='group relative flex flex-col items-center pb-2'>
 					<Link
 						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
 						href={`/dashboard/repo/${projectId}${page.path}`}>
@@ -35,8 +35,9 @@ export function RepoNavigation() {
 					</Link>
 					<div
 						className={cn(
-							'invisible w-[90%] border-b-[2px] group-hover:visible border-b-white border-opacity-50',
-							pathname == `/dashboard/repo/${projectId}${page.path}` && 'visible border-opacity-100'
+							'invisible w-[90%] border-b-[2px] border-b-white border-opacity-50 group-hover:visible',
+							pathname == `/dashboard/repo/${projectId}${page.path}` &&
+								'visible border-opacity-100'
 						)}></div>
 				</div>
 			))}

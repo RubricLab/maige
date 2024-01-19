@@ -25,10 +25,10 @@ export default async function RootLayout({
 
 	return (
 		<div className='space-y-2'>
-			<ChartsLinks route={route}/>
+			<ChartsLinks route={route} />
 			<div className='space-y-5'>
-			<Charts route={route} />
-			{children}
+				<Charts route={route} />
+				{children}
 			</div>
 		</div>
 	)

@@ -1,6 +1,7 @@
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commentTool from '~/tools/comment'
 import dispatchEngineer from '~/tools/dispatchEngineer'
@@ -9,7 +10,6 @@ import {githubTool} from '~/tools/github'
 import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
 import {isDev} from '~/utils/index'
-import prisma from '~/prisma'
 
 export async function maige({
 	input,
@@ -27,7 +27,7 @@ export async function maige({
 	input: string
 	octokit: any
 	customerId: string
-	projectId: string,
+	projectId: string
 	repoFullName: string
 	issueNumber?: number
 	issueId?: string
@@ -38,7 +38,7 @@ export async function maige({
 }) {
 	let tokens = {
 		prompt: 0,
-		completion: 0,
+		completion: 0
 	}
 
 	const model = new ChatOpenAI({
@@ -49,11 +49,12 @@ export async function maige({
 		callbacks: [
 			{
 				async handleLLMEnd(data) {
-					tokens = { 
-						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0), 
-						completion: tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0) 
-					};
-				},
+					tokens = {
+						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0),
+						completion:
+							tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0)
+					}
+				}
 			}
 		]
 	})
@@ -71,7 +72,9 @@ export async function maige({
 		}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
-		...(beta ? [dispatchEngineer({issueNumber, repoFullName, customerId, projectId})] : []),
+		...(beta
+			? [dispatchEngineer({issueNumber, repoFullName, customerId, projectId})]
+			: []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
 		...(pullUrl && beta
 			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId, projectId})]
@@ -111,12 +114,12 @@ All repo labels: ${allLabels
 							totalTokens: tokens.prompt + tokens.completion,
 							promptTokens: tokens.prompt,
 							completionTokens: tokens.completion,
-							action: "Review an issue with maige",
-							agent: "maige",
-							model: "gpt-4-1106-preview",
+							action: 'Review an issue with maige',
+							agent: 'maige',
+							model: 'gpt-4-1106-preview'
 						}
 					})
-				},
+				}
 			}
 		]
 	})

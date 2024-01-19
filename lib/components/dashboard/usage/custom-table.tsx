@@ -4,7 +4,6 @@ import {
 	ChevronDownIcon,
 	ChevronUpIcon
 } from '@radix-ui/react-icons'
-import { UsageRow } from './table-wrapper';
 import Link from 'next/link'
 import {
 	Table,
@@ -15,6 +14,7 @@ import {
 	TableRow
 } from '~/components/ui/table'
 import {cn} from '~/utils'
+import {UsageRow} from './table-wrapper'
 
 const TableColNames = [
 	{
@@ -49,8 +49,15 @@ const TableColNames = [
 	}
 ]
 
-export function CustomTable({data, params, route}: {data: UsageRow[]; params: any, route:string}) {
-
+export function CustomTable({
+	data,
+	params,
+	route
+}: {
+	data: UsageRow[]
+	params: any
+	route: string
+}) {
 	return (
 		<Table>
 			<TableHeader className='bg-neutral-700 bg-opacity-80'>

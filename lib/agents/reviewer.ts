@@ -30,7 +30,7 @@ export async function reviewer({
 }) {
 	let tokens = {
 		prompt: 0,
-		completion: 0,
+		completion: 0
 	}
 
 	const model = new ChatOpenAI({
@@ -40,11 +40,12 @@ export async function reviewer({
 		callbacks: [
 			{
 				async handleLLMEnd(data) {
-					tokens = { 
-						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0), 
-						completion: tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0) 
-					};
-				},
+					tokens = {
+						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0),
+						completion:
+							tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0)
+					}
+				}
 			}
 		]
 	})
@@ -107,12 +108,12 @@ export async function reviewer({
 							totalTokens: tokens.prompt + tokens.completion,
 							promptTokens: tokens.prompt,
 							completionTokens: tokens.completion,
-							action: "Review a PR with reviewer",
-							agent: "reviewer",
-							model: "gpt-4-1106-preview",
+							action: 'Review a PR with reviewer',
+							agent: 'reviewer',
+							model: 'gpt-4-1106-preview'
 						}
 					})
-				},
+				}
 			}
 		]
 	})
