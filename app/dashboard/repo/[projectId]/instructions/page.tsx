@@ -21,5 +21,10 @@ async function InstructionsWrapper({projectId}: {projectId: string}) {
 		}
 	})
 
-	return <Instructions instructions={instructions} />
+	return (
+		<Instructions
+			projectId={projectId}
+			instructions={instructions}
+		/>
+	)
 }
