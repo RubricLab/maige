@@ -14,15 +14,24 @@ export default async function Charts({route}: {route: string}) {
 
 	if (!session) return <div>Not authenticated</div>
 
+	// To mitigate SQL injection
+	if (session.user?.githubUserId?.length > 16) return <div>Bad GitHub ID</div>
+
+	const dateStringByOffset = (offset: number): string => {
+		const date = new Date()
+		date.setDate(date.getDate() + offset)
+		return date.toISOString().split('T')[0]
+	}
+
 	const groupUsage: UsageDay[] = await prisma.$queryRaw`
-      SELECT DATE(U.createdAt) AS usageDay, 
-           COUNT(U.id) AS usageCount,
-           SUM(U.totalTokens) AS totalTokens
+		SELECT DATE(U.createdAt) AS usageDay, 
+					COUNT(U.id) AS usageCount,
+					SUM(U.totalTokens) AS totalTokens
     FROM Usage U
     INNER JOIN Project P ON U.projectId = P.id
     INNER JOIN Customer C ON P.customerId = C.id
-    WHERE U.createdAt >= '2024-01-14' 
-    AND U.createdAt <= '2024-01-30'
+    WHERE U.createdAt >= ${dateStringByOffset(-14)} 
+    AND U.createdAt <= ${dateStringByOffset(1)}
     AND C.githubUserId = ${session.user.githubUserId}
     GROUP BY usageDay
     ORDER BY usageDay;
