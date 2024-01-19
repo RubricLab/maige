@@ -1,7 +1,7 @@
 import {getServerSession} from 'next-auth'
 import {authOptions} from '~/authOptions'
 import prisma from '~/prisma'
-import Chart from './chart'
+import Chart from './Chart'
 
 type UsageDay = {
 	usageDay: Date
