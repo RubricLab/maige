@@ -8,7 +8,7 @@ import prisma from '~/prisma'
 export default async function Page() {
 	const session = await getServerSession(authOptions)
 
-	if (!session) redirect('/auth')
+	if (!session?.user?.githubUserId) redirect('/auth')
 
 	const customer = await prisma.customer.findUnique({
 		where: {

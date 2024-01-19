@@ -1,6 +1,7 @@
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commentTool from '~/tools/comment'
 import dispatchEngineer from '~/tools/dispatchEngineer'
@@ -10,17 +11,11 @@ import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
 import {isDev} from '~/utils/index'
 
-const model = new ChatOpenAI({
-	modelName: 'gpt-4-1106-preview',
-	openAIApiKey: env.OPENAI_API_KEY,
-	temperature: 0
-})
-
 export async function maige({
 	input,
 	octokit,
-	prisma,
 	customerId,
+	projectId,
 	repoFullName,
 	issueNumber,
 	issueId,
@@ -31,8 +26,8 @@ export async function maige({
 }: {
 	input: string
 	octokit: any
-	prisma: any
 	customerId: string
+	projectId: string
 	repoFullName: string
 	issueNumber?: number
 	issueId?: string
@@ -41,6 +36,29 @@ export async function maige({
 	comment: any
 	beta?: boolean
 }) {
+	let tokens = {
+		prompt: 0,
+		completion: 0
+	}
+
+	const model = new ChatOpenAI({
+		modelName: 'gpt-4-1106-preview',
+		openAIApiKey: env.OPENAI_API_KEY,
+		temperature: 0,
+		streaming: false,
+		callbacks: [
+			{
+				async handleLLMEnd(data) {
+					tokens = {
+						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0),
+						completion:
+							tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0)
+					}
+				}
+			}
+		]
+	})
+
 	const tools = [
 		labelTool({octokit, allLabels, issueId}),
 		updateInstructionsTool({
@@ -54,10 +72,12 @@ export async function maige({
 		}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
-		...(beta ? [dispatchEngineer({issueNumber, repoFullName, customerId})] : []),
+		...(beta
+			? [dispatchEngineer({issueNumber, repoFullName, customerId, projectId})]
+			: []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
 		...(pullUrl && beta
-			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId})]
+			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId, projectId})]
 			: [])
 	]
 
@@ -84,7 +104,24 @@ All repo labels: ${allLabels
 		// verbose: true,
 		agentArgs: {
 			prefix
-		}
+		},
+		callbacks: [
+			{
+				async handleChainEnd() {
+					await prisma.usage.create({
+						data: {
+							projectId: projectId,
+							totalTokens: tokens.prompt + tokens.completion,
+							promptTokens: tokens.prompt,
+							completionTokens: tokens.completion,
+							action: 'Review an issue with maige',
+							agent: 'maige',
+							model: 'gpt-4-1106-preview'
+						}
+					})
+				}
+			}
+		]
 	})
 
 	const {output} = await executor.call({input})

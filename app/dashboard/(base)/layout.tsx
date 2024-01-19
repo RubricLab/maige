@@ -1,6 +1,7 @@
 import {ApplicationProvider} from 'lib/components/dashboard/ApplicationProvider'
 import {Toaster} from 'sonner'
 import {MainNavigation} from '~/components/dashboard/Navigation'
+import Feedback from '~/components/feedback/feedback'
 
 export default async function RootLayout({
 	children
@@ -8,12 +9,13 @@ export default async function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<div className='flex flex-col gap-8'>
-			<Toaster />
+		<div className='space-y-4'>
+			<Toaster position='top-right' />
 			<ApplicationProvider>
 				<MainNavigation />
 				<div className='z-10 grid h-full w-full'>{children}</div>
 			</ApplicationProvider>
+			<Feedback />
 		</div>
 	)
 }

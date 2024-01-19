@@ -13,10 +13,6 @@ const routes = [
 		name: 'Instructions',
 		path: '/instructions'
 	},
-	// {
-	// 	name: 'Runs',
-	// 	path: '/runs'
-	// },
 	{
 		name: 'Settings',
 		path: '/settings'
@@ -31,7 +27,7 @@ export function RepoNavigation() {
 			{routes.map((page, index) => (
 				<div
 					key={index}
-					className='relative flex flex-col items-center pb-2'>
+					className='group relative flex flex-col items-center pb-2'>
 					<Link
 						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
 						href={`/dashboard/repo/${projectId}${page.path}`}>
@@ -39,8 +35,9 @@ export function RepoNavigation() {
 					</Link>
 					<div
 						className={cn(
-							'invisible w-[90%] border-b-[2px] border-b-white',
-							pathname == `/dashboard/repo/${projectId}${page.path}` && 'visible'
+							'invisible w-[90%] border-b-[2px] border-b-white border-opacity-50 group-hover:visible',
+							pathname == `/dashboard/repo/${projectId}${page.path}` &&
+								'visible border-opacity-100'
 						)}></div>
 				</div>
 			))}
