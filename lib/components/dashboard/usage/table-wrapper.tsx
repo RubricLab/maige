@@ -78,7 +78,7 @@ export default async function UsageTable({
 		}
 	})
 	const end = performance.now()
-	const timeTaken = end - start
+	const timeTaken = Math.floor(end - start)
 	const usageNum = usage?.length || 0
 
 	const params = new URLSearchParams({
@@ -96,8 +96,7 @@ export default async function UsageTable({
 					</span>
 					/
 					<span>
-						Fetched Page in{' '}
-						<span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms
+						Fetched Page in <span className='text-green-400'>{timeTaken}</span> ms
 					</span>
 				</div>
 				<TableSearch
