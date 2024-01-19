@@ -34,7 +34,7 @@ export function Instructions({
 					<div
 						key={instruction.id}
 						className={cn(
-							'h-0.5 w-full max-w-xl bg-zinc-900',
+							'h-0.5 w-full max-w-xl bg-gray-900',
 							i + 1 === instructions.length && 'hidden'
 						)}></div>
 				</React.Fragment>
@@ -82,7 +82,7 @@ function Instruction({
 		<div
 			id={instruction.id}
 			className={cn(
-				'group relative flex w-full max-w-xl flex-col gap-4 rounded-lg border-2 border-panel-border bg-panel p-8 opacity-100 transition-opacity duration-200',
+				'group relative flex w-full max-w-xl flex-col gap-4 rounded-lg border-2 bg-primary p-8 opacity-100 transition-opacity duration-200',
 				{'pointer-events-none opacity-50': isDelete}
 			)}>
 			{!isDelete && (
@@ -99,7 +99,7 @@ function Instruction({
 				</button>
 			)}
 			<div className='flex items-center justify-between'>
-				<div className='text flex items-center justify-center rounded-sm bg-zinc-800 px-2.5 text-zinc-500'>
+				<div className='text flex items-center justify-center rounded-sm bg-gray-800 px-2.5 text-gray-500'>
 					{index + 1}
 				</div>
 				<Subtext>
@@ -107,12 +107,12 @@ function Instruction({
 						<Link
 							href={instruction.githubCommentLink}
 							target='_blank'
-							className='inline-flex items-center gap-0.5 rounded-sm bg-zinc-800 px-2.5 py-0.5'>
+							className='inline-flex items-center gap-0.5 rounded-sm bg-gray-800 px-2.5 py-0.5'>
 							{instruction.creatorUsername}
 							<ArrowTopRightIcon />
 						</Link>
 					) : (
-						<span className='inline-flex items-center gap-0.5 rounded-sm bg-zinc-800 px-2.5 py-0.5'>
+						<span className='inline-flex items-center gap-0.5 rounded-sm bg-gray-800 px-2.5 py-0.5'>
 							{instruction.creatorUsername}
 						</span>
 					)}

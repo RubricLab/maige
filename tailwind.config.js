@@ -14,33 +14,15 @@ module.exports = {
 	],
 	prefix: '',
 	theme: {
-		container: {
-			center: true,
-			padding: '2rem',
-			screens: {
-				'2xl': '1400px'
-			}
-		},
 		extend: {
 			colors: {
-				panel: '#0A0A0A',
-				'panel-border': '#171717',
 				gray: {
 					...colors.neutral
 				},
-				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
-				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
-				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
@@ -72,22 +54,22 @@ module.exports = {
 					},
 					background: {
 						muted: 'transparent',
-						subtle: colors.zinc[800],
-						DEFAULT: colors.zinc[800],
-						emphasis: colors.zinc[800]
+						subtle: colors.neutral[800],
+						DEFAULT: colors.neutral[800],
+						emphasis: colors.neutral[800]
 					},
 					border: {
-						DEFAULT: colors.zinc[800]
+						DEFAULT: colors.neutral[800]
 					},
 					ring: {
-						DEFAULT: colors.zinc[800]
+						DEFAULT: colors.neutral[800]
 					},
 					content: {
 						subtle: colors.red[800],
-						DEFAULT: colors.gray[200],
-						emphasis: colors.zinc[200],
-						strong: colors.gray[800],
-						inverted: colors.gray[850]
+						DEFAULT: colors.neutral[200],
+						emphasis: colors.neutral[200],
+						strong: colors.neutral[800],
+						inverted: colors.neutral[850]
 					}
 				}
 			},
@@ -116,7 +98,9 @@ module.exports = {
 				'tremor-full': '9999px'
 			},
 			fontFamily: {
-				jakarta: ['var(--font-jakarta)']
+				monocraft: ['var(--font-monocraft)'],
+				jakarta: ['var(--font-jakarta)'],
+				roboto: ['var(--font-roboto)']
 			},
 			keyframes: {
 				'accordion-down': {

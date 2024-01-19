@@ -15,7 +15,7 @@ export function Repositories({projects}: {projects: any[]}) {
 		<div className='grid w-full gap-4 sm:grid-cols-4'>
 			{projects.map(project => (
 				<Link
-					className='flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border-2 border-black border-opacity-20 bg-white p-4 py-3.5 transition-all hover:border-opacity-100 dark:border-white dark:bg-black'
+					className='flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border-2 bg-white p-4 py-3.5 transition-all hover:border-secondary dark:bg-black'
 					href={`/dashboard/repo/${project.id}`}
 					key={project.id}>
 					<div className='flex w-full items-center justify-between'>
@@ -33,7 +33,7 @@ export function Repositories({projects}: {projects: any[]}) {
 						<span className='font-medium'>
 							{project.customInstructions.length} Custom Instructions
 						</span>
-						<span className='text-sm text-zinc-500'>
+						<span className='text-sm text-gray-500'>
 							Added {timeAgo(project.createdAt)}
 						</span>
 					</div>

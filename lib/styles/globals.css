@@ -13,11 +13,6 @@
 		--popover: 224 80.4% 4.1%;
 		--popover-foreground: 210 20% 98%;
 
-		--primary: #fff;
-		--primary-foreground: #ddd;
-		--secondary: #bbb;
-		--secondary-foreground: #999;
-
 		--muted: 215 27.9% 16.9%;
 		--muted-foreground: 217.9 10.6% 64.9%;
 
@@ -27,34 +22,48 @@
 		--destructive: 0 62.8% 30.6%;
 		--destructive-foreground: 210 20% 98%;
 
-		--border: 215 27.9% 16.9%;
 		--input: 215 27.9% 16.9%;
 		--ring: 216 12.2% 83.9%;
 
 		--radius: 0.5rem;
 	}
 	* {
-		@apply border-border;
+		@apply border-tertiary;
 	}
 	html {
-		@apply bg-white text-black dark:bg-black dark:text-white;
+		@apply font-roboto bg-primary text-primary;
 	}
 	a {
 		@apply transition-all focus:outline-none active:outline-none;
 	}
 	h1 {
-		@apply font-jakarta text-5xl font-bold !leading-[5.5rem] !tracking-tighter sm:text-7xl;
+		@apply font-monocraft text-5xl font-bold !leading-[5.5rem] !tracking-tighter sm:text-6xl;
 	}
 	h2 {
-		@apply font-jakarta text-3xl font-bold !leading-[2.5rem] !tracking-tight;
+		@apply font-monocraft text-3xl font-bold !leading-[2.5rem] !tracking-tight;
 	}
 	.center {
 		@apply flex flex-col items-center justify-center;
 	}
+	.bg-primary {
+		@apply bg-white dark:bg-black;
+	}
 	.text-primary {
-		@apply text-white dark:text-black;
+		@apply text-black dark:text-white;
 	}
 	.text-secondary {
-		@apply !text-gray-300 dark:text-gray-600;
+		@apply text-black/80 dark:text-white/80;
+	}
+	.text-tertiary {
+		@apply text-black/60 dark:text-white/60;
+	}
+	.border-primary {
+		@apply border-black dark:border-white;
+	}
+	.border-secondary {
+		@apply border-black/60 dark:border-white/60;
+	}
+	.border-tertiary {
+		@apply border-black/20 dark:border-white/20;
 	}
 }

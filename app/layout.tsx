@@ -1,6 +1,6 @@
 import {Metadata, Viewport} from 'next'
 import '~/styles/globals.css'
-import {jakarta, roboto} from '~/utils/fonts'
+import {jakarta, monocraft, roboto} from '~/utils/fonts'
 
 const title = 'Maige'
 const description = 'AI-powered codebase actions.'
@@ -46,7 +46,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
 	return (
 		<html
 			lang='en'
-			className={`${jakarta.variable} ${roboto.className}`}>
+			className={`${jakarta.variable} ${monocraft.variable} ${roboto.className}`}>
 			<body>
 				<main>{children}</main>
 			</body>

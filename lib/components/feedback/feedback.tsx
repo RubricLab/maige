@@ -48,12 +48,12 @@ export default function Feedback({}: Props) {
 				</PopoverTrigger>
 				<PopoverContent className='mb-7 mr-6 w-[235px]'>
 					<div className='flex flex-col gap-2'>
-						<div className='w-full border-b border-b-accent pb-2 text-sm font-semibold text-slate-400'>
+						<div className='w-full border-b border-b-accent pb-2 text-sm font-semibold text-secondary'>
 							Send Us Some Feedback!
 						</div>
 						<div className='flex w-full flex-col gap-2'>
 							<Textarea
-								className='h-24 w-full cursor-text border-none p-0 text-slate-400 placeholder:opacity-50'
+								className='h-24 w-full cursor-text border-none p-0 text-secondary placeholder:opacity-50'
 								value={content}
 								placeholder='I wish that ...'
 								onChange={e => setContent(e.target.value)}
