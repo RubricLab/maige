@@ -1,8 +1,8 @@
 'use client'
 
-import {SpinnerLoader} from 'app/dashboard/Loader'
 import {motion} from 'framer-motion'
 import {ReactNode} from 'react'
+import {SpinnerLoader} from '~/components/dashboard/Loader'
 import {cn} from '~/utils'
 import {SmallBody} from '../Text'
 
