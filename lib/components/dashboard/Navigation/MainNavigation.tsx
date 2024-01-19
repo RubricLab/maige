@@ -13,14 +13,6 @@ const routes = [
 		name: 'Usage',
 		path: '/usage'
 	}
-	// {
-	// 	name: 'Agents',
-	// 	path: '/agents'
-	// },
-	// {
-	// 	name: 'Runs',
-	// 	path: '/runs'
-	// }
 ]
 
 export function MainNavigation() {
@@ -39,7 +31,10 @@ export function MainNavigation() {
 					<div
 						className={cn(
 							'invisible w-[90%] border-b-[2px] border-b-white border-opacity-50 group-hover:visible',
-							pathname == `/dashboard${page.path}` && 'visible border-opacity-100'
+							(page.path === '' && pathname === '/dashboard') ||
+								(page.path !== '' && pathname.startsWith(`/dashboard${page.path}`))
+								? 'visible border-opacity-100'
+								: ''
 						)}></div>
 				</div>
 			))}

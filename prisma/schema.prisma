@@ -1,27 +1,30 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider  = "mysql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 model Customer {
-  id                   String     @id @default(cuid())
-  name                 String     @unique
-  githubUserId         String?    @unique
-  stripeSubscriptionId String?    @unique
-  stripeCustomerId     String?    @unique
-  usage                Int        @default(0)
-  totalUsage           Int        @default(0)
-  usageLimit           Int        @default(20)
-  usageUpdatedAt       DateTime   @default(now())
-  usageWarned          Boolean    @default(false)
-  createdAt            DateTime   @default(now())
-  projects             Project[]
-  feedback             Feedback[]
+  id                   String  @id @default(cuid())
+  name                 String  @unique
+  githubUserId         String? @unique
+  stripeSubscriptionId String? @unique
+  stripeCustomerId     String? @unique
+
+  projects Project[]
+  feedback Feedback[]
+
+  usage          Int      @default(0)
+  totalUsage     Int      @default(0)
+  usageLimit     Int      @default(20)
+  usageUpdatedAt DateTime @default(now())
+
+  usageWarned Boolean  @default(false)
+  createdAt   DateTime @default(now())
 }
 
 model Project {
@@ -50,16 +53,21 @@ model Instruction {
 }
 
 model Usage {
-  id        String   @id @default(cuid())
-  projectId String
-  action    String
-  agent     String
-  tokens    String
-  model     String
-  createdAt DateTime @default(now())
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id               String   @id @default(cuid())
+  projectId        String
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  action           String
+  agent            String
+  promptTokens     Int
+  completionTokens Int
+  totalTokens      Int
+  model            String
+  createdAt        DateTime @default(now())
 
   @@index([projectId])
+  @@fulltext([action])
+  @@fulltext([agent])
+  @@fulltext([action, agent])
 }
 
 model Feedback {

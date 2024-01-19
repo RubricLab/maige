@@ -9,11 +9,13 @@ export default function dispatchReviewer({
 	repoFullName,
 	pullUrl,
 	customerId,
+	projectId,
 	octokit
 }: {
 	repoFullName: string
 	pullUrl: string
 	customerId: string
+	projectId: string
 	octokit: any
 }) {
 	return new DynamicStructuredTool({
@@ -44,6 +46,7 @@ export default function dispatchReviewer({
 				commitId,
 				repoFullName,
 				customerId,
+				projectId,
 				octokit
 			})
 		},

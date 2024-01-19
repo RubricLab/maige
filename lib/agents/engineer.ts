@@ -3,6 +3,7 @@ import {Octokit} from '@octokit/core'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import {ChatOpenAI} from 'langchain/chat_models/openai'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
 import {codebaseSearch} from '~/tools/codeSearch'
 import commitCode from '~/tools/commitCode'
 import listFiles from '~/tools/listFiles'
@@ -11,23 +12,41 @@ import writeFile from '~/tools/writeFile'
 import {getInstallationId, getInstallationToken} from '~/utils/github'
 import {isDev} from '~/utils/index'
 
-const model = new ChatOpenAI({
-	modelName: 'gpt-4-1106-preview',
-	openAIApiKey: env.OPENAI_API_KEY,
-	temperature: 0.3
-})
-
 export async function engineer({
 	task,
 	repoFullName,
 	issueNumber,
-	customerId
+	customerId,
+	projectId
 }: {
 	task: string
 	repoFullName: string
 	issueNumber: number
 	customerId: string
+	projectId: string
 }) {
+	let tokens = {
+		prompt: 0,
+		completion: 0
+	}
+
+	const model = new ChatOpenAI({
+		modelName: 'gpt-4-1106-preview',
+		openAIApiKey: env.OPENAI_API_KEY,
+		temperature: 0.3,
+		callbacks: [
+			{
+				async handleLLMEnd(data) {
+					tokens = {
+						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0),
+						completion:
+							tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0)
+					}
+				}
+			}
+		]
+	})
+
 	const {content: title} = await model.call([
 		'Could you output a very concise PR title for this request?',
 		`Task: ${task}`
@@ -82,6 +101,23 @@ Your final output message should be the message that will be included in the pul
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
 		// verbose: true,
+		callbacks: [
+			{
+				async handleChainEnd() {
+					await prisma.usage.create({
+						data: {
+							projectId: projectId,
+							totalTokens: tokens.prompt + tokens.completion,
+							promptTokens: tokens.prompt,
+							completionTokens: tokens.completion,
+							action: 'Create some stuff with engineer',
+							agent: 'engineer',
+							model: 'gpt-4-1106-preview'
+						}
+					})
+				}
+			}
+		],
 		agentArgs: {
 			prefix
 		}

@@ -197,6 +197,7 @@ export const POST = async (req: Request) => {
 					name: payload?.repository?.name
 				},
 				select: {
+					id: true,
 					name: true,
 					customInstructions: true
 				}
@@ -209,6 +210,8 @@ export const POST = async (req: Request) => {
 	const {id: customerId, usage, usageLimit, usageWarned, projects} = customer
 	const instructions =
 		projects?.[0]?.customInstructions.map(ci => ci.content).join('. ') || ''
+
+	const projectId = projects?.[0]?.id
 
 	// Get GitHub app instance access token
 	const app = new App({
@@ -299,8 +302,8 @@ Your instructions: ${instructions || 'do nothing'}.
 		await maige({
 			input: prompt,
 			octokit,
-			prisma,
 			customerId,
+			projectId,
 			repoFullName: `${owner}/${name}`,
 			issueNumber: issue?.number,
 			issueId: issue?.node_id,
