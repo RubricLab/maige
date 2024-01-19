@@ -3,7 +3,6 @@ import config from '@rubriclab/tailwind-config'
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-	darkMode: ['class'],
 	presets: [config],
 	content: [
 		'./pages/**/*.{ts,tsx}',
@@ -112,6 +111,9 @@ module.exports = {
 				'tremor-default': '0.5rem',
 				'tremor-full': '9999px'
 			},
+			fontFamily: {
+				italiana: ['var(--font-italiana)']
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {height: '0'},
@@ -131,6 +133,12 @@ module.exports = {
 				'tremor-default': ['0.875rem', {lineHeight: '1.25rem'}],
 				'tremor-title': ['1.125rem', {lineHeight: '1.75rem'}],
 				'tremor-metric': ['1.875rem', {lineHeight: '2.25rem'}]
+      },
+			dropShadow: {
+				glow: [
+					'0 0px 20px rgba(255,255, 255, 0.35)',
+					'0 0px 65px rgba(255, 255,255, 0.2)'
+				]
 			}
 		}
 	},

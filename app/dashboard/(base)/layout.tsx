@@ -13,9 +13,7 @@ export default async function RootLayout({
 			<Toaster position='top-right' />
 			<ApplicationProvider>
 				<MainNavigation />
-				<div className='flex h-full w-full flex-col'>
-					<div className='z-10 grid w-full bg-transparent xl:px-24'>{children}</div>
-				</div>
+				<div className='z-10 grid h-full w-full'>{children}</div>
 			</ApplicationProvider>
 			<Feedback />
 		</div>
