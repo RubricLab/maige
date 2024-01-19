@@ -79,10 +79,7 @@ export default async function UsageTable({
 	})
 	const end = performance.now()
 	const timeTaken = end - start
-
-	const usageNum: number = await prisma.usage.count({
-		where: usageFilter
-	})
+	const usageNum = usage?.length || 0
 
 	const params = new URLSearchParams({
 		...(usageQuery.data.q ? {q: usageQuery.data.q} : {}),
