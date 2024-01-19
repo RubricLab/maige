@@ -12,10 +12,10 @@ const timeAgo = (timestamp: Date) => {
 
 export function Repositories({projects}: {projects: any[]}) {
 	return (
-		<div className='grid w-full gap-4 sm:grid-cols-2'>
+		<div className='grid w-full gap-4 sm:grid-cols-4'>
 			{projects.map(project => (
 				<Link
-					className='flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border-2 border-white border-opacity-20 bg-black p-4 py-3.5 transition-all hover:border-opacity-100'
+					className='flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border-2 border-black border-opacity-20 bg-white p-4 py-3.5 transition-all hover:border-opacity-100 dark:border-white dark:bg-black'
 					href={`/dashboard/repo/${project.id}`}
 					key={project.id}>
 					<div className='flex w-full items-center justify-between'>
