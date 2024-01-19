@@ -1,7 +1,7 @@
 import {getServerSession} from 'next-auth'
 import {authOptions} from '~/authOptions'
 import prisma from '~/prisma'
-import TestChart from './test-chart'
+import Chart from './test-chart'
 
 type UsageDay = {
 	usageDay: Date
@@ -44,11 +44,9 @@ export default async function Charts({route}: {route: string}) {
 		tokens: Number(row.totalTokens)
 	}))
 
-	console.log("Rendering Chart", new Date)
-
 	if (route === 'runs')
 		return (
-			<TestChart
+			<Chart
 				data={convertedUsage}
 				category='runs'
 				color='green'
@@ -57,7 +55,7 @@ export default async function Charts({route}: {route: string}) {
 
 	if (route === 'tokens')
 		return (
-			<TestChart
+			<Chart
 				data={tokensUsage}
 				category='tokens'
 				color='orange'
@@ -66,7 +64,7 @@ export default async function Charts({route}: {route: string}) {
 
 	if (route === '')
 		return (
-			<TestChart
+			<Chart
 				data={tokensUsage}
 				category='tokens'
 				color='purple'

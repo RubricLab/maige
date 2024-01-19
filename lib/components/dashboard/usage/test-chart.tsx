@@ -2,7 +2,7 @@
 
 import { LineChart } from "@tremor/react";
 
-export default function TestChart({
+export default function Chart({
   data,
   category,
   color,

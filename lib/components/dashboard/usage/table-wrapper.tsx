@@ -29,16 +29,18 @@ export type UsageRow = {
 const UsageParamsSchema = z.object({
 	q: z.coerce.string().optional(),
 	p: z.coerce.number().min(1).optional().default(1),
-	col: z.enum(['createdAt', 'totalTokens', 'action', 'agent', 'model']).optional(),
+	col: z
+		.enum(['createdAt', 'totalTokens', 'action', 'agent', 'model'])
+		.optional(),
 	dir: z.enum(['asc', 'desc']).optional()
 })
 
 export default async function UsageTable({
 	searchParams,
-    route
+	route
 }: {
 	searchParams: {[key: string]: string | string[] | undefined}
-    route: string
+	route: string
 }) {
 	const session = await getServerSession(authOptions)
 
@@ -52,21 +54,20 @@ export default async function UsageTable({
 	const pageNum = usageQuery.data.p
 
 	const usageFilter = {
-		project: {customer: {githubUserId: session.user.githubUserId}}
+		project: {customer: {githubUserId: session.user.githubUserId}},
+		action: {contains: usageQuery.data.q}
 	}
 
-	usageFilter['action'] = {contains: usageQuery.data.q}
-
-	const filCol = usageQuery.data.col
-	const usageOrder = {}
-	if (filCol) usageOrder[filCol] = usageQuery.data.dir
+	const usageOrder = {
+		...(usageQuery.data.col && {[usageQuery.data.col]: usageQuery.data.dir})
+	}
 
 	const start = performance.now()
 	const usage: UsageRow[] = await prisma.usage.findMany({
 		take: pageSize,
 		skip: pageSize * (pageNum - 1),
 		where: usageFilter,
-		orderBy: usageOrder as any,
+		orderBy: usageOrder,
 		include: {
 			project: {
 				select: {
@@ -78,8 +79,6 @@ export default async function UsageTable({
 	})
 	const end = performance.now()
 	const timeTaken = end - start
-
-	console.log("Rendering Table")
 
 	const usageNum: number = await prisma.usage.count({
 		where: usageFilter
@@ -95,7 +94,6 @@ export default async function UsageTable({
 		<div className='flex w-full flex-col gap-2'>
 			<div className='inline-flex flex-col justify-between gap-3 lg:flex-row lg:items-center'>
 				<div className='inline-flex w-fit gap-2 rounded-md bg-green-800 bg-opacity-50 px-2 py-0.5 font-mono text-xs'>
-					{' '}
 					<span>
 						<span className='text-green-400'>{usageNum}</span> Total Results
 					</span>
@@ -105,11 +103,14 @@ export default async function UsageTable({
 						<span className='text-green-400'>{timeTaken.toFixed(4)}</span> ms
 					</span>
 				</div>
-				<TableSearch route={route} searchValue={usageQuery.data.q ? usageQuery.data.q : ''} />
+				<TableSearch
+					route={route}
+					searchValue={usageQuery.data.q ? usageQuery.data.q : ''}
+				/>
 			</div>
 			<div className='flex max-w-full overflow-hidden'>
 				<CustomTable
-                    route={route}
+					route={route}
 					params={usageQuery.data}
 					data={usage}
 				/>
