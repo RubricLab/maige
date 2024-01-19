@@ -5,7 +5,7 @@ import {ArrowTopRightIcon} from '@radix-ui/react-icons'
 import {deleteInstruction} from 'app/dashboard/repo/[projectId]/instructions/actions'
 import {PenSquare, XIcon} from 'lucide-react'
 import Link from 'next/link'
-import React, {useState} from 'react'
+import React, {useCallback, useState} from 'react'
 import {toast} from 'sonner'
 import {updateInstruction} from '~/actions/instructions'
 import {Button, buttonVariants} from '~/components/ui/button'
@@ -39,7 +39,6 @@ export function Instructions({
 						)}></div>
 				</React.Fragment>
 			))}
-			{/* </div> */}
 			<div className='fixed bottom-0 left-0 right-0 mx-auto w-fit pb-10'>
 				{projectId && <NewInstruction projectId={projectId} />}
 			</div>
@@ -58,6 +57,26 @@ function Instruction({
 	const [submitLoading, setSubmitLoading] = useState(false)
 	const [content, setContent] = useState(instruction.content)
 	const [isDelete, setDelete] = useState(false)
+
+	const handleSave = useCallback(async () => {
+		setSubmitLoading(true)
+
+		const success = await updateInstruction(instruction.id, content)
+
+		setSubmitLoading(false)
+
+		if (success) {
+			setContent(content) // optimistically update state variable
+			setIsEditing(false)
+
+			toast.info('Instruction updated')
+		} else toast.error('Error updating instruction')
+	}, [content, instruction.id])
+
+	const handleCancel = useCallback(() => {
+		setContent(instruction.content)
+		setIsEditing(false)
+	}, [instruction.content])
 
 	return (
 		<div
@@ -126,25 +145,13 @@ function Instruction({
 					<Button
 						size='sm'
 						variant='outline'
-						onClick={() => {
-							setContent(instruction.content)
-							setIsEditing(false)
-						}}>
+						onClick={handleCancel}>
 						Cancel
 					</Button>
 					<PrimaryButton
 						className={buttonVariants({size: 'sm'})}
 						loading={submitLoading}
-						onClick={async () => {
-							setSubmitLoading(true)
-							const success = await updateInstruction(instruction.id, content)
-							setSubmitLoading(false)
-							if (success) {
-								setContent(content) // optimistically update state variable
-								setIsEditing(false)
-								toast.info('Instruction updated')
-							} else toast.error('Error updating instruction')
-						}}>
+						onClick={handleSave}>
 						Save
 					</PrimaryButton>
 				</div>
