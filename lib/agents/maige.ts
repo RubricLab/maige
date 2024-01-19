@@ -14,7 +14,6 @@ import prisma from '~/prisma'
 export async function maige({
 	input,
 	octokit,
-	// prisma,
 	customerId,
 	projectId,
 	repoFullName,
@@ -27,7 +26,6 @@ export async function maige({
 }: {
 	input: string
 	octokit: any
-	// prisma: any
 	customerId: string
 	projectId: string,
 	repoFullName: string

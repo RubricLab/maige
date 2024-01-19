@@ -302,7 +302,6 @@ Your instructions: ${instructions || 'do nothing'}.
 		await maige({
 			input: prompt,
 			octokit,
-			// prisma,
 			customerId,
 			projectId,
 			repoFullName: `${owner}/${name}`,
