@@ -22,7 +22,7 @@ const routes = [
 
 export default function ChartsLinks({route}: Props) {
 	return (
-		<div className='flex justify-center gap-2 pb-2'>
+		<div className='flex justify-start gap-2 pb-2'>
 			{routes.map((page, index) => (
 				<div
 					key={index}
@@ -30,8 +30,8 @@ export default function ChartsLinks({route}: Props) {
 					<Link
 						prefetch={false}
 						className={cn(
-							'mb-1 rounded-sm border border-slate-500 border-opacity-50 bg-slate-600 bg-opacity-50 px-2.5 py-0.5 hover:border-purple-300 hover:bg-purple-400 hover:bg-opacity-50',
-							{'border border-purple-400 bg-purple-500': route == page.path}
+							'mb-1 rounded-sm border bg-gray-900 px-2.5 py-0.5 transition-colors hover:border-gray-700 hover:bg-gray-800',
+							{'border-gray-700 bg-gray-800': route == page.path}
 						)}
 						href={`/dashboard/usage/${page.path}`}>
 						{page.name}

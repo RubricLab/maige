@@ -1,6 +1,6 @@
 import {notFound} from 'next/navigation'
 import z from 'zod'
-import Charts from '~/components/dashboard/usage/charts'
+import {UsageCharts} from '~/components/dashboard/usage/charts'
 import ChartsLinks from '~/components/dashboard/usage/charts-links'
 
 const paramsSchema = z.enum(['runs', 'tokens'])
@@ -27,7 +27,7 @@ export default async function RootLayout({
 		<div className='space-y-2'>
 			<ChartsLinks route={route} />
 			<div className='space-y-5'>
-				<Charts route={route} />
+				<UsageCharts route={route} />
 				{children}
 			</div>
 		</div>

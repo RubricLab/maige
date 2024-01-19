@@ -25,7 +25,9 @@ module.exports = {
 			colors: {
 				panel: '#0A0A0A',
 				'panel-border': '#171717',
-				grey: '#555555',
+				gray: {
+					...colors.neutral
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -133,7 +135,7 @@ module.exports = {
 				'tremor-default': ['0.875rem', {lineHeight: '1.25rem'}],
 				'tremor-title': ['1.125rem', {lineHeight: '1.75rem'}],
 				'tremor-metric': ['1.875rem', {lineHeight: '2.25rem'}]
-      },
+			},
 			dropShadow: {
 				glow: [
 					'0 0px 20px rgba(255,255, 255, 0.35)',

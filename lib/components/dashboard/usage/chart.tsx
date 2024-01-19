@@ -33,18 +33,16 @@ export default function Chart({
 	}
 
 	return (
-		<>
-			<LineChart
-				className='h-72 w-full'
-				data={data}
-				index='date'
-				showAnimation={true}
-				showLegend={false}
-				categories={[category]}
-				customTooltip={customTooltip}
-				colors={[color]}
-				yAxisWidth={40}
-			/>
-		</>
+		<LineChart
+			className='h-72 w-full'
+			data={data}
+			index='date'
+			showAnimation={true}
+			showLegend={false}
+			categories={[category]}
+			customTooltip={customTooltip}
+			colors={[color]}
+			yAxisWidth={40}
+		/>
 	)
 }

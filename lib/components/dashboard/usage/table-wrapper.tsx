@@ -43,11 +43,9 @@ export default async function UsageTable({
 	route: string
 }) {
 	const session = await getServerSession(authOptions)
-
 	const usageQuery = UsageParamsSchema.safeParse(searchParams)
 
 	if (!usageQuery.success) return <p>Bad request</p>
-
 	if (!session) redirect('/auth')
 
 	const pageSize = 5
@@ -77,6 +75,7 @@ export default async function UsageTable({
 			}
 		}
 	})
+
 	const end = performance.now()
 	const timeTaken = Math.floor(end - start)
 	const usageNum = usage?.length || 0
@@ -90,13 +89,12 @@ export default async function UsageTable({
 	return (
 		<div className='flex w-full flex-col gap-2'>
 			<div className='inline-flex flex-col justify-between gap-3 lg:flex-row lg:items-center'>
-				<div className='inline-flex w-fit gap-2 rounded-md bg-green-800 bg-opacity-50 px-2 py-0.5 font-mono text-xs'>
+				<div className='inline-flex w-fit gap-2 rounded-sm bg-green-900 bg-opacity-50 px-2 py-0.5 font-mono text-xs'>
 					<span>
-						<span className='text-green-400'>{usageNum}</span> Total Results
+						<span className='text-green-400'>{usageNum}</span> results
 					</span>
-					/
 					<span>
-						Fetched Page in <span className='text-green-400'>{timeTaken}</span> ms
+						in <span className='text-green-400'>{timeTaken}</span> ms
 					</span>
 				</div>
 				<TableSearch
@@ -120,7 +118,7 @@ export default async function UsageTable({
 							href={`/dashboard/usage/${route}?${params}&p=${i + 1}`}
 							key={i}>
 							<Button
-								className={cn({'bg-neutral-700': i + 1 === pageNum})}
+								className={cn({'bg-neutral-800': i + 1 === pageNum})}
 								size='sm'
 								variant='outline'>
 								{i + 1}

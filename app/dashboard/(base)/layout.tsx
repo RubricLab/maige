@@ -9,7 +9,7 @@ export default async function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<div>
+		<div className='space-y-4'>
 			<Toaster position='top-right' />
 			<ApplicationProvider>
 				<MainNavigation />

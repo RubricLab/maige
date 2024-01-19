@@ -60,8 +60,8 @@ export function CustomTable({
 }) {
 	return (
 		<Table>
-			<TableHeader className='bg-neutral-700 bg-opacity-80'>
-				<TableRow className='border-none'>
+			<TableHeader>
+				<TableRow className='!border-b-2'>
 					{TableColNames.map(col => {
 						const searchParams = new URLSearchParams(params)
 						if (col.key !== 'project') {

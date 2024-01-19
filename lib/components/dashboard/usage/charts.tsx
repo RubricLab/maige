@@ -9,7 +9,7 @@ type UsageDay = {
 	totalTokens: number
 }
 
-export default async function Charts({route}: {route: string}) {
+export async function UsageCharts({route}: {route: string}) {
 	const session = await getServerSession(authOptions)
 
 	if (!session) return <div>Not authenticated</div>
@@ -25,8 +25,8 @@ export default async function Charts({route}: {route: string}) {
 
 	const groupUsage: UsageDay[] = await prisma.$queryRaw`
 		SELECT DATE(U.createdAt) AS usageDay, 
-					COUNT(U.id) AS usageCount,
-					SUM(U.totalTokens) AS totalTokens
+			COUNT(U.id) AS usageCount,
+			SUM(U.totalTokens) AS totalTokens
     FROM Usage U
     INNER JOIN Project P ON U.projectId = P.id
     INNER JOIN Customer C ON P.customerId = C.id
@@ -35,7 +35,7 @@ export default async function Charts({route}: {route: string}) {
     AND C.githubUserId = ${session.user.githubUserId}
     GROUP BY usageDay
     ORDER BY usageDay;
-    `
+	`
 
 	const convertedUsage = groupUsage.map(row => ({
 		date: new Date(row.usageDay).toLocaleDateString('en-US', {

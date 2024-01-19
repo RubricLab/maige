@@ -18,23 +18,23 @@ const routes = [
 export function MainNavigation() {
 	const pathname = usePathname()
 	return (
-		<div className='z-10 flex gap-2'>
+		<div className='relative z-10 flex border-b-2 border-b-black/20 dark:border-b-white/20'>
 			{routes.map((page, index) => (
 				<div
 					key={index}
-					className='group relative flex flex-col items-center'>
+					className='group relative -bottom-0.5 flex flex-col items-center'>
 					<Link
-						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-black hover:bg-opacity-20 hover:dark:bg-white'
+						className='mb-1 rounded-sm px-3 py-1 hover:bg-black/20 hover:dark:bg-white/20'
 						href={`/dashboard${page.path}`}>
 						{page.name}
 					</Link>
 					<div
 						className={cn(
-							'invisible w-[90%] border-b-[2px] border-b-white border-opacity-50 group-hover:visible',
+							'w-full border-b-2 border-black/50 transition-opacity dark:border-white/50',
 							(page.path === '' && pathname === '/dashboard') ||
 								(page.path !== '' && pathname.startsWith(`/dashboard${page.path}`))
-								? 'visible border-opacity-100'
-								: ''
+								? 'opacity-100'
+								: 'opacity-0 group-hover:opacity-100'
 						)}></div>
 				</div>
 			))}
