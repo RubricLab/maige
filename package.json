@@ -16,6 +16,7 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.0",
     "crypto": "^1.0.1",
+    "dom-helpers": "^5.2.1",
     "encoding": "^0.1.13",
     "framer-motion": "^10.16.16",
     "graphql": "^16.8.1",
