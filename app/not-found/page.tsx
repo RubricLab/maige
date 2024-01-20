@@ -13,7 +13,7 @@ export default function NotFound({}: Props) {
 				<Link
 					href={`https://github.com/apps/${env.GITHUB_APP_NAME}`}
 					rel='noopener noreferrer'>
-					<button className='w-72 rounded-md bg-green-700 p-3 text-xl font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80'>
+					<button className='w-72 rounded-sm bg-green-700 p-3 text-xl font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80'>
 						Add to your repo
 					</button>
 				</Link>

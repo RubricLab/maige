@@ -1,6 +1,5 @@
 import {CommandIcon, Search as SearchIcon} from 'lucide-react'
 import React from 'react'
-
 import {Button} from '~/components/ui/button'
 import {
 	CommandDialog,

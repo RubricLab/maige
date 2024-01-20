@@ -46,7 +46,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
 	return (
 		<html
 			lang='en'
-			className={`${jakarta.variable} ${monocraft.variable} ${roboto.className}`}>
+			className={`${jakarta.variable} ${monocraft.variable} ${roboto.variable}`}>
 			<body>
 				<main>{children}</main>
 			</body>

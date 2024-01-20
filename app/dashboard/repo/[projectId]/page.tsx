@@ -14,18 +14,15 @@ export default async function Page({params}: {params: {projectId: string}}) {
 	})
 	return (
 		<div className='flex flex-col gap-4'>
-			<div className='w-full border-b pb-8 text-2xl font-medium xl:px-[4.25rem]'>
+			<div className='w-full border-b pb-8 text-2xl font-medium'>
 				<span className='inline-flex items-center gap-2'>
 					<Link href='/dashboard'>
-						<ChevronLeftIcon
-							width='20'
-							height='20'
-						/>
+						<ChevronLeftIcon className='h-6 w-6' />
 					</Link>{' '}
 					{project.name}
 				</span>
 			</div>
-			<div className='flex flex-col xl:px-24'>Coming soon...</div>
+			<div className='flex flex-col'>Coming soon...</div>
 		</div>
 	)
 }

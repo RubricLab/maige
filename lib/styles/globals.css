@@ -24,14 +24,12 @@
 
 		--input: 215 27.9% 16.9%;
 		--ring: 216 12.2% 83.9%;
-
-		--radius: 0.5rem;
 	}
 	* {
 		@apply border-tertiary;
 	}
 	html {
-		@apply font-roboto bg-primary text-primary;
+		@apply bg-primary text-primary;
 	}
 	a {
 		@apply transition-all focus:outline-none active:outline-none;
@@ -48,6 +46,12 @@
 	.bg-primary {
 		@apply bg-white dark:bg-black;
 	}
+	.bg-secondary {
+		@apply bg-black/60 dark:bg-white/60;
+	}
+	.bg-tertiary {
+		@apply bg-black/20 dark:bg-white/20;
+	}
 	.text-primary {
 		@apply text-black dark:text-white;
 	}
@@ -61,7 +65,7 @@
 		@apply border-black dark:border-white;
 	}
 	.border-secondary {
-		@apply border-black/60 dark:border-white/60;
+		@apply border-black/50 dark:border-white/50;
 	}
 	.border-tertiary {
 		@apply border-black/20 dark:border-white/20;

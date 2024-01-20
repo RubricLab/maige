@@ -15,7 +15,7 @@ export function Repositories({projects}: {projects: any[]}) {
 		<div className='grid w-full gap-4 sm:grid-cols-4'>
 			{projects.map(project => (
 				<Link
-					className='flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border-2 bg-white p-4 py-3.5 transition-all hover:border-secondary dark:bg-black'
+					className='flex h-36 w-full cursor-pointer flex-col justify-between rounded-sm border bg-white p-4 py-3.5 transition-all hover:border-secondary dark:bg-black'
 					href={`/dashboard/repo/${project.id}`}
 					key={project.id}>
 					<div className='flex w-full items-center justify-between'>
