@@ -1,14 +1,5 @@
 import Link from 'next/link'
-
-const timeAgo = (timestamp: Date) => {
-	const date = new Date(timestamp)
-	const daysAgo = Math.floor(
-		(new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
-	)
-	return daysAgo === 0
-		? 'today'
-		: `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`
-}
+import {timeAgo} from '~/utils'
 
 export function Repositories({projects}: {projects: any[]}) {
 	return (
