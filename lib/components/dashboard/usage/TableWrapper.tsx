@@ -7,7 +7,7 @@ import {authOptions} from '~/authOptions'
 import {Button} from '~/components/ui/button'
 import prisma from '~/prisma'
 import {cn} from '~/utils'
-import {CustomTable, TableSearch} from './'
+import {CustomTable, TableSearch} from '.'
 
 type UsageProject = {
 	name: string
