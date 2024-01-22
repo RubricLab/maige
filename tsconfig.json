@@ -3,7 +3,8 @@
 		"baseUrl": ".",
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
 		"paths": {
-			"~/*": ["./lib/*"]
+			"~/*": ["./lib/*"],
+			"~/components/dashboard/*": ["./lib/components/dashboard/*"]
 		},
 		"plugins": [{"name": "next"}],
 		"types": ["bun-types", "web"]
