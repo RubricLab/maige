@@ -14,7 +14,7 @@ import {
 	TableRow
 } from '~/components/ui/table'
 import {cn} from '~/utils'
-import {UsageRow} from './table-wrapper'
+import {type UsageRow} from './TableWrapper'
 
 const TableColNames = [
 	{

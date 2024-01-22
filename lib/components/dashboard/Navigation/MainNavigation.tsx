@@ -24,7 +24,7 @@ export function MainNavigation() {
 					key={index}
 					className='group relative -bottom-px flex flex-col items-center'>
 					<Link
-						className='mb-1 rounded-sm px-3 py-1 hover:bg-black/20 hover:dark:bg-white/20'
+						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-primary/10'
 						href={`/dashboard${page.path}`}>
 						{page.name}
 					</Link>

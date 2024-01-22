@@ -35,17 +35,17 @@ export function DashboardHeader({
 					className='rounded-full object-cover'
 					alt='Maige Logo'
 				/>
-				<span className='inline-flex items-center gap-1.5'>
+				<span className='inline-flex items-center justify-center gap-1.5'>
 					<Link
 						href={'/dashboard'}
-						className='rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'>
+						className='rounded-sm px-2.5 py-0.5 hover:bg-primary/10'>
 						{session.user.name}
 					</Link>
 					{pathname.split('/dashboard/repo/')[1] && (
 						<>
-							<span className='mb-1 text-xl text-gray-500'>/</span>{' '}
+							<span className='text-xl text-accent'>/</span>{' '}
 							<Link
-								className='rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
+								className='rounded-sm px-2.5 py-0.5 hover:bg-primary/10'
 								href={
 									'/dashboard/repo/' +
 									pathname.split('/dashboard/repo/')[1].split('/')[0]

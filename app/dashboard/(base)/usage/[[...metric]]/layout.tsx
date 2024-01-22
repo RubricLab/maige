@@ -1,7 +1,6 @@
 import {notFound} from 'next/navigation'
 import z from 'zod'
-import {UsageCharts} from '~/components/dashboard/usage/charts'
-import ChartsLinks from '~/components/dashboard/usage/charts-links'
+import {ChartsLinks, UsageCharts} from '~/components/dashboard/Metrics'
 
 const paramsSchema = z.enum(['runs', 'tokens'])
 

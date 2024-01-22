@@ -3,11 +3,10 @@ import Link from 'next/link'
 import {redirect} from 'next/navigation'
 import z from 'zod'
 import {authOptions} from '~/authOptions'
-import {CustomTable} from '~/components/dashboard/usage/custom-table'
-import TableSearch from '~/components/dashboard/usage/search'
 import {Button} from '~/components/ui/button'
 import prisma from '~/prisma'
 import {cn} from '~/utils'
+import {CustomTable, TableSearch} from '.'
 
 type UsageProject = {
 	name: string
@@ -35,7 +34,7 @@ const UsageParamsSchema = z.object({
 	dir: z.enum(['asc', 'desc']).optional()
 })
 
-export default async function UsageTable({
+export async function UsageTable({
 	searchParams,
 	route
 }: {

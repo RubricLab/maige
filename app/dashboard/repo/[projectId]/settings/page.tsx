@@ -1,3 +1,3 @@
-export default async function Page() {
+export default function Settings() {
 	return <div>Coming soon...</div>
 }

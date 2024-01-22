@@ -8,7 +8,7 @@ import prisma from '~/prisma'
 export default async function Page() {
 	const session = await getServerSession(authOptions)
 
-	if (!session?.user?.githubUserId) redirect('/auth')
+	if (!session?.user?.githubUserId) redirect('/')
 
 	const customer = await prisma.customer.findUnique({
 		where: {
@@ -16,22 +16,22 @@ export default async function Page() {
 		}
 	})
 
-	if (!customer) redirect('/not-found')
-
-	const projects = await prisma.project.findMany({
-		where: {
-			customerId: customer.id
-		},
-		select: {
-			id: true,
-			name: true,
-			createdAt: true,
-			customInstructions: true
-		}
-	})
+	const projects = customer
+		? await prisma.project.findMany({
+				where: {
+					customerId: customer.id
+				},
+				select: {
+					id: true,
+					name: true,
+					createdAt: true,
+					customInstructions: true
+				}
+			})
+		: []
 
 	return (
-		<div className='flex flex-col items-center gap-8'>
+		<div className='flex flex-col items-center'>
 			<Suspense fallback={<p>Loading...</p>}>
 				<Repositories projects={projects} />
 			</Suspense>

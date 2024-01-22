@@ -1,8 +1,7 @@
 'use client'
-
 import {LineChart} from '@tremor/react'
 
-export default function Chart({
+export function Chart({
 	data,
 	category,
 	color
@@ -13,6 +12,7 @@ export default function Chart({
 }) {
 	const customTooltip = ({payload, active}: {payload: any; active: any}) => {
 		if (!active || !payload) return null
+
 		return (
 			<div className='w-56 rounded-tremor-default border border-tremor-border bg-tremor-background p-2 text-tremor-default shadow-tremor-dropdown'>
 				{payload.map((category: any, idx: number) => (
