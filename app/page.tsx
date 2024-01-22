@@ -80,9 +80,7 @@ const Page = () => {
 			</section>
 			{/* How-to */}
 			<section className='center min-h-screen space-y-10 py-24 text-secondary sm:space-y-24 sm:py-40'>
-				<h1 className='text-tertiary mr-auto pl-10 sm:text-7xl'>
-					Get going in a few clicks:
-				</h1>
+				<h1 className='text-tertiary sm:text-6xl'>Get going in a few clicks:</h1>
 				<div className='max-w-xl space-y-4'>
 					<h2 className='text-primary'>1. Connect your repo</h2>
 					<p className='text-xl'>
