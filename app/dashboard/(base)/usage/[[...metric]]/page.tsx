@@ -1,4 +1,4 @@
-import {UsageTable} from '~/components/dashboard/Usage'
+import {UsageTable} from '~/components/dashboard/Metrics'
 
 export default async function Usage({
 	searchParams,
