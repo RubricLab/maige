@@ -4,6 +4,7 @@ import {env} from 'process'
 import future from '~/assets/future.png'
 import joshuaTreeDay from '~/assets/joshua-tree-day.png'
 import joshuaTreeNight from '~/assets/joshua-tree-night.png'
+import labelFlow from '~/assets/label-flow.png'
 import {Header} from '~/components/Header'
 import {Cal, Highlight, Precedent, Trigger} from '~/components/logos'
 import {Nuxt} from '~/components/logos/Nuxt'
@@ -78,7 +79,7 @@ const Page = () => {
 				</div>
 			</section>
 			{/* How-to */}
-			<section className='center h-screen space-y-10 py-24 text-secondary sm:space-y-24 sm:py-40'>
+			<section className='center min-h-screen space-y-10 py-24 text-secondary sm:space-y-24 sm:py-40'>
 				<h1 className='text-tertiary mr-auto pl-10 sm:text-7xl'>
 					Get going in a few clicks:
 				</h1>
@@ -90,11 +91,18 @@ const Page = () => {
 					</p>
 				</div>
 				<div className='flex w-full flex-wrap items-center gap-6 sm:gap-12'>
-					<Image
-						src={joshuaTreeDay}
-						alt='Joshua tree at day'
-						className='h-auto w-1/2 opacity-80'
-					/>
+					<div className='center relative w-full p-6 sm:w-1/2'>
+						<Image
+							src={joshuaTreeDay}
+							alt='Joshua tree at day'
+							className='object-cover'
+						/>
+						<Image
+							src={labelFlow}
+							alt='Maige labelling flow'
+							className='absolute w-5/6'
+						/>
+					</div>
 					<div className='max-w-md space-y-4'>
 						<h2 className='text-primary'>2. Write your rules</h2>
 						<p className='text-xl'>
