@@ -3,11 +3,10 @@ import Link from 'next/link'
 import {redirect} from 'next/navigation'
 import z from 'zod'
 import {authOptions} from '~/authOptions'
-import {CustomTable} from '~/components/dashboard/Usage/CustomTable'
-import {TableSearch} from '~/components/dashboard/Usage/Search'
 import {Button} from '~/components/ui/button'
 import prisma from '~/prisma'
 import {cn} from '~/utils'
+import {CustomTable, TableSearch} from './'
 
 type UsageProject = {
 	name: string
