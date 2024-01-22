@@ -1,4 +1,4 @@
-export {Chart} from './Chart'
+export {Chart} from './ChartTest'
 export {UsageCharts} from './Charts'
 export {ChartsLinks} from './ChartsLinks'
 export {CustomTable} from './CustomTable'
