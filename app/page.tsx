@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import {env} from 'process'
+import fullFlow from '~/assets/full-flow.png'
 import future from '~/assets/future.png'
 import joshuaTreeDay from '~/assets/joshua-tree-day.png'
 import joshuaTreeNight from '~/assets/joshua-tree-night.png'
@@ -143,8 +144,8 @@ const Page = () => {
 						className='object-cover opacity-80'
 					/>
 					<Image
-						src={labelFlow}
-						alt='Maige labelling flow'
+						src={fullFlow}
+						alt='Maige commenting flow'
 						className='absolute w-5/6 shadow-2xl'
 					/>
 				</div>
