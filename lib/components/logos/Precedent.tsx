@@ -11,7 +11,7 @@ export const Precedent = ({className}: {className?: string}) => {
 				<Image
 					alt='Precent logo'
 					src={precedentLogo}
-					className='max-h-full w-auto opacity-70 invert group-hover:opacity-100'
+					className='max-h-full w-auto invert group-hover:opacity-100'
 				/>
 				<p className='text-2xl'>Precedent</p>
 			</div>

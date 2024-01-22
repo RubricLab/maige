@@ -5,6 +5,8 @@ import joshuaTreeDay from '~/assets/joshua-tree-day.png'
 import tatooine from '~/assets/tatooine.png'
 import {Footer} from '~/components/Footer'
 import {Header} from '~/components/Header'
+import {Cal, Highlight, Precedent, Trigger} from '~/components/logos'
+import {Nuxt} from '~/components/logos/Nuxt'
 
 const loomConfig = {
 	hide_owner: 'true',
@@ -65,6 +67,19 @@ const Page = () => {
 					</span>
 				</div>
 			</section>
+			{/* Logos */}
+			<section className='center space-y-16 p-12 sm:p-24'>
+				<p className='font-monocraft text-tertiary'>
+					Used by 1.8k++ of the best teams:
+				</p>
+				<div className='center gap-12 sm:gap-14'>
+					<Cal className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+					<Trigger className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+					<Precedent className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+					<Highlight className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+					<Nuxt className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+				</div>
+			</section>
 			{/* How-to */}
 			<section className='center h-screen space-y-10 text-secondary sm:space-y-24'>
 				<div className='max-w-xl space-y-4'>
@@ -99,6 +114,7 @@ const Page = () => {
 					</p>
 				</div>
 			</section>
+
 			<section className='center font-monocraft h-screen p-8 sm:p-24'>
 				<div className='center max-w-2xl !items-start space-y-8 text-left text-2xl sm:space-y-24'>
 					<p className='text-red-500'>
