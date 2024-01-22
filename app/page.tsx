@@ -19,12 +19,12 @@ const loomConfig = {
 }
 const loomQueryParams = new URLSearchParams(loomConfig).toString()
 
-const CTAButton = () => (
+const CTAButton = ({text}: {text?: string}) => (
 	<Link
 		href={`https://github.com/apps/${env.GITHUB_APP_NAME}`}
 		rel='noopener noreferrer'>
 		<button className='w-72 rounded-sm bg-green-700 p-3 text-xl font-medium text-white transition-all hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600/60'>
-			Add to your repo
+			{text || 'Add to your repo'}
 		</button>
 	</Link>
 )
@@ -144,8 +144,36 @@ const Page = () => {
 					</div>
 				</div>
 			</section>
-			<section className='relative h-screen'>
-				<h1>Pricing</h1>
+			<section className='center relative h-screen space-y-8'>
+				<div className='center space-y-4'>
+					<h1 className='text-secondary'>Pricing</h1>
+					<p className='text-tertiary text-xl'>
+						Try Maige for free, then pay by usage.
+					</p>
+				</div>
+				<div className='flex flex-wrap gap-4'>
+					<div className='w-96 border-2 border-primary p-4 sm:p-8'>
+						<div className='space-y-3 pb-8'>
+							<h2>Standard Plan</h2>
+							<p>
+								Learn how Maige can help you. First 40 issues free, then continue at
+								$20/mo.
+							</p>
+							<p className='text-tertiary'>⬥ Auto-labelling</p>
+							<p className='text-tertiary'>⬥ Auto-assignment</p>
+							<p className='text-tertiary'>⬥ Auto-comments</p>
+							<p className='text-tertiary'>⬥ Custom instructions</p>
+							<p className='text-tertiary'>⬥ Code review</p>
+							<p className='text-tertiary'>⬥ Code generation</p>
+						</div>
+						<CTAButton text='Get started now' />
+					</div>
+					<div className='text-tertiary border-tertiary w-96 space-y-3 border-2 p-4 sm:p-8'>
+						<h2>Enterprise</h2>
+						<p>Best for large teams.</p>
+						<p>Coming soon.</p>
+					</div>
+				</div>
 			</section>
 			<section className='center relative h-screen w-screen space-y-4 text-green-200'>
 				<p className='font-monocraft text-xl font-medium'>
