@@ -1,10 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import {env} from 'process'
+import future from '~/assets/future.png'
 import joshuaTreeDay from '~/assets/joshua-tree-day.png'
 import joshuaTreeNight from '~/assets/joshua-tree-night.png'
-import tatooine from '~/assets/tatooine.png'
-import {Footer} from '~/components/Footer'
 import {Header} from '~/components/Header'
 import {Cal, Highlight, Precedent, Trigger} from '~/components/logos'
 import {Nuxt} from '~/components/logos/Nuxt'
@@ -43,7 +42,7 @@ const DemoVideo = () => (
 
 const Page = () => {
 	return (
-		<div className='relative w-screen space-y-6 sm:space-y-12'>
+		<div className='relative w-screen space-y-6 overflow-hidden sm:space-y-12'>
 			<Header />
 			<div className='absolute right-2 top-0 ml-auto h-8 w-8 rounded-full bg-gradient-to-t from-red-700 to-red-500 drop-shadow-glow' />
 			{/* Hero */}
@@ -120,9 +119,9 @@ const Page = () => {
 				<Image
 					src={joshuaTreeNight}
 					alt='Joshua tree at night'
-					className='w-auto grow'
+					className='h-auto w-1/2'
 				/>
-				<div className='center z-10 min-w-80 max-w-xl !items-start space-y-8 text-left text-2xl text-green-500 sm:space-y-24'>
+				<div className='center z-10 max-w-xl grow !items-start space-y-8 text-left text-2xl text-green-500 sm:space-y-24'>
 					<p>
 						- maige is an AI with access to GitHub. it can do anything you could do in
 						the UI.
@@ -135,15 +134,20 @@ const Page = () => {
 					<p>+ The whole thing is customizable with text</p>
 				</div>
 			</section>
-			<section className='relative h-screen'></section>
-			<section className='relative h-screen'>
+			<section className='center relative h-screen w-screen space-y-4 text-green-200'>
+				<p className='font-monocraft text-xl font-medium'>
+					Maige is an open-source experiment by Rubric Labs
+				</p>
+				<p>a new way to build</p>
+				<p>get started now</p>
+				<CTAButton />
 				<Image
-					src={tatooine}
+					src={future}
 					alt='Future desert scene'
-					className='h-96'
+					className='absolute -z-10 h-full w-full object-cover opacity-40'
 				/>
 			</section>
-			<Footer />
+			{/* <Footer /> */}
 		</div>
 	)
 }
