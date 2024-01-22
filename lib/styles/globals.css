@@ -64,7 +64,7 @@
 		@apply bg-background text-foreground;
 	}
 	h1 {
-		@apply font-monocraft text-5xl font-bold !leading-[5.5rem] !tracking-tighter;
+		@apply font-monocraft text-5xl font-bold !leading-[4.5rem] !tracking-tighter;
 	}
 	h2 {
 		@apply text-3xl font-bold;
