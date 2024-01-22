@@ -150,13 +150,13 @@ const Page = () => {
 					</p>
 				</div>
 				<div className='flex flex-wrap gap-4'>
-					<div className='w-96 border-2 border-primary p-4 sm:p-8'>
+					<div className='center w-96 border-2 border-primary p-4 sm:p-10'>
 						<div className='space-y-3 pb-8'>
 							<h2>Standard Plan</h2>
-							<p>
-								Learn how Maige can help you. First 40 issues free, then continue at
-								$20/mo.
-							</p>
+							<h3>
+								~$1.00 USD/<span className='text-tertiary'>30 issues</span>
+							</h3>
+							<p>Learn how Maige can help you. First 30 issues free.</p>
 							<p className='text-tertiary'>⬥ Auto-labelling</p>
 							<p className='text-tertiary'>⬥ Auto-assignment</p>
 							<p className='text-tertiary'>⬥ Auto-comments</p>
