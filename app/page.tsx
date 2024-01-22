@@ -99,7 +99,22 @@ const Page = () => {
 					</p>
 				</div>
 			</section>
-			<section className='relative h-screen'></section>
+			<section className='center font-monocraft h-screen p-8 sm:p-24'>
+				<div className='center max-w-2xl !items-start space-y-8 text-left text-2xl sm:space-y-24'>
+					<p className='text-red-500'>
+						- maige is an AI with access to GitHub. it can do anything you could do in
+						the UI.
+					</p>
+					<p className='text-green-500'>+ It labels your issues automatically</p>
+					<p className='text-yellow-500'>
+						| There&apos;s also a code sandbox that it can spin up
+					</p>
+					<p className='text-green-500'>+ It can also review PRs</p>
+					<p className='text-green-500'>
+						+ The whole thing is customizable with text
+					</p>
+				</div>
+			</section>
 			<section className='relative h-screen'></section>
 			<section className='relative h-screen'>
 				<Image
