@@ -66,22 +66,22 @@ const Page = () => {
 				</div>
 			</section>
 			{/* How-to */}
-			<section className='center h-screen space-y-10 text-secondary sm:space-y-20'>
-				<div className='max-w-2xl space-y-4'>
-					<h2>1. Connect your repo</h2>
+			<section className='center h-screen space-y-10 text-secondary sm:space-y-24'>
+				<div className='max-w-xl space-y-4'>
+					<h2 className='text-primary'>1. Connect your repo</h2>
 					<p className='text-xl'>
 						When you connect, we create three things: a webhook, embeddings of your
 						entire codebase, and a sandbox environment.
 					</p>
 				</div>
-				<div className='flex w-full flex-wrap gap-8'>
+				<div className='flex w-full flex-wrap items-center gap-6 sm:gap-12'>
 					<Image
 						src={joshuaTreeDay}
 						alt='Future desert scene'
 						className='h-auto w-1/2 opacity-80'
 					/>
 					<div className='max-w-md space-y-4'>
-						<h2>2. Write your rules</h2>
+						<h2 className='text-primary'>2. Write your rules</h2>
 						<p className='text-xl'>
 							Simply describe what should happen when issues and PRs are opened.
 						</p>
@@ -91,8 +91,8 @@ const Page = () => {
 						</p>
 					</div>
 				</div>
-				<div className='max-w-2xl space-y-4'>
-					<h2>3. Watch it run</h2>
+				<div className='max-w-xl space-y-4'>
+					<h2 className='text-primary'>3. Watch it run</h2>
 					<p className='text-xl'>
 						Tell your community how to leverage your workflows. Monitor runs and
 						provide feedback in our dashboard.
