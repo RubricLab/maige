@@ -10,7 +10,7 @@ type Props = {
 	route: string
 }
 
-export default function TableSearch({searchValue, route}: Props) {
+export function TableSearch({searchValue, route}: Props) {
 	const router = useRouter()
 	const [search, setSearch] = useState<string>(searchValue)
 	const debouncedSearchTerm = useDebounce(search, 200)
