@@ -173,17 +173,27 @@ const Page = () => {
 					</div>
 				</div>
 			</section>
-			<section className='center relative h-screen w-screen space-y-4 text-green-200'>
-				<p className='font-monocraft text-xl font-medium'>
-					Maige is an open-source experiment by Rubric Labs
-				</p>
-				<p>a new way to build</p>
-				<p>get started now</p>
-				<CTAButton />
+			<section className='center relative h-screen w-screen space-y-4 text-primary dark:text-green-300'>
+				<div className='font-monocraft space-x-2 text-lg'>
+					<span>maige is an</span>
+					<Link
+						className='font-bold'
+						href='https://github.com/RubricLab/maige'
+						target='_blank'>
+						open-source experiment
+					</Link>
+					<span>by</span>
+					<Link
+						className='font-bold'
+						href='https://rubriclabs.com'
+						target='_blank'>
+						Rubric Labs
+					</Link>
+				</div>
 				<Image
 					src={future}
 					alt='Future desert scene'
-					className='absolute -z-10 h-full w-full object-cover opacity-40'
+					className='absolute -z-10 h-full w-full object-cover opacity-20'
 				/>
 			</section>
 			{/* <Footer /> */}
