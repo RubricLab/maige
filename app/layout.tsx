@@ -1,4 +1,5 @@
 import {Metadata, Viewport} from 'next'
+import Providers from '~/components/dashboard/Providers'
 import '~/styles/globals.css'
 import {italiana, roboto} from '~/utils/fonts'
 
@@ -48,7 +49,9 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
 			lang='en'
 			className={`${italiana.variable} ${roboto.className}`}>
 			<body>
-				<main>{children}</main>
+				<Providers>
+					<main>{children}</main>
+				</Providers>
 			</body>
 		</html>
 	)
