@@ -14,7 +14,7 @@ const loomConfig = {
 	hideEmbedTopBar: 'true',
 	hide_share: 'true',
 	hide_title: 'true',
-	default_speed: 'true',
+	default_speed: '1.2',
 	skip_embed_eovn: 'true'
 }
 const loomQueryParams = new URLSearchParams(loomConfig).toString()
@@ -98,7 +98,7 @@ const Page = () => {
 						<Image
 							src={labelFlow}
 							alt='Maige labelling flow'
-							className='absolute w-5/6'
+							className='absolute w-5/6 shadow-2xl'
 						/>
 					</div>
 					<div className='max-w-md space-y-4'>
@@ -122,7 +122,6 @@ const Page = () => {
 			</section>
 			<section className='center font-monocraft relative h-screen !flex-row gap-8 py-8 sm:py-24'>
 				<div className='bg-sunset absolute right-10 top-10 h-screen w-8' />
-
 				<div className='center z-10 grow !items-start text-xl text-green-500 sm:pl-16'>
 					<div className='max-w-lg space-y-8 sm:space-y-20'>
 						<p>
@@ -137,11 +136,18 @@ const Page = () => {
 						<p>+ The whole thing is customizable with text</p>
 					</div>
 				</div>
-				<Image
-					src={joshuaTreeNight}
-					alt='Joshua tree at night'
-					className='h-auto w-1/2'
-				/>
+				<div className='center relative w-full p-6 sm:w-1/2'>
+					<Image
+						src={joshuaTreeNight}
+						alt='Joshua tree at night'
+						className='object-cover opacity-80'
+					/>
+					<Image
+						src={labelFlow}
+						alt='Maige labelling flow'
+						className='absolute w-5/6 shadow-2xl'
+					/>
+				</div>
 			</section>
 			<section className='center relative h-screen space-y-8'>
 				<div className='center space-y-4'>
@@ -158,12 +164,12 @@ const Page = () => {
 								~$1.00 USD/<span className='text-tertiary'>30 issues</span>
 							</h3>
 							<p>Learn how Maige can help you. First 30 issues free.</p>
-							<p className='text-tertiary'>⬥ Auto-labelling</p>
-							<p className='text-tertiary'>⬥ Auto-assignment</p>
-							<p className='text-tertiary'>⬥ Auto-comments</p>
-							<p className='text-tertiary'>⬥ Custom instructions</p>
-							<p className='text-tertiary'>⬥ Code review</p>
-							<p className='text-tertiary'>⬥ Code generation</p>
+							<p className='text-tertiary'>+ Auto-labelling</p>
+							<p className='text-tertiary'>+ Auto-assignment</p>
+							<p className='text-tertiary'>+ Auto-comments</p>
+							<p className='text-tertiary'>+ Custom instructions</p>
+							<p className='text-tertiary'>+ Code review</p>
+							<p className='text-tertiary'>+ Code generation</p>
 						</div>
 						<CTAButton text='Get started now' />
 					</div>
