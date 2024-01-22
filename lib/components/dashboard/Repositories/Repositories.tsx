@@ -1,12 +1,36 @@
+import {PlusIcon} from 'lucide-react'
 import Link from 'next/link'
+import {ReactNode} from 'react'
+import env from '~/env.mjs'
 import {timeAgo} from '~/utils'
+
+function RepoLayout({children, href}: {children: ReactNode; href: string}) {
+	return (
+		<Link
+			className='relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border-2 border-border/60 p-4 py-3.5 transition-opacity duration-300 hover:border-border'
+			href={href}>
+			{children}
+		</Link>
+	)
+}
+
+function AddRepository() {
+	return (
+		<RepoLayout
+			href={`https://github.com/apps/${env.GITHUB_APP_NAME}/installations/new`}>
+			<div className='flex h-full w-full items-center justify-center gap-2'>
+				<PlusIcon />
+				Add repository
+			</div>
+		</RepoLayout>
+	)
+}
 
 export function Repositories({projects}: {projects: any[]}) {
 	return (
 		<div className='grid w-full gap-4 sm:grid-cols-4'>
 			{projects.map(project => (
-				<Link
-					className='relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border-2 border-border border-opacity-20 p-4 py-3.5 transition-all hover:border-opacity-100'
+				<RepoLayout
 					href={`/dashboard/repo/${project.id}`}
 					key={project.id}>
 					<div className='flex w-full items-center justify-between'>
@@ -28,8 +52,9 @@ export function Repositories({projects}: {projects: any[]}) {
 							Added {timeAgo(project.createdAt)}
 						</span>
 					</div>
-				</Link>
+				</RepoLayout>
 			))}
+			<AddRepository />
 		</div>
 	)
 }
