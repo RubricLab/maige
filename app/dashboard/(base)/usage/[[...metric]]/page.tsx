@@ -1,4 +1,4 @@
-import UsageTable from '~/components/dashboard/Usage/TableWrapper'
+import {UsageTable} from '~/components/dashboard/Usage/TableWrapper'
 
 export default async function Usage({
 	searchParams,

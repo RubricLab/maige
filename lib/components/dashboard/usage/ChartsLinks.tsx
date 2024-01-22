@@ -20,7 +20,7 @@ const routes = [
 	}
 ]
 
-export default function ChartsLinks({route}: Props) {
+export function ChartsLinks({route}: Props) {
 	return (
 		<div className='flex justify-start gap-2 pb-2'>
 			{routes.map((page, index) => (

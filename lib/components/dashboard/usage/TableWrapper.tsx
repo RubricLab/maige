@@ -35,7 +35,7 @@ const UsageParamsSchema = z.object({
 	dir: z.enum(['asc', 'desc']).optional()
 })
 
-export default async function UsageTable({
+export async function UsageTable({
 	searchParams,
 	route
 }: {
