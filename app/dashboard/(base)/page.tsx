@@ -31,7 +31,7 @@ export default async function Page() {
 		: []
 
 	return (
-		<div className='flex flex-col items-center gap-8'>
+		<div className='flex flex-col items-center'>
 			<Suspense fallback={<p>Loading...</p>}>
 				<Repositories projects={projects} />
 			</Suspense>

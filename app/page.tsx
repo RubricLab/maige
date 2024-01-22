@@ -18,7 +18,7 @@ const Page = () => {
 						<h1 className='bg-gradient-to-l from-orange-200 to-indigo-800 bg-clip-text text-lg font-bold leading-normal tracking-tight text-transparent sm:pb-4 sm:text-8xl'>
 							Maige
 						</h1>
-						<h2 className='text:lg font-medium leading-3 tracking-tight text-white/80 sm:pb-8 sm:text-3xl'>
+						<h2 className='text-lg font-medium leading-3 tracking-tight text-white/80 sm:pb-8 sm:text-3xl'>
 							Have AI label your issues.
 						</h2>
 					</div>

@@ -18,19 +18,19 @@ const routes = [
 export function MainNavigation() {
 	const pathname = usePathname()
 	return (
-		<div className='relative z-10 flex border-b-2 border-b-black/20 dark:border-b-white/20'>
+		<div className='relative z-10 flex border-b-2 border-border'>
 			{routes.map((page, index) => (
 				<div
 					key={index}
 					className='group relative -bottom-0.5 flex flex-col items-center'>
 					<Link
-						className='mb-1 rounded-sm px-3 py-1 hover:bg-black/20 hover:dark:bg-white/20'
+						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-primary/10'
 						href={`/dashboard${page.path}`}>
 						{page.name}
 					</Link>
 					<div
 						className={cn(
-							'w-full border-b-2 border-black/50 transition-opacity dark:border-white/50',
+							'w-full border-b-2 border-border transition-opacity',
 							(page.path === '' && pathname === '/dashboard') ||
 								(page.path !== '' && pathname.startsWith(`/dashboard${page.path}`))
 								? 'opacity-100'

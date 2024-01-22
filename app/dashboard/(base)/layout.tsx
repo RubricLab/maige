@@ -11,7 +11,7 @@ export default async function RootLayout({
 		<div className='space-y-4'>
 			<Toaster position='top-right' />
 			<MainNavigation />
-			<div className='z-10 grid h-full w-full'>{children}</div>
+			<div className='z-10 h-full w-full'>{children}</div>
 			<Feedback />
 		</div>
 	)

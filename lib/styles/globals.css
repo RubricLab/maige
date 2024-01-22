@@ -35,7 +35,7 @@
 		--radius: 0.5rem;
 	}
 	.dark {
-		--background: 224 71.4% 4.1%;
+		--background: 0 100% 0%;
 		--foreground: 210 20% 98%;
 
 		--card: 224 71.4% 4.1%;
@@ -70,6 +70,15 @@
 	}
 	html {
 		@apply bg-background text-foreground;
+	}
+	h1 {
+		@apply text-5xl font-bold;
+	}
+	h2 {
+		@apply text-3xl font-bold;
+	}
+	h3 {
+		@apply text-xl font-semibold;
 	}
 	a {
 		@apply transition-all focus:outline-none;
