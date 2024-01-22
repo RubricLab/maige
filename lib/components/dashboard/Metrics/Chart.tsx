@@ -1,3 +1,4 @@
+'use client'
 import {LineChart} from '@tremor/react'
 
 export function Chart({
