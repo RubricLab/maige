@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {env} from 'process'
 import joshuaTreeDay from '~/assets/joshua-tree-day.png'
+import joshuaTreeNight from '~/assets/joshua-tree-night.png'
 import tatooine from '~/assets/tatooine.png'
 import {Footer} from '~/components/Footer'
 import {Header} from '~/components/Header'
@@ -22,7 +23,7 @@ const CTAButton = () => (
 	<Link
 		href={`https://github.com/apps/${env.GITHUB_APP_NAME}`}
 		rel='noopener noreferrer'>
-		<button className='w-72 bg-green-700 p-3 text-xl font-medium text-white transition-all hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600/60'>
+		<button className='w-72 rounded-sm bg-green-700 p-3 text-xl font-medium text-white transition-all hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600/60'>
 			Add to your repo
 		</button>
 	</Link>
@@ -34,7 +35,7 @@ const DemoVideo = () => (
 			<iframe
 				src={`https://www.loom.com/embed/1f8fc747459d44659dc508460cf44208?sid=5820036c-e4fc-4343-b9ad-7f350af10dee?${loomQueryParams}`}
 				allowFullScreen
-				className='relative my-auto block aspect-[7/4] h-auto w-full overflow-hidden border-4 border-secondary'
+				className='relative my-auto block aspect-[7/4] h-auto w-full overflow-hidden rounded-xl border-4 border-secondary'
 			/>
 		</div>
 	</div>
@@ -47,15 +48,15 @@ const Page = () => {
 			<div className='absolute right-2 top-0 ml-auto h-8 w-8 rounded-full bg-gradient-to-t from-red-700 to-red-500 drop-shadow-glow' />
 			{/* Hero */}
 			<section className='center relative mx-auto min-h-screen max-w-5xl space-y-4 pt-16 sm:space-y-10 sm:pt-[25vh]'>
-				<div className='max-w-3xl space-y-4'>
+				<div className='max-w-3xl space-y-6'>
 					<h1 className='relative text-primary sm:text-7xl dark:text-orange-100'>
 						<span className='absolute left-px top-px -z-10 text-secondary'>
 							intelligent codebase copilot
 						</span>
 						<span>intelligent codebase copilot</span>
 					</h1>
-					<h2 className='font-sans text-secondary'>
-						maige lets you run natural language workflows on your codebase
+					<h2 className='text-tertiary font-sans font-semibold'>
+						run natural language workflows on your codebase
 					</h2>
 				</div>
 				<CTAButton />
@@ -92,7 +93,7 @@ const Page = () => {
 				<div className='flex w-full flex-wrap items-center gap-6 sm:gap-12'>
 					<Image
 						src={joshuaTreeDay}
-						alt='Future desert scene'
+						alt='Joshua tree at day'
 						className='h-auto w-1/2 opacity-80'
 					/>
 					<div className='max-w-md space-y-4'>
@@ -114,21 +115,24 @@ const Page = () => {
 					</p>
 				</div>
 			</section>
-
-			<section className='center font-monocraft h-screen p-8 sm:p-24'>
-				<div className='center max-w-2xl !items-start space-y-8 text-left text-2xl sm:space-y-24'>
-					<p className='text-red-500'>
+			<section className='center font-monocraft relative h-screen !flex-row gap-8 py-8 sm:py-24'>
+				<div className='bg-sunset absolute right-10 top-10 h-screen w-8' />
+				<Image
+					src={joshuaTreeNight}
+					alt='Joshua tree at night'
+					className='w-auto grow'
+				/>
+				<div className='center z-10 min-w-80 max-w-xl !items-start space-y-8 text-left text-2xl text-green-500 sm:space-y-24'>
+					<p>
 						- maige is an AI with access to GitHub. it can do anything you could do in
 						the UI.
 					</p>
-					<p className='text-green-500'>+ It labels your issues automatically</p>
+					<p> + It labels your issues automatically</p>
 					<p className='text-yellow-500'>
 						| There&apos;s also a code sandbox that it can spin up
 					</p>
-					<p className='text-green-500'>+ It can also review PRs</p>
-					<p className='text-green-500'>
-						+ The whole thing is customizable with text
-					</p>
+					<p>+ It can also review PRs</p>
+					<p>+ The whole thing is customizable with text</p>
 				</div>
 			</section>
 			<section className='relative h-screen'></section>
@@ -136,7 +140,7 @@ const Page = () => {
 				<Image
 					src={tatooine}
 					alt='Future desert scene'
-					className='h-full object-cover'
+					className='h-96'
 				/>
 			</section>
 			<Footer />
