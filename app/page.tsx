@@ -44,17 +44,16 @@ const Page = () => {
 	return (
 		<div className='relative w-screen space-y-6 overflow-hidden sm:space-y-12'>
 			<Header />
-			<div className='absolute right-2 top-0 ml-auto h-8 w-8 rounded-full bg-gradient-to-t from-red-700 to-red-500 drop-shadow-glow' />
 			{/* Hero */}
 			<section className='center relative mx-auto min-h-screen max-w-5xl space-y-4 pt-16 sm:space-y-10 sm:pt-[25vh]'>
 				<div className='max-w-3xl space-y-6'>
-					<h1 className='relative text-primary sm:text-7xl dark:text-orange-100'>
+					<h1 className='relative text-primary sm:text-7xl dark:text-orange-200'>
 						<span className='absolute left-px top-px -z-10 text-secondary'>
 							intelligent codebase copilot
 						</span>
 						<span>intelligent codebase copilot</span>
 					</h1>
-					<h2 className='text-tertiary font-sans font-semibold'>
+					<h2 className='font-sans font-semibold text-secondary'>
 						run natural language workflows on your codebase
 					</h2>
 				</div>
@@ -69,19 +68,20 @@ const Page = () => {
 			</section>
 			{/* Logos */}
 			<section className='center space-y-16 p-12 sm:p-24'>
-				<p className='font-monocraft text-tertiary'>
-					Used by 1.8k++ of the best teams:
-				</p>
+				<p className='font-monocraft text-tertiary'>Used by 1.8k++ repos:</p>
 				<div className='center gap-12 sm:gap-14'>
-					<Cal className='h-8 opacity-60 transition-opacity hover:opacity-100' />
-					<Trigger className='h-8 opacity-60 transition-opacity hover:opacity-100' />
-					<Precedent className='h-8 opacity-60 transition-opacity hover:opacity-100' />
-					<Highlight className='h-8 opacity-60 transition-opacity hover:opacity-100' />
-					<Nuxt className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+					<Cal className='h-10 opacity-60 transition-opacity hover:opacity-100' />
+					<Trigger className='h-10 opacity-60 transition-opacity hover:opacity-100' />
+					<Precedent className='h-10 opacity-60 transition-opacity hover:opacity-100' />
+					<Highlight className='h-10 opacity-60 transition-opacity hover:opacity-100' />
+					<Nuxt className='h-10 opacity-60 transition-opacity hover:opacity-100' />
 				</div>
 			</section>
 			{/* How-to */}
-			<section className='center h-screen space-y-10 text-secondary sm:space-y-24'>
+			<section className='center h-screen space-y-10 py-24 text-secondary sm:space-y-24 sm:py-40'>
+				<h1 className='text-tertiary mr-auto pl-10 sm:text-7xl'>
+					Get going in a few clicks:
+				</h1>
 				<div className='max-w-xl space-y-4'>
 					<h2 className='text-primary'>1. Connect your repo</h2>
 					<p className='text-xl'>
@@ -121,18 +121,23 @@ const Page = () => {
 					alt='Joshua tree at night'
 					className='h-auto w-1/2'
 				/>
-				<div className='center z-10 max-w-xl grow !items-start space-y-8 text-left text-2xl text-green-500 sm:space-y-24'>
-					<p>
-						- maige is an AI with access to GitHub. it can do anything you could do in
-						the UI.
-					</p>
-					<p> + It labels your issues automatically</p>
-					<p className='text-yellow-500'>
-						| There&apos;s also a code sandbox that it can spin up
-					</p>
-					<p>+ It can also review PRs</p>
-					<p>+ The whole thing is customizable with text</p>
+				<div className='center z-10 grow !items-start text-left text-xl text-green-500'>
+					<div className='max-w-lg space-y-8 sm:space-y-20'>
+						<p>
+							- maige is an AI with access to GitHub. it can do anything you could do
+							in the UI.
+						</p>
+						<p> + It labels your issues automatically</p>
+						<p className='text-yellow-500'>
+							| There&apos;s also a code sandbox that it can spin up
+						</p>
+						<p>+ It can also review PRs</p>
+						<p>+ The whole thing is customizable with text</p>
+					</div>
 				</div>
+			</section>
+			<section className='relative h-screen'>
+				<h1>Pricing</h1>
 			</section>
 			<section className='center relative h-screen w-screen space-y-4 text-green-200'>
 				<p className='font-monocraft text-xl font-medium'>
