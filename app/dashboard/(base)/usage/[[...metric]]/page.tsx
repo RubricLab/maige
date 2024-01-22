@@ -1,4 +1,4 @@
-import {UsageTable} from '~/components/dashboard/Usage'
+import {Test} from '~/components/Test'
 
 export default async function Usage({
 	searchParams,
@@ -12,9 +12,11 @@ export default async function Usage({
 	const route = params.metric ? params.metric[0] : ''
 
 	return (
-		<UsageTable
-			route={route}
-			searchParams={searchParams}
-		/>
+		<Test />
+
+		// <UsageTable
+		// 	route={route}
+		// 	searchParams={searchParams}
+		// />
 	)
 }
