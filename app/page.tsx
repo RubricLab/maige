@@ -122,12 +122,8 @@ const Page = () => {
 			</section>
 			<section className='center font-monocraft relative h-screen !flex-row gap-8 py-8 sm:py-24'>
 				<div className='bg-sunset absolute right-10 top-10 h-screen w-8' />
-				<Image
-					src={joshuaTreeNight}
-					alt='Joshua tree at night'
-					className='h-auto w-1/2'
-				/>
-				<div className='center z-10 grow !items-start text-left text-xl text-green-500'>
+
+				<div className='center z-10 grow !items-start text-xl text-green-500 sm:pl-16'>
 					<div className='max-w-lg space-y-8 sm:space-y-20'>
 						<p>
 							- maige is an AI with access to GitHub. it can do anything you could do
@@ -141,6 +137,11 @@ const Page = () => {
 						<p>+ The whole thing is customizable with text</p>
 					</div>
 				</div>
+				<Image
+					src={joshuaTreeNight}
+					alt='Joshua tree at night'
+					className='h-auto w-1/2'
+				/>
 			</section>
 			<section className='center relative h-screen space-y-8'>
 				<div className='center space-y-4'>
