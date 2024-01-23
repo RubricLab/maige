@@ -73,9 +73,11 @@ export function DashboardHeader({
 						/>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent className='mr-6 mt-2 w-[235px]'>
-						{session.user.email && (
+						{(session.user.name || session.user.email) && (
 							<>
-								<DropdownMenuItem disabled={true}></DropdownMenuItem>
+								<DropdownMenuItem disabled={true}>
+									{session.user.name ? session.user.name : session.user.email}
+								</DropdownMenuItem>
 								<DropdownMenuSeparator />
 							</>
 						)}
