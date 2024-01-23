@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
 import {CommandMenu} from '~/components/CommandBar'
+import Feedback from '~/components/Feedback'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -59,6 +60,7 @@ export function DashboardHeader({
 				</span>
 			</div>
 			<div className='flex items-center gap-4'>
+				<Feedback />
 				<CommandMenu />
 				<DropdownMenu>
 					<DropdownMenuTrigger className='focus-visible:outline-none'>
@@ -71,8 +73,12 @@ export function DashboardHeader({
 						/>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent className='mr-6 mt-2 w-[235px]'>
-						<DropdownMenuItem disabled={true}>{session.user.email}</DropdownMenuItem>
-						<DropdownMenuSeparator />
+						{session.user.email && (
+							<>
+								<DropdownMenuItem disabled={true}></DropdownMenuItem>
+								<DropdownMenuSeparator />
+							</>
+						)}
 						<DropdownMenuItem
 							className='cursor-pointer'
 							onClick={() => signOut()}>
