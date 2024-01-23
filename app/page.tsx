@@ -117,14 +117,14 @@ const Page = () => {
 			<section className='text-tertiary px-4 pb-20 sm:px-12'>
 				<div className='flex max-w-3xl flex-col space-y-8 '>
 					<h2>Maige flexibly works with the GitHub API to find a way.</h2>
-					<div className='text-secondary space-y-6 text-xl'>
+					<div className='text-secondary space-y-6 text-2xl'>
 						<p>
 							+ maige always <span className='text-green-600'>assign</span>{' '}
 							<span className='text-yellow-600'>UI-related</span> issues to @milton
 						</p>
 						<p>
-							+ maige <span className='text-green-600'>label</span> PRs that change the
-							.env as &apos;needs-approval&apos;{' '}
+							+ maige <span className='text-green-600'>label</span> .env PRs as
+							&apos;needs-approval&apos;{' '}
 							<span className='text-yellow-600'>unless</span> opened by @maintainer
 						</p>
 						<p>
@@ -135,7 +135,7 @@ const Page = () => {
 				</div>
 			</section>
 			{/* Description */}
-			<section className='center relative h-screen gap-8 py-8 font-monocraft sm:flex-row sm:py-24'>
+			<section className='center relative h-screen gap-8 py-8 font-monocraft sm:flex-row'>
 				<div className='absolute right-4 top-10 h-screen w-9 bg-sunset sm:right-10' />
 				<div className='z-10 flex w-full flex-col text-xl text-green-600 sm:pl-16'>
 					<div className='max-w-sm space-y-10 px-4 sm:max-w-lg sm:space-y-20'>
