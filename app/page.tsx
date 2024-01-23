@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import {env} from 'process'
 import fullFlow from '~/assets/full-flow.png'
 import future from '~/assets/future.png'
 import joshuaTreeDay from '~/assets/joshua-tree-day.png'
 import joshuaTreeNight from '~/assets/joshua-tree-night.png'
 import labelFlow from '~/assets/label-flow.png'
+import {Auth} from '~/components/Auth'
 import {Header} from '~/components/Header'
 import {Cal, Highlight, Precedent, Trigger} from '~/components/logos'
 import {Nuxt} from '~/components/logos/Nuxt'
@@ -19,16 +19,6 @@ const loomConfig = {
 	skip_embed_eovn: 'true'
 }
 const loomQueryParams = new URLSearchParams(loomConfig).toString()
-
-const CTAButton = ({text}: {text?: string}) => (
-	<Link
-		href={`https://github.com/apps/${env.GITHUB_APP_NAME}`}
-		rel='noopener noreferrer'>
-		<button className='w-72 rounded-sm bg-green-700 p-3 text-xl font-medium text-white transition-all hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600/60'>
-			{text || 'Add to your repo'}
-		</button>
-	</Link>
-)
 
 const DemoVideo = () => (
 	<div className='z-10 w-full'>
@@ -61,7 +51,7 @@ const Page = () => {
 						run natural language workflows on your codebase
 					</h2>
 				</div>
-				<CTAButton />
+				<Auth />
 				<DemoVideo />
 				<div className='absolute -left-10 top-2/3 w-10 break-words text-center'>
 					<div className='absolute top-1/3 -z-10 h-56 w-full bg-sunset' />
@@ -197,7 +187,7 @@ const Page = () => {
 							<p>+ Code review</p>
 							<p>+ Code generation</p>
 						</div>
-						<CTAButton text='Get started now' />
+						<Auth text='Get started now' />
 					</div>
 					<div className='text-tertiary border-tertiary w-full space-y-3 rounded-sm border-2 p-4 sm:w-96 sm:p-8'>
 						<h2>Enterprise</h2>
