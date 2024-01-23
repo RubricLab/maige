@@ -1,6 +1,5 @@
 import {Toaster} from 'sonner'
 import {MainNavigation} from '~/components/dashboard/Navigation'
-import Feedback from '~/components/feedback/feedback'
 
 export default async function RootLayout({
 	children
@@ -9,10 +8,9 @@ export default async function RootLayout({
 }) {
 	return (
 		<div className='space-y-4'>
-			<Toaster position='top-right' />
+			<Toaster position='bottom-right' />
 			<MainNavigation />
 			<div className='z-10 h-full w-full'>{children}</div>
-			<Feedback />
 		</div>
 	)
 }
