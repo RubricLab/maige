@@ -1,4 +1,4 @@
-const Cal = ({className = ''}: {className?: string}) => {
+export const Cal = ({className = ''}: {className?: string}) => {
 	return (
 		<a
 			href='https://cal.com'
@@ -18,5 +18,3 @@ const Cal = ({className = ''}: {className?: string}) => {
 		</a>
 	)
 }
-
-export default Cal

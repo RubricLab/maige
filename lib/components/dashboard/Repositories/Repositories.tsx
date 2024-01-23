@@ -48,7 +48,7 @@ export function Repositories({projects}: {projects: any[]}) {
 						<span className='font-medium'>
 							{project.customInstructions.length} Custom Instructions
 						</span>
-						<span className='text-sm text-zinc-500'>
+						<span className='text-sm text-gray-500'>
 							Added {timeAgo(project.createdAt)}
 						</span>
 					</div>

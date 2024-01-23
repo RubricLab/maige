@@ -1,17 +1,13 @@
 'use client'
 
-import {Github} from 'lucide-react'
 import {signIn} from 'next-auth/react'
-import {Button} from '~/components/ui/button'
 
-export function Auth() {
+export function Auth({text}: {text?: string}) {
 	return (
-		<Button
-			className='w-full py-5'
-			variant='default'
+		<button
+			className='w-72 rounded-sm bg-green-700 p-3 text-xl font-medium text-white transition-all hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600/60'
 			onClick={() => signIn('github', {callbackUrl: '/dashboard'})}>
-			<Github className='mr-2 inline' />
-			Add to your repo
-		</Button>
+			{text || 'Add to your repo'}
+		</button>
 	)
 }

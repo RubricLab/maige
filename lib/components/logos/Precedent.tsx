@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import precedentLogo from 'public/assets/logos/precedent.png'
 
-function Precedent({className}: {className?: string}) {
+export const Precedent = ({className}: {className?: string}) => {
 	return (
 		<a
 			href='https://precedent.dev'
@@ -11,12 +11,10 @@ function Precedent({className}: {className?: string}) {
 				<Image
 					alt='Precent logo'
 					src={precedentLogo}
-					className='max-h-full w-auto opacity-70 invert group-hover:opacity-100'
+					className='max-h-full w-auto invert group-hover:opacity-100'
 				/>
 				<p className='text-2xl'>Precedent</p>
 			</div>
 		</a>
 	)
 }
-
-export default Precedent
