@@ -42,7 +42,7 @@ const Page = () => {
 			<section className='center relative mx-auto min-h-screen max-w-5xl space-y-6 pt-16 sm:space-y-12 sm:pt-40'>
 				<div className='max-w-4xl space-y-6 px-4 text-center'>
 					<h1 className='text-primary relative sm:text-7xl dark:text-orange-100'>
-						<span className='text-secondary absolute left-px top-px -z-10'>
+						<span className='text-tertiary absolute left-0.5 top-0.5 -z-10'>
 							intelligent codebase copilot
 						</span>
 						<span>intelligent codebase copilot</span>
