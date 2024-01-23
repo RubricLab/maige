@@ -1,12 +1,11 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import {Auth} from '~/components/Auth'
 import {Footer} from '~/components/Footer'
 import {Header} from '~/components/Header'
 import Cal from '~/components/logos/Cal'
 import Highlight from '~/components/logos/Highlight'
 import Precedent from '~/components/logos/Precedent'
 import Trigger from '~/components/logos/Trigger'
-import env from '~/env.mjs'
 import demoSrc from '../public/assets/demo.png'
 
 const Page = () => {
@@ -19,7 +18,7 @@ const Page = () => {
 						<h1 className='bg-gradient-to-l from-orange-200 to-indigo-800 bg-clip-text text-lg font-bold leading-normal tracking-tight text-transparent sm:pb-4 sm:text-8xl'>
 							Maige
 						</h1>
-						<h2 className='text:lg font-medium leading-3 tracking-tight text-white/80 sm:pb-8 sm:text-3xl'>
+						<h2 className='text-lg font-medium leading-3 tracking-tight text-white/80 sm:pb-8 sm:text-3xl'>
 							Have AI label your issues.
 						</h2>
 					</div>
@@ -35,13 +34,7 @@ const Page = () => {
 							</p>
 						</div>
 						<div className='flex flex-col items-center space-y-1'>
-							<Link
-								href={`https://github.com/apps/${env.GITHUB_APP_NAME}`}
-								rel='noopener noreferrer'>
-								<button className='w-72 rounded-md bg-green-700 p-3 text-xl font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-green-600/60 enabled:hover:bg-green-600 disabled:opacity-80'>
-									Add to your repo
-								</button>
-							</Link>
+							<Auth />
 							<p className='text-xs text-white/60'>Free to try.</p>
 						</div>
 						<div className='flex flex-col items-center space-y-2 text-center text-white/60'>

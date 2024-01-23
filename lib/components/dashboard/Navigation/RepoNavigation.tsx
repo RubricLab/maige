@@ -29,7 +29,7 @@ export function RepoNavigation() {
 					key={index}
 					className='group relative flex flex-col items-center pb-2'>
 					<Link
-						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-white hover:bg-opacity-20'
+						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-primary/10'
 						href={`/dashboard/repo/${projectId}${page.path}`}>
 						{page.name}
 					</Link>

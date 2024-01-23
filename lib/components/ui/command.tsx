@@ -4,7 +4,6 @@ import {type DialogProps} from '@radix-ui/react-dialog'
 import {MagnifyingGlassIcon} from '@radix-ui/react-icons'
 import {Command as CommandPrimitive} from 'cmdk'
 import * as React from 'react'
-
 import {Dialog, DialogContent} from '~/components/ui/dialog'
 import {cn} from '~/utils'
 
@@ -15,7 +14,7 @@ const Command = React.forwardRef<
 	<CommandPrimitive
 		ref={ref}
 		className={cn(
-			'flex h-full w-full flex-col overflow-hidden rounded-md bg-black text-popover-foreground',
+			'flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground',
 			className
 		)}
 		{...props}
