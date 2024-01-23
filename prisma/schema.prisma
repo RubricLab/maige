@@ -76,6 +76,7 @@ model Feedback {
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String
   content    String
+  createdAt  DateTime @default(now())
 
   @@index([customerId])
 }
