@@ -1,8 +1,15 @@
-export const Maige = ({className}: {className?: string}) => {
+export const Maige = ({
+	className,
+	style
+}: {
+	className?: string
+	style?: React.CSSProperties
+}) => {
 	return (
 		<svg
 			viewBox='0 0 500 500'
 			className={className}
+			style={style}
 			fill='none'
 			xmlns='http://www.w3.org/2000/svg'>
 			<path
