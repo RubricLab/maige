@@ -59,8 +59,8 @@ export default async function Preview() {
 					src={labelFlow}
 					style={{
 						height: '80%',
-						bottom: '10px',
-						right: '10px',
+						bottom: '-10px',
+						right: '-20px',
 						opacity: 0.9,
 						borderRadius: '2px',
 						position: 'absolute'
@@ -69,8 +69,8 @@ export default async function Preview() {
 				<div
 					style={{
 						position: 'absolute',
-						left: '24px',
-						top: 0,
+						left: '28px',
+						top: '4px',
 						display: 'flex',
 						flexDirection: 'column'
 					}}>
@@ -92,8 +92,8 @@ export default async function Preview() {
 						position: 'absolute',
 						display: 'flex',
 						alignItems: 'flex-end',
-						bottom: '20px',
-						left: '20px'
+						bottom: '28px',
+						left: '28px'
 					}}>
 					<Maige
 						style={{
