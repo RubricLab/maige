@@ -31,11 +31,10 @@ export default function Feedback({}: Props) {
 			open={openDialog}
 			onOpenChange={() => setOpenDialog(prev => !prev)}>
 			<DialogTrigger>
-				<Button
-					variant='outline'
-					size='icon'>
+				{/* Making this a button throws a button-in-button HTML error */}
+				<div className='center hover:bg-tertiary h-9 w-9 rounded-sm transition-colors'>
 					<MessageSquareMoreIcon className='h-4 w-4' />
-				</Button>
+				</div>
 			</DialogTrigger>
 			<DialogContent>
 				<div className='flex w-full flex-col gap-4'>

@@ -7,7 +7,7 @@ export function TextArea({
 }) {
 	return (
 		<textarea
-			className='w-full rounded-lg border-2 bg-primary p-2 text-white focus:outline-none'
+			className='text-primary bg-primary w-full rounded-sm border p-2 focus:outline-none'
 			value={value}
 			onChange={e => onTextChange((e.target as any).value)}></textarea>
 	)

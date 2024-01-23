@@ -2,7 +2,7 @@
 import config from '@rubriclab/tailwind-config'
 import colors from 'tailwindcss/colors'
 
-module.exports = {
+const tailwindConfig = {
 	presets: [config],
 	content: [
 		'./pages/**/*.{ts,tsx}',
@@ -159,3 +159,5 @@ module.exports = {
 	],
 	plugins: [require('tailwindcss-animate'), require('@headlessui/tailwindcss')]
 }
+
+export default tailwindConfig

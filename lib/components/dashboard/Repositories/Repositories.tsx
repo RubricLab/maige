@@ -2,12 +2,23 @@ import {PlusIcon} from 'lucide-react'
 import Link from 'next/link'
 import {ReactNode} from 'react'
 import env from '~/env.mjs'
-import {timeAgo} from '~/utils'
+import {cn, timeAgo} from '~/utils'
 
-function RepoLayout({children, href}: {children: ReactNode; href: string}) {
+function RepoLayout({
+	children,
+	href,
+	className
+}: {
+	children: ReactNode
+	href: string
+	className?: string
+}) {
 	return (
 		<Link
-			className='relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border-2 border-border/60 p-4 py-3.5 transition-opacity duration-300 hover:border-border'
+			className={cn(
+				className,
+				'border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border p-4 py-3.5 transition-opacity duration-300'
+			)}
 			href={href}>
 			{children}
 		</Link>
@@ -17,6 +28,7 @@ function RepoLayout({children, href}: {children: ReactNode; href: string}) {
 function AddRepository() {
 	return (
 		<RepoLayout
+			className='!border-dashed'
 			href={`https://github.com/apps/${env.GITHUB_APP_NAME}/installations/new`}>
 			<div className='flex h-full w-full items-center justify-center gap-2'>
 				<PlusIcon />
@@ -37,7 +49,7 @@ export function Repositories({projects}: {projects: any[]}) {
 						<div className='flex items-center gap-3'>
 							<div className='relative'>
 								<div className='h-6 w-6 rounded-full bg-foreground' />
-								<p className='absolute left-0 right-0 top-1/2 m-auto -translate-y-1/2 text-center font-medium leading-none text-secondary'>
+								<p className='text-secondary absolute left-0 right-0 top-1/2 m-auto -translate-y-1/2 text-center font-medium leading-none'>
 									{project.name.charAt(0).toUpperCase()}
 								</p>
 							</div>

@@ -23,7 +23,7 @@ export function Instructions({
 	projectId: string
 }) {
 	return (
-		<div className='relative flex w-full flex-col items-center space-y-4 pb-10'>
+		<div className='relative flex w-full flex-col space-y-4 pb-10'>
 			{instructions.map((instruction, i) => (
 				<React.Fragment key={instruction.id}>
 					<Instruction
@@ -82,7 +82,7 @@ function Instruction({
 		<div
 			id={instruction.id}
 			className={cn(
-				'group relative flex w-full max-w-xl flex-col gap-4 rounded-lg border-2 bg-primary p-8 opacity-100 transition-opacity duration-200',
+				'bg-primary group relative flex w-full max-w-xl flex-col gap-4 rounded-sm border p-6 opacity-100 transition-opacity duration-200',
 				{'pointer-events-none opacity-50': isDelete}
 			)}>
 			{!isDelete && (
@@ -91,7 +91,7 @@ function Instruction({
 						setDelete(true)
 						deleteInstruction(instruction.projectId, instruction.id)
 					}}
-					className='absolute -right-3 -top-3 hidden rounded-lg bg-red-500 p-1 opacity-0 transition-opacity duration-200 ease-in-out group-hover:block group-hover:opacity-100'>
+					className='absolute -right-3 -top-3 hidden rounded-sm bg-red-500 p-1 opacity-0 transition-opacity duration-200 ease-in-out group-hover:block group-hover:opacity-100'>
 					<XIcon
 						size={15}
 						strokeWidth={3}
