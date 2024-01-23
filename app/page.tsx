@@ -36,41 +36,43 @@ const DemoVideo = () => (
 			<iframe
 				src={`https://www.loom.com/embed/1f8fc747459d44659dc508460cf44208?sid=5820036c-e4fc-4343-b9ad-7f350af10dee?${loomQueryParams}`}
 				allowFullScreen
-				className='relative my-auto block aspect-[7/4] h-auto w-full overflow-hidden rounded-xl border-4 border-secondary'
+				className='border-secondary relative my-auto block aspect-[7/4] h-auto w-full overflow-hidden rounded-xl border-4'
 			/>
 		</div>
 	</div>
 )
+
+const todayString = new Date().toISOString().split('T')[0].replaceAll('-', '/')
 
 const Page = () => {
 	return (
 		<div className='relative w-screen space-y-6 overflow-hidden sm:space-y-12'>
 			<Header />
 			{/* Hero */}
-			<section className='center relative mx-auto min-h-screen max-w-5xl space-y-4 pt-16 sm:space-y-10 sm:pt-[25vh]'>
+			<section className='center relative mx-auto min-h-screen max-w-5xl space-y-6 pt-16 sm:space-y-12 sm:pt-40'>
 				<div className='max-w-3xl space-y-6'>
-					<h1 className='relative text-primary sm:text-7xl dark:text-orange-200'>
-						<span className='absolute left-px top-px -z-10 text-secondary'>
+					<h1 className='text-primary relative sm:text-7xl dark:text-orange-100'>
+						<span className='text-secondary absolute left-px top-px -z-10'>
 							intelligent codebase copilot
 						</span>
 						<span>intelligent codebase copilot</span>
 					</h1>
-					<h2 className='font-sans font-semibold text-secondary'>
+					<h2 className='text-secondary font-sans font-medium'>
 						run natural language workflows on your codebase
 					</h2>
 				</div>
 				<CTAButton />
 				<DemoVideo />
 				<div className='absolute -left-10 top-2/3 w-10 break-words text-center'>
-					<div className='bg-sunset absolute top-1/3 -z-10 h-56 w-full' />
-					<span className='font-monocraft text-tertiary text-4xl'>
-						version one: 01 / 23 / 24
+					<div className='absolute top-1/3 -z-10 h-56 w-full bg-sunset' />
+					<span className='text-tertiary font-monocraft text-4xl'>
+						version one: {todayString}
 					</span>
 				</div>
 			</section>
 			{/* Logos */}
 			<section className='center space-y-16 p-12 sm:p-24'>
-				<p className='font-monocraft text-tertiary'>Used by 1.8k++ repos:</p>
+				<p className='text-tertiary font-monocraft'>Used by 1.8k++ repos:</p>
 				<div className='center gap-12 sm:gap-14'>
 					<Cal className='h-10 opacity-60 transition-opacity hover:opacity-100' />
 					<Trigger className='h-10 opacity-60 transition-opacity hover:opacity-100' />
@@ -80,8 +82,8 @@ const Page = () => {
 				</div>
 			</section>
 			{/* How-to */}
-			<section className='center min-h-screen space-y-10 py-24 text-secondary sm:space-y-24 sm:py-40'>
-				<h1 className='text-tertiary sm:text-6xl'>Get going in a few clicks:</h1>
+			<section className='center text-secondary min-h-screen space-y-10 py-24 sm:space-y-20 sm:py-40'>
+				<h1 className='text-tertiary'>Get started in a few clicks:</h1>
 				<div className='max-w-xl space-y-4'>
 					<h2 className='text-primary'>1. Connect your repo</h2>
 					<p className='text-xl'>
@@ -94,12 +96,12 @@ const Page = () => {
 						<Image
 							src={joshuaTreeDay}
 							alt='Joshua tree at day'
-							className='object-cover'
+							className='rounded-md object-cover'
 						/>
 						<Image
 							src={labelFlow}
 							alt='Maige labelling flow'
-							className='absolute w-5/6 shadow-2xl'
+							className='absolute w-5/6 rounded-md shadow-2xl'
 						/>
 					</div>
 					<div className='max-w-md space-y-4'>
@@ -121,16 +123,41 @@ const Page = () => {
 					</p>
 				</div>
 			</section>
-			<section className='center font-monocraft relative h-screen !flex-row gap-8 py-8 sm:py-24'>
-				<div className='bg-sunset absolute right-10 top-10 h-screen w-8' />
-				<div className='center z-10 grow !items-start text-xl text-green-500 sm:pl-16'>
+			{/* Examples */}
+			<section className='flex flex-col space-y-12 px-6 pb-20 sm:px-12'>
+				<h2>Some examples:</h2>
+				<div className='text-tertiary space-y-6 font-monocraft text-xl'>
+					<p>
+						+ &quot;maige always <span className='text-green-600'>assign</span>{' '}
+						<span className='text-yellow-600'>UI-related</span> issues to
+						@milton&quot;
+					</p>
+					<p>
+						+ &quot;maige <span className='text-green-600'>label</span> PRs that
+						change the .env as &apos;needs-approval&apos;{' '}
+						<span className='text-yellow-600'>unless</span> opened by
+						@maintainer&quot;
+					</p>
+					<p>
+						+ &quot;maige <span className='text-green-600'>review</span> all incoming
+						PRs per our CONTRIBUTING.md&quot;
+					</p>
+				</div>
+				<p className='text-secondary text-2xl'>
+					Maige flexibly works with the GitHub API to find a way.
+				</p>
+			</section>
+			{/* Description */}
+			<section className='center relative h-screen !flex-row gap-8 py-8 font-monocraft sm:py-24'>
+				<div className='absolute right-10 top-10 h-screen w-8 bg-sunset' />
+				<div className='center z-10 grow !items-start text-xl text-green-600 sm:pl-16'>
 					<div className='max-w-lg space-y-8 sm:space-y-20'>
 						<p>
 							- maige is an AI with access to GitHub. it can do anything you could do
 							in the UI.
 						</p>
 						<p> + It labels your issues automatically</p>
-						<p className='text-yellow-500'>
+						<p className='text-yellow-600'>
 							| There&apos;s also a code sandbox that it can spin up
 						</p>
 						<p>+ It can also review PRs</p>
@@ -141,15 +168,16 @@ const Page = () => {
 					<Image
 						src={joshuaTreeNight}
 						alt='Joshua tree at night'
-						className='object-cover opacity-80'
+						className='rounded-md object-cover opacity-80'
 					/>
 					<Image
 						src={fullFlow}
 						alt='Maige commenting flow'
-						className='absolute w-5/6 shadow-2xl'
+						className='absolute w-5/6 rounded-md shadow-2xl'
 					/>
 				</div>
 			</section>
+			{/* Pricing */}
 			<section className='center relative h-screen space-y-8'>
 				<div className='center space-y-4'>
 					<h1 className='text-secondary'>Pricing</h1>
@@ -158,7 +186,7 @@ const Page = () => {
 					</p>
 				</div>
 				<div className='flex flex-wrap gap-4'>
-					<div className='center w-96 border-2 border-primary p-4 sm:p-10'>
+					<div className='center border-primary w-96 rounded-sm border-2 p-4 sm:p-10'>
 						<div className='space-y-3 pb-8'>
 							<h2>Standard Plan</h2>
 							<h3>
@@ -174,15 +202,16 @@ const Page = () => {
 						</div>
 						<CTAButton text='Get started now' />
 					</div>
-					<div className='text-tertiary border-tertiary w-96 space-y-3 border-2 p-4 sm:p-8'>
+					<div className='text-tertiary border-tertiary w-96 space-y-3 rounded-sm border-2 p-4 sm:p-8'>
 						<h2>Enterprise</h2>
 						<p>Best for large teams.</p>
 						<p>Coming soon.</p>
 					</div>
 				</div>
 			</section>
-			<section className='center relative h-screen w-screen space-y-4 text-primary dark:text-green-300'>
-				<div className='font-monocraft space-x-2 text-lg'>
+			{/* Footer */}
+			<section className='center text-primary relative h-screen w-screen space-y-4 dark:text-green-300'>
+				<div className='space-x-2 font-monocraft text-lg'>
 					<span>maige is an</span>
 					<Link
 						className='font-bold'
@@ -204,7 +233,6 @@ const Page = () => {
 					className='absolute -z-10 h-full w-full object-cover opacity-20'
 				/>
 			</section>
-			{/* <Footer /> */}
 		</div>
 	)
 }
