@@ -50,14 +50,14 @@ const Page = () => {
 			<Header />
 			{/* Hero */}
 			<section className='center relative mx-auto min-h-screen max-w-5xl space-y-6 pt-16 sm:space-y-12 sm:pt-40'>
-				<div className='max-w-3xl space-y-6 px-4'>
+				<div className='max-w-4xl space-y-6 px-4 text-center'>
 					<h1 className='text-primary relative sm:text-7xl dark:text-orange-100'>
 						<span className='text-secondary absolute left-px top-px -z-10'>
 							intelligent codebase copilot
 						</span>
 						<span>intelligent codebase copilot</span>
 					</h1>
-					<h2 className='text-secondary font-sans font-medium'>
+					<h2 className=' font-sans font-medium'>
 						run natural language workflows on your codebase
 					</h2>
 				</div>
@@ -96,12 +96,12 @@ const Page = () => {
 						<Image
 							src={joshuaTreeDay}
 							alt='Joshua tree at day'
-							className='rounded-sm object-cover'
+							className='rounded-sm object-cover opacity-80'
 						/>
 						<Image
 							src={labelFlow}
 							alt='Maige labelling flow'
-							className='absolute w-11/12 rounded-sm shadow-2xl'
+							className='absolute w-11/12 rounded-sm shadow-2xl sm:w-5/6'
 						/>
 					</div>
 					<div className='max-w-md space-y-4'>
@@ -124,32 +124,31 @@ const Page = () => {
 				</div>
 			</section>
 			{/* Examples */}
-			<section className='text-tertiary flex flex-col space-y-8 px-4 pb-20 sm:px-12'>
-				<h2>Maige flexibly works with the GitHub API to find a way.</h2>
-				<p className='text-xl'>For example:</p>
-				<div className='text-secondary space-y-6 text-xl'>
-					<p>
-						+ &quot;maige always <span className='text-green-600'>assign</span>{' '}
-						<span className='text-yellow-600'>UI-related</span> issues to
-						@milton&quot;
-					</p>
-					<p>
-						+ &quot;maige <span className='text-green-600'>label</span> PRs that
-						change the .env as &apos;needs-approval&apos;{' '}
-						<span className='text-yellow-600'>unless</span> opened by
-						@maintainer&quot;
-					</p>
-					<p>
-						+ &quot;maige <span className='text-green-600'>review</span> all incoming
-						PRs per our CONTRIBUTING.md&quot;
-					</p>
+			<section className='text-tertiary px-4 pb-20 sm:px-12'>
+				<div className='flex max-w-3xl flex-col space-y-8 '>
+					<h2>Maige flexibly works with the GitHub API to find a way.</h2>
+					<div className='text-secondary space-y-6 text-xl'>
+						<p>
+							+ maige always <span className='text-green-600'>assign</span>{' '}
+							<span className='text-yellow-600'>UI-related</span> issues to @milton
+						</p>
+						<p>
+							+ maige <span className='text-green-600'>label</span> PRs that change the
+							.env as &apos;needs-approval&apos;{' '}
+							<span className='text-yellow-600'>unless</span> opened by @maintainer
+						</p>
+						<p>
+							+ maige <span className='text-green-600'>review</span> all incoming PRs
+							per our <span className='text-yellow-600'>CONTRIBUTING.md</span>
+						</p>
+					</div>
 				</div>
 			</section>
 			{/* Description */}
 			<section className='center relative h-screen gap-8 py-8 font-monocraft sm:flex-row sm:py-24'>
 				<div className='absolute right-4 top-10 h-screen w-9 bg-sunset sm:right-10' />
-				<div className='z-10 flex w-full grow flex-col text-xl text-green-600 sm:pl-16'>
-					<div className='max-w-sm space-y-10 px-4 sm:space-y-20'>
+				<div className='z-10 flex w-full flex-col text-xl text-green-600 sm:pl-16'>
+					<div className='max-w-sm space-y-10 px-4 sm:max-w-lg sm:space-y-20'>
 						<p>
 							+ maige is an AI with access to GitHub. it can do anything you could do
 							in the UI.
@@ -162,7 +161,7 @@ const Page = () => {
 						<p>+ The whole thing is customizable with text</p>
 					</div>
 				</div>
-				<div className='center relative w-full sm:w-1/2 sm:p-6'>
+				<div className='center relative w-full sm:p-6'>
 					<Image
 						src={joshuaTreeNight}
 						alt='Joshua tree at night'
@@ -171,7 +170,7 @@ const Page = () => {
 					<Image
 						src={fullFlow}
 						alt='Maige commenting flow'
-						className='absolute w-11/12 rounded-sm shadow-2xl'
+						className='absolute w-11/12 rounded-sm shadow-2xl sm:w-5/6'
 					/>
 				</div>
 			</section>
