@@ -32,7 +32,7 @@ const CTAButton = ({text}: {text?: string}) => (
 
 const DemoVideo = () => (
 	<div className='z-10 w-full'>
-		<div className='mx-[5%]'>
+		<div className='mx-4 sm:mx-12'>
 			<iframe
 				src={`https://www.loom.com/embed/1f8fc747459d44659dc508460cf44208?sid=5820036c-e4fc-4343-b9ad-7f350af10dee?${loomQueryParams}`}
 				allowFullScreen
@@ -50,7 +50,7 @@ const Page = () => {
 			<Header />
 			{/* Hero */}
 			<section className='center relative mx-auto min-h-screen max-w-5xl space-y-6 pt-16 sm:space-y-12 sm:pt-40'>
-				<div className='max-w-3xl space-y-6'>
+				<div className='max-w-3xl space-y-6 px-4'>
 					<h1 className='text-primary relative sm:text-7xl dark:text-orange-100'>
 						<span className='text-secondary absolute left-px top-px -z-10'>
 							intelligent codebase copilot
@@ -71,7 +71,7 @@ const Page = () => {
 				</div>
 			</section>
 			{/* Logos */}
-			<section className='center space-y-16 p-12 sm:p-24'>
+			<section className='center space-y-16 p-4 sm:p-24'>
 				<p className='text-tertiary font-monocraft'>Used by 1.8k++ repos:</p>
 				<div className='center gap-12 sm:gap-14'>
 					<Cal className='h-10 opacity-60 transition-opacity hover:opacity-100' />
@@ -82,7 +82,7 @@ const Page = () => {
 				</div>
 			</section>
 			{/* How-to */}
-			<section className='center text-secondary min-h-screen space-y-10 py-24 sm:space-y-20 sm:py-40'>
+			<section className='center text-secondary min-h-screen space-y-12 px-4 py-20 sm:space-y-20 sm:py-40'>
 				<h1 className='text-tertiary'>Get started in a few clicks:</h1>
 				<div className='max-w-xl space-y-4'>
 					<h2 className='text-primary'>1. Connect your repo</h2>
@@ -91,17 +91,17 @@ const Page = () => {
 						entire codebase, and a sandbox environment.
 					</p>
 				</div>
-				<div className='flex w-full flex-wrap items-center gap-6 sm:gap-12'>
-					<div className='center relative w-full p-6 sm:w-1/2'>
+				<div className='flex w-full flex-wrap items-center gap-12'>
+					<div className='center relative w-full sm:w-1/2 sm:p-6'>
 						<Image
 							src={joshuaTreeDay}
 							alt='Joshua tree at day'
-							className='rounded-md object-cover'
+							className='rounded-sm object-cover'
 						/>
 						<Image
 							src={labelFlow}
 							alt='Maige labelling flow'
-							className='absolute w-5/6 rounded-md shadow-2xl'
+							className='absolute w-11/12 rounded-sm shadow-2xl'
 						/>
 					</div>
 					<div className='max-w-md space-y-4'>
@@ -124,9 +124,10 @@ const Page = () => {
 				</div>
 			</section>
 			{/* Examples */}
-			<section className='flex flex-col space-y-12 px-6 pb-20 sm:px-12'>
-				<h2>Some examples:</h2>
-				<div className='text-tertiary space-y-6 font-monocraft text-xl'>
+			<section className='text-tertiary flex flex-col space-y-8 px-4 pb-20 sm:px-12'>
+				<h2>Maige flexibly works with the GitHub API to find a way.</h2>
+				<p className='text-xl'>For example:</p>
+				<div className='text-secondary space-y-6 text-xl'>
 					<p>
 						+ &quot;maige always <span className='text-green-600'>assign</span>{' '}
 						<span className='text-yellow-600'>UI-related</span> issues to
@@ -143,17 +144,14 @@ const Page = () => {
 						PRs per our CONTRIBUTING.md&quot;
 					</p>
 				</div>
-				<p className='text-secondary text-2xl'>
-					Maige flexibly works with the GitHub API to find a way.
-				</p>
 			</section>
 			{/* Description */}
-			<section className='center relative h-screen !flex-row gap-8 py-8 font-monocraft sm:py-24'>
-				<div className='absolute right-10 top-10 h-screen w-8 bg-sunset' />
-				<div className='center z-10 grow !items-start text-xl text-green-600 sm:pl-16'>
-					<div className='max-w-lg space-y-8 sm:space-y-20'>
+			<section className='center relative h-screen gap-8 py-8 font-monocraft sm:flex-row sm:py-24'>
+				<div className='absolute right-4 top-10 h-screen w-9 bg-sunset sm:right-10' />
+				<div className='z-10 flex w-full grow flex-col text-xl text-green-600 sm:pl-16'>
+					<div className='max-w-sm space-y-10 px-4 sm:space-y-20'>
 						<p>
-							- maige is an AI with access to GitHub. it can do anything you could do
+							+ maige is an AI with access to GitHub. it can do anything you could do
 							in the UI.
 						</p>
 						<p> + It labels your issues automatically</p>
@@ -164,21 +162,21 @@ const Page = () => {
 						<p>+ The whole thing is customizable with text</p>
 					</div>
 				</div>
-				<div className='center relative w-full p-6 sm:w-1/2'>
+				<div className='center relative w-full sm:w-1/2 sm:p-6'>
 					<Image
 						src={joshuaTreeNight}
 						alt='Joshua tree at night'
-						className='rounded-md object-cover opacity-80'
+						className='rounded-sm object-cover opacity-90'
 					/>
 					<Image
 						src={fullFlow}
 						alt='Maige commenting flow'
-						className='absolute w-5/6 rounded-md shadow-2xl'
+						className='absolute w-11/12 rounded-sm shadow-2xl'
 					/>
 				</div>
 			</section>
 			{/* Pricing */}
-			<section className='center relative h-screen space-y-8'>
+			<section className='center relative h-screen space-y-8 px-4'>
 				<div className='center space-y-4'>
 					<h1 className='text-secondary'>Pricing</h1>
 					<p className='text-tertiary text-xl'>
@@ -186,23 +184,23 @@ const Page = () => {
 					</p>
 				</div>
 				<div className='flex flex-wrap gap-4'>
-					<div className='center border-primary w-96 rounded-sm border-2 p-4 sm:p-10'>
-						<div className='space-y-3 pb-8'>
-							<h2>Standard Plan</h2>
-							<h3>
-								~$1.00 USD/<span className='text-tertiary'>30 issues</span>
-							</h3>
+					<div className='center border-primary w-full rounded-sm border-2 p-4 sm:w-96 sm:p-10'>
+						<div className='text-tertiary space-y-3 pb-8'>
+							<h2 className='text-secondary'>Standard Plan</h2>
+							<p className='text-primary text-2xl font-medium'>
+								$1.00 USD/<span className='text-secondary'>30 issues</span>
+							</p>
 							<p>Learn how Maige can help you. First 30 issues free.</p>
-							<p className='text-tertiary'>+ Auto-labelling</p>
-							<p className='text-tertiary'>+ Auto-assignment</p>
-							<p className='text-tertiary'>+ Auto-comments</p>
-							<p className='text-tertiary'>+ Custom instructions</p>
-							<p className='text-tertiary'>+ Code review</p>
-							<p className='text-tertiary'>+ Code generation</p>
+							<p>+ Auto-labelling</p>
+							<p>+ Auto-assignment</p>
+							<p>+ Auto-comments</p>
+							<p>+ Custom instructions</p>
+							<p>+ Code review</p>
+							<p>+ Code generation</p>
 						</div>
 						<CTAButton text='Get started now' />
 					</div>
-					<div className='text-tertiary border-tertiary w-96 space-y-3 rounded-sm border-2 p-4 sm:p-8'>
+					<div className='text-tertiary border-tertiary w-full space-y-3 rounded-sm border-2 p-4 sm:w-96 sm:p-8'>
 						<h2>Enterprise</h2>
 						<p>Best for large teams.</p>
 						<p>Coming soon.</p>
@@ -210,8 +208,8 @@ const Page = () => {
 				</div>
 			</section>
 			{/* Footer */}
-			<section className='center text-primary relative h-screen w-screen space-y-4 dark:text-green-300'>
-				<div className='space-x-2 font-monocraft text-lg'>
+			<section className='center text-primary relative h-screen w-screen space-y-4 dark:text-green-100'>
+				<div className='space-x-2 text-center font-monocraft text-lg'>
 					<span>maige is an</span>
 					<Link
 						className='font-bold'
