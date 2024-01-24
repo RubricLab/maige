@@ -296,7 +296,7 @@ Issue labels: ${labels}.
 `
 }
 ${isComment ? `The comment by @${comment.user.login}: ${comment?.body}.` : ''}
-Your instructions: ${instructions || 'do nothing'}.
+Your instructions: ${instructions}.
 `.replaceAll('\n', ' ')
 
 		await maige({
