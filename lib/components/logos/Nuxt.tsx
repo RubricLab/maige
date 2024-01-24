@@ -1,7 +1,7 @@
 export const Nuxt = ({className = ''}: {className?: string}) => {
 	return (
 		<a
-			href='https://highlight.io'
+			href='https://nuxt.com/'
 			target='_blank'
 			rel='noreferrer noopener'>
 			<svg
