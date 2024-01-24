@@ -95,6 +95,7 @@ export default async function Icon() {
 						width: '30%',
 						height: '30%',
 						top: 0,
+						transform: 'translateX(-50%)',
 						left: `${~~(new Date().getHours() / 2.4)}0%`, // 😎
 						borderRadius: '100%',
 						position: 'absolute',
