@@ -135,7 +135,7 @@ const Page = () => {
 				</div>
 			</section>
 			{/* Description */}
-			<section className='center relative h-screen gap-8 py-8 font-monocraft sm:flex-row'>
+			<section className='center relative min-h-screen gap-8 py-8 font-monocraft sm:flex-row'>
 				<div className='absolute right-4 top-10 h-screen w-9 bg-sunset sm:right-10' />
 				<div className='z-10 flex w-full flex-col text-xl text-green-600 sm:pl-16'>
 					<div className='max-w-sm space-y-10 px-4 sm:max-w-lg sm:space-y-20'>
@@ -165,7 +165,7 @@ const Page = () => {
 				</div>
 			</section>
 			{/* Pricing */}
-			<section className='center relative h-screen space-y-8 px-4'>
+			<section className='center relative min-h-screen space-y-8 px-4'>
 				<div className='center space-y-4'>
 					<h1 className='text-secondary'>Pricing</h1>
 					<p className='text-tertiary text-xl'>
@@ -198,7 +198,7 @@ const Page = () => {
 			</section>
 			{/* Footer */}
 			<section className='center text-primary relative h-screen w-screen space-y-4 dark:text-green-100'>
-				<div className='space-x-2 text-center font-monocraft text-lg'>
+				<div className='space-x-1 px-4 text-center text-lg'>
 					<span>maige is an</span>
 					<Link
 						className='font-bold'
