@@ -47,8 +47,9 @@ const Page = () => {
 						</span>
 						<span>intelligent codebase copilot</span>
 					</h1>
-					<h2 className=' font-sans font-medium'>
-						run natural language workflows on your codebase
+					<h2 className='font-sans font-medium'>
+						Maige is open-source infrastucture for running natural language workflows
+						on your codebase.
 					</h2>
 				</div>
 				<Auth />
