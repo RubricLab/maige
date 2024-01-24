@@ -177,9 +177,9 @@ const Page = () => {
 						<div className='text-tertiary space-y-3 pb-8'>
 							<h2 className='text-secondary'>Standard Plan</h2>
 							<p className='text-primary text-2xl font-medium'>
-								$1.00 USD/<span className='text-secondary'>30 issues</span>
+								$30.00 USD/<span className='text-secondary'>month</span>
 							</p>
-							<p>Learn how Maige can help you. First 30 issues free.</p>
+							<p>First 30 issues free to push Maige to its limits.</p>
 							<p>+ Auto-labelling</p>
 							<p>+ Auto-assignment</p>
 							<p>+ Auto-comments</p>
