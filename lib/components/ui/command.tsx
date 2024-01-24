@@ -4,7 +4,6 @@ import {type DialogProps} from '@radix-ui/react-dialog'
 import {MagnifyingGlassIcon} from '@radix-ui/react-icons'
 import {Command as CommandPrimitive} from 'cmdk'
 import * as React from 'react'
-
 import {Dialog, DialogContent} from '~/components/ui/dialog'
 import {cn} from '~/utils'
 
@@ -28,7 +27,7 @@ interface CommandDialogProps extends DialogProps {}
 const CommandDialog = ({children, ...props}: CommandDialogProps) => {
 	return (
 		<Dialog {...props}>
-			<DialogContent className='overflow-hidden p-0'>
+			<DialogContent className='overflow-hidden !rounded-sm p-0'>
 				<Command className='[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5'>
 					{children}
 				</Command>
@@ -64,7 +63,10 @@ const CommandList = React.forwardRef<
 >(({className, ...props}, ref) => (
 	<CommandPrimitive.List
 		ref={ref}
-		className={cn('max-h-[300px] overflow-y-auto overflow-x-hidden', className)}
+		className={cn(
+			'max-h-[300px] overflow-y-auto overflow-x-hidden pb-1',
+			className
+		)}
 		{...props}
 	/>
 ))
@@ -119,7 +121,7 @@ const CommandItem = React.forwardRef<
 	<CommandPrimitive.Item
 		ref={ref}
 		className={cn(
-			'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+			'aria-selected:bg-tertiary relative flex cursor-default select-none items-center rounded-sm !px-3 py-1.5 text-sm outline-none aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
 			className
 		)}
 		{...props}

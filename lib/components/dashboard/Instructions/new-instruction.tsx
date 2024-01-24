@@ -14,7 +14,7 @@ export default function NewInstruction({projectId}: Props) {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<Button>Create Instruction</Button>
+				<Button variant='outline'>Create Instruction</Button>
 			</PopoverTrigger>
 			<PopoverContent className='w-96 border-0 bg-black bg-opacity-70'>
 				<div className='flex w-full flex-col gap-2'>

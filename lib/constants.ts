@@ -18,5 +18,5 @@ export const TIERS = {
 }
 
 export const COPY = {
-	FOOTER: `By [Maige](https://maige.app). How's my driving?`
+	FOOTER: `<sub>From [Maige](https://maige.app). How's my driving?</sub>`
 }

@@ -23,7 +23,7 @@ export function Instructions({
 	projectId: string
 }) {
 	return (
-		<div className='relative flex w-full flex-col items-center space-y-4 pb-10'>
+		<div className='relative flex w-full flex-col space-y-4 pb-10'>
 			{instructions.map((instruction, i) => (
 				<React.Fragment key={instruction.id}>
 					<Instruction
@@ -34,7 +34,7 @@ export function Instructions({
 					<div
 						key={instruction.id}
 						className={cn(
-							'h-0.5 w-full max-w-xl bg-zinc-900',
+							'h-0.5 w-full max-w-xl bg-gray-900',
 							i + 1 === instructions.length && 'hidden'
 						)}></div>
 				</React.Fragment>
@@ -82,7 +82,7 @@ function Instruction({
 		<div
 			id={instruction.id}
 			className={cn(
-				'group relative flex w-full max-w-xl flex-col gap-4 rounded-lg border-2 border-panel-border bg-panel p-8 opacity-100 transition-opacity duration-200',
+				'bg-primary group relative flex w-full max-w-xl flex-col gap-4 rounded-sm border p-6 opacity-100 transition-opacity duration-200',
 				{'pointer-events-none opacity-50': isDelete}
 			)}>
 			{!isDelete && (
@@ -91,7 +91,7 @@ function Instruction({
 						setDelete(true)
 						deleteInstruction(instruction.projectId, instruction.id)
 					}}
-					className='absolute -right-3 -top-3 hidden rounded-lg bg-red-500 p-1 opacity-0 transition-opacity duration-200 ease-in-out group-hover:block group-hover:opacity-100'>
+					className='absolute -right-3 -top-3 hidden rounded-sm bg-red-500 p-1 opacity-0 transition-opacity duration-200 ease-in-out group-hover:block group-hover:opacity-100'>
 					<XIcon
 						size={15}
 						strokeWidth={3}
@@ -99,7 +99,7 @@ function Instruction({
 				</button>
 			)}
 			<div className='flex items-center justify-between'>
-				<div className='text flex items-center justify-center rounded-sm bg-zinc-800 px-2.5 text-zinc-500'>
+				<div className='text flex items-center justify-center rounded-sm bg-gray-800 px-2.5 text-gray-500'>
 					{index + 1}
 				</div>
 				<Subtext>
@@ -107,12 +107,12 @@ function Instruction({
 						<Link
 							href={instruction.githubCommentLink}
 							target='_blank'
-							className='inline-flex items-center gap-0.5 rounded-sm bg-zinc-800 px-2.5 py-0.5'>
+							className='inline-flex items-center gap-0.5 rounded-sm bg-gray-800 px-2.5 py-0.5'>
 							{instruction.creatorUsername}
 							<ArrowTopRightIcon />
 						</Link>
 					) : (
-						<span className='inline-flex items-center gap-0.5 rounded-sm bg-zinc-800 px-2.5 py-0.5'>
+						<span className='inline-flex items-center gap-0.5 rounded-sm bg-gray-800 px-2.5 py-0.5'>
 							{instruction.creatorUsername}
 						</span>
 					)}

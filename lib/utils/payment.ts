@@ -42,9 +42,13 @@ export const createPaymentLink = async (
 			mode: 'subscription',
 			payment_method_types: ['card'],
 			success_url:
-				env.VERCEL === '1' ? 'https://maige.app/success' : 'http://localhost:3000',
+				env.VERCEL === '1'
+					? 'https://maige.app/dashboard'
+					: 'http://localhost:3000',
 			cancel_url:
-				env.VERCEL === '1' ? 'https://maige.app/success' : 'http://localhost:3000',
+				env.VERCEL === '1'
+					? 'https://maige.app/dashboard'
+					: 'http://localhost:3000',
 			line_items: [
 				{
 					price: TIERS[tier].priceId,

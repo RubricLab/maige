@@ -44,7 +44,7 @@ model Project {
 model Instruction {
   id                String   @id @default(cuid())
   projectId         String
-  content           String
+  content           String   @db.VarChar(1000)
   creatorUsername   String?
   githubCommentLink String?
   createdAt         DateTime @default(now())
@@ -76,6 +76,7 @@ model Feedback {
   customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId String
   content    String
+  createdAt  DateTime @default(now())
 
   @@index([customerId])
 }

@@ -21,24 +21,29 @@ const routes = [
 
 export function RepoNavigation() {
 	const pathname = usePathname()
-	const {projectId} = useParams()
+	const { projectId } = useParams()
+	
 	return (
-		<div className='flex gap-2 pb-8'>
+		<div className='border-tertiary relative z-10 flex gap-2 border-b'>
 			{routes.map((page, index) => (
 				<div
 					key={index}
-					className='group relative flex flex-col items-center pb-2'>
+					className='group relative -bottom-px flex flex-col items-center'>
 					<Link
-						className='mb-1 rounded-sm px-2.5 py-0.5 hover:bg-primary/10'
+						className='hover:bg-primary/10 mb-1 rounded-sm px-2.5 py-0.5'
 						href={`/dashboard/repo/${projectId}${page.path}`}>
 						{page.name}
 					</Link>
 					<div
 						className={cn(
-							'invisible w-[90%] border-b-[2px] border-b-border border-opacity-50 group-hover:visible',
-							pathname == `/dashboard/repo/${projectId}${page.path}` &&
-								'visible border-opacity-100'
-						)}></div>
+							'border-secondary w-full border-b transition-opacity',
+							(page.path === '' && pathname === `/dashboard/repo/${projectId}`) ||
+								(page.path !== '' &&
+									pathname.startsWith(`/dashboard/repo/${projectId}${page.path}`))
+								? 'opacity-100'
+								: 'opacity-0 group-hover:opacity-100'
+						)}
+					/>
 				</div>
 			))}
 		</div>

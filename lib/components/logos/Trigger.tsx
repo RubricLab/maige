@@ -1,4 +1,4 @@
-function Trigger({className}: {className?: string}) {
+export const Trigger = ({className}: {className?: string}) => {
 	return (
 		<a
 			href='https://trigger.dev'
@@ -63,5 +63,3 @@ function Trigger({className}: {className?: string}) {
 		</a>
 	)
 }
-
-export default Trigger

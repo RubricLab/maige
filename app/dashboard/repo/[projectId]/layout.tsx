@@ -13,9 +13,9 @@ export default async function Layout({
 	if (!session) redirect('/dashboard')
 
 	return (
-		<div>
+		<div className='space-y-4'>
 			<RepoNavigation />
-			{children}
+			<div className='z-10 h-full w-full'>{children}</div>
 		</div>
 	)
 }
