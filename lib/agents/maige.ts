@@ -72,11 +72,9 @@ export async function maige({
 		}),
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
-		...(beta
-			? [dispatchEngineer({issueNumber, repoFullName, customerId, projectId})]
-			: []),
-		...(issueId ? [commentTool({octokit, issueId})] : []),
-		...(pullUrl && beta
+		dispatchEngineer({issueNumber, repoFullName, customerId, projectId}),
+		commentTool({octokit, issueId}),
+		...(pullUrl
 			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId, projectId})]
 			: [])
 	]

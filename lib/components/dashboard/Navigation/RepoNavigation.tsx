@@ -10,8 +10,12 @@ const routes = [
 		path: ''
 	},
 	{
-		name: 'Instructions',
-		path: '/instructions'
+		name: 'Workflows',
+		path: '/workflows'
+	},
+	{
+		name: 'Bots',
+		path: '/bots'
 	},
 	{
 		name: 'Settings',
@@ -21,8 +25,8 @@ const routes = [
 
 export function RepoNavigation() {
 	const pathname = usePathname()
-	const { projectId } = useParams()
-	
+	const {projectId} = useParams()
+
 	return (
 		<div className='border-tertiary relative z-10 flex gap-2 border-b'>
 			{routes.map((page, index) => (
