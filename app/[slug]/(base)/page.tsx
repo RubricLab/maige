@@ -3,7 +3,7 @@ import {redirect} from 'next/navigation'
 import {Suspense} from 'react'
 import {authOptions} from '~/authOptions'
 
-export default async function Page() {
+export default async function Dashboard({params}: {params: {slug: string}}) {
 	const session = await getServerSession(authOptions)
 	if (!session) redirect('/')
 

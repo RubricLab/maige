@@ -1,6 +1,6 @@
 'use client'
 
-import {Session} from 'next-auth'
+import {Team, User} from '@prisma/client'
 import {signOut} from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -15,17 +15,11 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
+import TeamNav from './TeamNav'
 import ProjectRoute from './projectHeader'
 
-export function DashboardHeader({
-	session,
-	avatarUrl
-}: {
-	session: Session
-	avatarUrl: string
-}) {
+export function DashboardHeader({user, teams}: {user: User; teams: Team[]}) {
 	const pathname = usePathname()
-
 	return (
 		<div className='sticky top-0 z-50 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 backdrop-blur-sm'>
 			<div className='flex items-center gap-4'>
@@ -35,11 +29,16 @@ export function DashboardHeader({
 					<Maige className='group-hover:text-secondary text-tertiary h-8 transition-colors' />
 				</Link>
 				<span className='inline-flex items-center justify-center gap-1.5'>
-					<Link
+					<TeamNav
+						teams={teams}
+						slug={pathname.split('/')[1]}
+					/>
+					{/* <Link
 						href={'/dashboard'}
 						className='hover:bg-primary/10 rounded-sm px-2.5 py-0.5'>
 						{session.user.name}
-					</Link>
+					</Link> */}
+
 					{pathname.split('/dashboard/repo/')[1] && (
 						<>
 							<span className='text-xl text-accent'>/</span>{' '}
@@ -63,7 +62,7 @@ export function DashboardHeader({
 				<DropdownMenu>
 					<DropdownMenuTrigger className='focus-visible:outline-none'>
 						<Image
-							src={avatarUrl}
+							src={user.image}
 							width={35}
 							height={35}
 							className='rounded-full object-cover'
@@ -71,10 +70,10 @@ export function DashboardHeader({
 						/>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent className='mr-6 mt-2 w-[235px]'>
-						{(session.user.name || session.user.email) && (
+						{(user.name || user.email) && (
 							<>
 								<DropdownMenuItem disabled={true}>
-									{session.user.name ? session.user.name : session.user.email}
+									{user.name ? user.name : user.email}
 								</DropdownMenuItem>
 								<DropdownMenuSeparator />
 							</>
