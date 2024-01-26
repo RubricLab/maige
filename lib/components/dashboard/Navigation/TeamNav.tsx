@@ -1,7 +1,7 @@
 'use client'
 
 import {Team} from '@prisma/client'
-import {Check, ChevronsUpDown} from 'lucide-react'
+import {ChevronsUpDown} from 'lucide-react'
 import {useState} from 'react'
 import {Button} from '~/components/ui/button'
 import {
@@ -12,7 +12,7 @@ import {
 	CommandItem
 } from '~/components/ui/command'
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover'
-import {cn} from '~/utils'
+import CreateTeam from '../Team/CreateTeam'
 
 const teams = [{id: '', slug: 'next.js', name: 'Next.js'}]
 
@@ -49,15 +49,10 @@ export default function TeamNav({teams, slug}: {teams: Team[]; slug: string}) {
 									setValue(currentValue === value ? '' : currentValue)
 									setOpen(false)
 								}}>
-								<Check
-									className={cn(
-										'mr-2 h-4 w-4',
-										value === team.id ? 'opacity-100' : 'opacity-0'
-									)}
-								/>
 								{team.name}
 							</CommandItem>
 						))}
+						<CreateTeam />
 					</CommandGroup>
 				</Command>
 			</PopoverContent>
