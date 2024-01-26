@@ -31,10 +31,11 @@ model User {
   usageUpdatedAt DateTime @default(now())
   usageWarned    Boolean  @default(false)
 
-  projects Project[]
-  feedback Feedback[]
-
-  @@index([id], name: "user_index")
+  projects   Project[]
+  feedback   Feedback[]
+  Team       Team[]
+  Membership Membership[]
+  Invite     Invite[]
 }
 
 model Project {
@@ -108,6 +109,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -116,6 +118,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -124,4 +128,55 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User         @relation(fields: [createdBy], references: [id])
+  Membership Membership[]
+  Invite     Invite[]
+
+  @@index([createdBy])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  userId    String
+  teamId    String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id])
+
+  @@index([userId])
+  @@index([teamId])
+}
+
+model Invite {
+  id           String    @id @default(cuid())
+  invitedBy    String
+  invitedEmail String
+  invitedRole  Role      @default(USER)
+  teamId       String
+  inviteSent   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  inviter User @relation(fields: [invitedBy], references: [id])
+  team    Team @relation(fields: [teamId], references: [id])
+
+  @@index([invitedBy])
+  @@index([teamId])
 }
