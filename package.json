@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@auth/prisma-adapter": "^1.0.17",
     "@e2b/sdk": "^0.11.0",
     "@octokit/app": "^14.0.2",
     "@prisma/client": "^5.6.0",

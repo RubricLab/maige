@@ -9,36 +9,45 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Customer {
-  id                   String  @id @default(cuid())
-  name                 String  @unique
-  githubUserId         String? @unique
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  userName      String?   @unique
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+
   stripeSubscriptionId String? @unique
   stripeCustomerId     String? @unique
-
-  projects Project[]
-  feedback Feedback[]
 
   usage          Int      @default(0)
   totalUsage     Int      @default(0)
   usageLimit     Int      @default(30)
   usageUpdatedAt DateTime @default(now())
+  usageWarned    Boolean  @default(false)
 
-  usageWarned Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  projects Project[]
+  feedback Feedback[]
+
+  @@index([id], name: "user_index")
 }
 
 model Project {
   id                 String        @id @default(cuid())
   name               String
-  customerId         String
+  userId             String
   createdAt          DateTime      @default(now())
-  customer           Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   usage              Usage[]
   customInstructions Instruction[]
 
-  @@unique([customerId, name])
-  @@index([customerId])
+  @@unique([userId, name])
+  @@index([id, userId])
 }
 
 model Instruction {
@@ -72,11 +81,47 @@ model Usage {
 }
 
 model Feedback {
-  id         String   @id @default(cuid())
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  customerId String
-  content    String
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
 
-  @@index([customerId])
+  @@index([userId])
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  refresh_token_expires_in Int?
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
