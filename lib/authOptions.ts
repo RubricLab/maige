@@ -6,6 +6,9 @@ import env from './env.mjs'
 
 export const authOptions: AuthOptions = {
 	adapter: PrismaAdapter(prisma),
+	session: {
+		strategy: 'jwt'
+	},
 	providers: [
 		GithubProvider({
 			clientId: env.GITHUB_CLIENT_ID as string,
@@ -21,5 +24,16 @@ export const authOptions: AuthOptions = {
 				}
 			}
 		})
-	]
+	],
+	callbacks: {
+		session: async ({token, session}) => {
+			if (token) {
+				session.user.id = token.sub
+				session.user.name = token.name
+				session.user.email = token.email
+				session.user.image = token.picture
+			}
+			return session
+		}
+	}
 }

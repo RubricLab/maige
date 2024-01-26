@@ -31,11 +31,12 @@ model User {
   usageUpdatedAt DateTime @default(now())
   usageWarned    Boolean  @default(false)
 
-  projects   Project[]
-  feedback   Feedback[]
-  Team       Team[]
-  Membership Membership[]
-  Invite     Invite[]
+  projects     Project[]
+  feedback     Feedback[]
+  teams        Team[]
+  memberships  Membership[]
+  invites      Invite[]
+  instructions Instruction[]
 }
 
 model Project {
@@ -57,10 +58,15 @@ model Instruction {
   content           String   @db.VarChar(1000)
   creatorUsername   String?
   githubCommentLink String?
+  createdBy         String
   createdAt         DateTime @default(now())
-  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  updatedAt         DateTime @updatedAt
+
+  user    User    @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
+  @@index([createdBy])
 }
 
 model Usage {
@@ -138,9 +144,9 @@ model Team {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user       User         @relation(fields: [createdBy], references: [id])
-  Membership Membership[]
-  Invite     Invite[]
+  user        User         @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  memberships Membership[]
+  invites     Invite[]
 
   @@index([createdBy])
 }
@@ -158,8 +164,8 @@ model Membership {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
-  team Team @relation(fields: [teamId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([teamId])
@@ -175,8 +181,8 @@ model Invite {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
-  inviter User @relation(fields: [invitedBy], references: [id])
-  team    Team @relation(fields: [teamId], references: [id])
+  inviter User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+  team    Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([invitedBy])
   @@index([teamId])
