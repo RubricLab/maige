@@ -2,6 +2,7 @@
 
 import {Team} from '@prisma/client'
 import {ChevronsUpDown} from 'lucide-react'
+import {useRouter} from 'next/navigation'
 import {useState} from 'react'
 import {Button} from '~/components/ui/button'
 import {
@@ -19,6 +20,7 @@ const teams = [{id: '', slug: 'next.js', name: 'Next.js'}]
 export default function TeamNav({teams, slug}: {teams: Team[]; slug: string}) {
 	const [open, setOpen] = useState(false)
 	const [value, setValue] = useState('')
+	const router = useRouter()
 
 	return (
 		<Popover
@@ -47,6 +49,7 @@ export default function TeamNav({teams, slug}: {teams: Team[]; slug: string}) {
 								value={team.id}
 								onSelect={currentValue => {
 									setValue(currentValue === value ? '' : currentValue)
+									router.push(`/${team.slug}`)
 									setOpen(false)
 								}}>
 								{team.name}

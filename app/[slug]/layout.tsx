@@ -1,12 +1,10 @@
 import {DashboardHeader} from '~/components/dashboard/Navigation'
 import {getCurrentUser} from '~/utils/session'
 
-export default async function RootLayout({
-	children
-}: {
-	children: React.ReactNode
-}) {
+async function Teams() {
 	const user = await getCurrentUser()
+	if (!user) return <></>
+
 	const teams = await prisma.membership
 		.findMany({
 			where: {userId: user.id},
@@ -15,13 +13,21 @@ export default async function RootLayout({
 		.then(memberships => memberships.map(m => m.team))
 
 	return (
+		<DashboardHeader
+			user={user}
+			teams={teams}
+		/>
+	)
+}
+
+export default async function RootLayout({
+	children
+}: {
+	children: React.ReactNode
+}) {
+	return (
 		<div className='relative min-h-screen w-full px-8'>
-			{user && (
-				<DashboardHeader
-					user={user}
-					teams={teams}
-				/>
-			)}
+			<Teams />
 			<div className='w-full'>{children}</div>
 		</div>
 	)

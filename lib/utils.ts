@@ -15,3 +15,11 @@ export function timeAgo(timestamp: Date) {
 		? 'today'
 		: `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`
 }
+
+// Convert string to a slug
+export function slugify(str: string): string {
+	return str
+		.toLowerCase()
+		.replace(/[^a-z0-9 -]/g, '')
+		.replace(/\s+/g, '-')
+}
