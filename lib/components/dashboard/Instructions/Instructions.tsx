@@ -12,7 +12,6 @@ import {Button, buttonVariants} from '~/components/ui/button'
 import {cn} from '~/utils'
 import {PrimaryButton} from '../Buttons'
 import {TextArea} from '../Input'
-import {MediumBody, Subtext} from '../Text'
 import NewInstruction from './new-instruction'
 
 export function Instructions({
@@ -102,7 +101,7 @@ function Instruction({
 				<div className='text flex items-center justify-center rounded-sm bg-gray-800 px-2.5 text-gray-500'>
 					{index + 1}
 				</div>
-				<Subtext>
+				<p>
 					{instruction.githubCommentLink ? (
 						<Link
 							href={instruction.githubCommentLink}
@@ -116,11 +115,11 @@ function Instruction({
 							{instruction.creatorUsername}
 						</span>
 					)}
-				</Subtext>
+				</p>
 			</div>
 			{!isEditing && (
 				<div className='flex flex-col gap-2'>
-					<MediumBody>&quot;{content}&quot;</MediumBody>
+					<p>&quot;{content}&quot;</p>
 					<div
 						className='flex w-full cursor-pointer justify-end'
 						onClick={() => setIsEditing(true)}>
