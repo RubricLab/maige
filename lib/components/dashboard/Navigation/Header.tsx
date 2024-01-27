@@ -16,7 +16,6 @@ import {
 	DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import TeamNav from './TeamNav'
-import ProjectRoute from './projectHeader'
 
 export function DashboardHeader({user, teams}: {user: User; teams: Team[]}) {
 	const pathname = usePathname()
@@ -33,27 +32,6 @@ export function DashboardHeader({user, teams}: {user: User; teams: Team[]}) {
 						teams={teams}
 						slug={pathname.split('/')[1]}
 					/>
-					{/* <Link
-						href={'/dashboard'}
-						className='hover:bg-primary/10 rounded-sm px-2.5 py-0.5'>
-						{session.user.name}
-					</Link> */}
-
-					{pathname.split('/dashboard/project/')[1] && (
-						<>
-							<span className='text-xl text-accent'>/</span>{' '}
-							<Link
-								className='hover:bg-primary/10 rounded-sm px-2.5 py-0.5'
-								href={
-									'/dashboard/project/' +
-									pathname.split('/dashboard/project/')[1].split('/')[0]
-								}>
-								<ProjectRoute
-									projectId={pathname.split('/dashboard/project/')[1].split('/')[0]}
-								/>
-							</Link>
-						</>
-					)}
 				</span>
 			</div>
 			<div className='flex items-center gap-4'>
