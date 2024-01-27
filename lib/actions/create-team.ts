@@ -14,13 +14,13 @@ export default async function createTeam(prevState: any, formData: FormData) {
 			message: 'Unauthorized, no session',
 			type: 'error'
 		}
-	console.log(user)
+
 	const parsed = schema.parse({
 		name: formData.get('name')
 	})
 
 	try {
-		await prisma.team.create({
+		const response = await prisma.team.create({
 			data: {
 				name: parsed.name,
 				slug: slugify(parsed.name),
@@ -30,7 +30,11 @@ export default async function createTeam(prevState: any, formData: FormData) {
 				}
 			}
 		})
-		return {message: `Successfully created ${parsed.name}`, type: 'success'}
+		return {
+			message: `Successfully created ${parsed.name}`,
+			type: 'success',
+			data: {slug: response.slug}
+		}
 	} catch (err) {
 		if (err instanceof Error)
 			return {

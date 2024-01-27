@@ -12,6 +12,10 @@ const routes = [
 	{
 		name: 'Usage',
 		path: '/usage'
+	},
+	{
+		name: 'Settings',
+		path: '/settings'
 	}
 ]
 

@@ -1,14 +1,16 @@
 'use client'
-import {useEffect, useRef} from 'react'
+import {useRouter} from 'next/navigation'
+import {useEffect} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
 import {toast} from 'sonner'
-import createTeam from '~/actions/team'
+import createTeam from '~/actions/create-team'
 import {Button} from '~/components/ui/button'
 import {Input} from '~/components/ui/input'
 
 const initialState = {
 	type: null,
-	message: null
+	message: null,
+	data: {}
 }
 
 function CreateButton() {
@@ -29,14 +31,15 @@ function CreateButton() {
 }
 
 export default function TeamForm() {
-	const formRef = useRef(null)
+	const router = useRouter()
 	const [state, formAction] = useFormState(createTeam, initialState)
 
 	// Trigger toast when state changes
 	useEffect(() => {
 		if (state?.type === 'success') {
 			toast.success(state?.message)
-			setTimeout(() => formRef.current.reset(), 2 * 1000) // Reset form state
+			if (state?.data?.slug)
+				setTimeout(() => router.push(`/${state.data.slug}`), 1 * 1000)
 		} else if (state?.type === 'error') {
 			toast.error(state?.message)
 			console.error(state?.message)
@@ -45,7 +48,6 @@ export default function TeamForm() {
 
 	return (
 		<form
-			ref={formRef}
 			className='flex w-full flex-col justify-end gap-3'
 			action={formAction}>
 			<Input
