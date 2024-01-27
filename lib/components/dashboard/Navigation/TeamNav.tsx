@@ -15,8 +15,6 @@ import {
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover'
 import CreateTeam from '../Team/CreateTeam'
 
-const teams = [{id: '', slug: 'next.js', name: 'Next.js'}]
-
 export default function TeamNav({teams, slug}: {teams: Team[]; slug: string}) {
 	const [open, setOpen] = useState(false)
 	const [value, setValue] = useState('')
