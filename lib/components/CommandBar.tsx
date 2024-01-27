@@ -1,5 +1,6 @@
 import {CommandIcon, Search as SearchIcon} from 'lucide-react'
-import React from 'react'
+import {useRouter} from 'next/navigation'
+import {useEffect, useState} from 'react'
 import {Button} from '~/components/ui/button'
 import {
 	CommandDialog,
@@ -10,14 +11,28 @@ import {
 	CommandList
 } from '~/components/ui/command'
 
-export function CommandMenu() {
-	const [open, setOpen] = React.useState(false)
+const routes = [
+	{
+		name: 'Home',
+		path: '/'
+	},
+	{
+		name: 'Usage',
+		path: '/usage'
+	}
+]
 
-	React.useEffect(() => {
+export function CommandMenu() {
+	const [open, setOpen] = useState(false)
+	const router = useRouter()
+
+	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
 			if (e.key === 'k' && e.metaKey) setOpen(open => !open)
 		}
+
 		document.addEventListener('keydown', down)
+
 		return () => document.removeEventListener('keydown', down)
 	}, [])
 
@@ -50,8 +65,17 @@ export function CommandMenu() {
 				<CommandInput placeholder='Type a command or search...' />
 				<CommandList>
 					<CommandEmpty>No results found.</CommandEmpty>
-					<CommandGroup heading='Suggestions'>
-						<CommandItem>Coming soon...</CommandItem>
+					<CommandGroup heading='Pages'>
+						{routes.map(({name, path}) => (
+							<CommandItem
+								key={path}
+								onSelect={() => {
+									router.push(`/dashboard/${path}`)
+									setOpen(false)
+								}}>
+								{name}
+							</CommandItem>
+						))}
 					</CommandGroup>
 				</CommandList>
 			</CommandDialog>
