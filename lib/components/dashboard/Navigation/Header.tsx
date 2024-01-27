@@ -39,17 +39,17 @@ export function DashboardHeader({user, teams}: {user: User; teams: Team[]}) {
 						{session.user.name}
 					</Link> */}
 
-					{pathname.split('/dashboard/repo/')[1] && (
+					{pathname.split('/dashboard/project/')[1] && (
 						<>
 							<span className='text-xl text-accent'>/</span>{' '}
 							<Link
 								className='hover:bg-primary/10 rounded-sm px-2.5 py-0.5'
 								href={
-									'/dashboard/repo/' +
-									pathname.split('/dashboard/repo/')[1].split('/')[0]
+									'/dashboard/project/' +
+									pathname.split('/dashboard/project/')[1].split('/')[0]
 								}>
 								<ProjectRoute
-									projectId={pathname.split('/dashboard/repo/')[1].split('/')[0]}
+									projectId={pathname.split('/dashboard/project/')[1].split('/')[0]}
 								/>
 							</Link>
 						</>

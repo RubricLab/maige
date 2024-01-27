@@ -107,7 +107,7 @@ export function CustomTable({
 					<TableRow key={usage.id}>
 						<TableCell className='group font-medium'>
 							<Link
-								href={`/dashboard/repo/${usage.project.id}`}
+								href={`/dashboard/project/${usage.project.id}`}
 								className='inline-flex items-center justify-between gap-2'>
 								{usage.project.name}{' '}
 								<ArrowRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />

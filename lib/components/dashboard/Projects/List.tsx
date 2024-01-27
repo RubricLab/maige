@@ -17,7 +17,7 @@ export default function ProjectsList({
 			{projects.map(project => (
 				<Link
 					className='border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border p-4 py-3.5 transition-opacity duration-300'
-					href={`${slug}/repo/${project.id}`}
+					href={`${slug}/project/${project.id}`}
 					key={project.id}>
 					<div className='flex w-full items-center justify-between'>
 						<div className='flex items-center gap-3'>

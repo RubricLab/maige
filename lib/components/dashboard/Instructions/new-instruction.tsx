@@ -1,4 +1,4 @@
-import {createInstruction} from 'app/[slug]/repo/[projectId]/instructions/actions'
+import {createInstruction} from 'app/[slug]/project/[projectId]/instructions/actions'
 import {useState} from 'react'
 import {Button} from '~/components/ui/button'
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover'

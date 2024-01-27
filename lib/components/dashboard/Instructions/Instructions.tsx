@@ -2,7 +2,7 @@
 
 import {type Instruction} from '@prisma/client'
 import {ArrowTopRightIcon} from '@radix-ui/react-icons'
-import {deleteInstruction} from 'app/[slug]/repo/[projectId]/instructions/actions'
+import {deleteInstruction} from 'app/[slug]/project/[projectId]/instructions/actions'
 import {PenSquare, XIcon} from 'lucide-react'
 import Link from 'next/link'
 import React, {useCallback, useState} from 'react'

@@ -17,7 +17,7 @@ export default async function Page({params}: {params: {projectId: string}}) {
 async function InstructionsWrapper({projectId}: {projectId: string}) {
 	const instructions = await prisma.instruction.findMany({
 		where: {
-			projectId
+			projectId: projectId
 		}
 	})
 
