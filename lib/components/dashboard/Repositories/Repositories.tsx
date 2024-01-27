@@ -2,6 +2,7 @@ import {PlusIcon} from 'lucide-react'
 import Link from 'next/link'
 import {ReactNode} from 'react'
 import env from '~/env.mjs'
+import {ProjectWithInstructions} from '~/types/prisma'
 import {cn, timeAgo} from '~/utils'
 
 function RepoLayout({
@@ -38,12 +39,18 @@ function AddRepository() {
 	)
 }
 
-export function Repositories({projects}: {projects: any[]}) {
+export function Repositories({
+	slug,
+	projects
+}: {
+	slug: string
+	projects: ProjectWithInstructions[]
+}) {
 	return (
 		<div className='grid w-full gap-4 sm:grid-cols-4'>
 			{projects.map(project => (
 				<RepoLayout
-					href={`/dashboard/repo/${project.id}`}
+					href={`${slug}/repo/${project.id}`}
 					key={project.id}>
 					<div className='flex w-full items-center justify-between'>
 						<div className='flex items-center gap-3'>
@@ -58,7 +65,7 @@ export function Repositories({projects}: {projects: any[]}) {
 					</div>
 					<div className='flex flex-col gap-1'>
 						<span className='font-medium'>
-							{project.customInstructions.length} Custom Instructions
+							{project.instructions?.length} Custom Instructions
 						</span>
 						<span className='text-sm text-gray-500'>
 							Added {timeAgo(project.createdAt)}
