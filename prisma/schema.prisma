@@ -37,19 +37,38 @@ model User {
   memberships  Membership[]
   invites      Invite[]
   instructions Instruction[]
+  AddProject   AddProject[]
 }
 
 model Project {
-  id           String        @id @default(cuid())
-  name         String
-  userId       String
-  createdAt    DateTime      @default(now())
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
   usage        Usage[]
   instructions Instruction[]
 
-  @@unique([userId, name])
-  @@index([id, userId])
+  @@index([userId])
+  @@index([teamId])
+}
+
+model AddProject {
+  id        String   @id @default(cuid())
+  userId    String
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([teamId])
 }
 
 model Instruction {
@@ -147,6 +166,8 @@ model Team {
   user        User         @relation(fields: [createdBy], references: [id], onDelete: Restrict)
   memberships Membership[]
   invites     Invite[]
+  Project     Project[]
+  AddProject  AddProject[]
 
   @@index([createdBy])
 }
