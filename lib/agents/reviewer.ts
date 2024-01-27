@@ -1,5 +1,5 @@
+import {ChatOpenAI} from '@langchain/openai'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
-import {ChatOpenAI} from 'langchain/chat_models/openai'
 import parse, {Change, Chunk} from 'parse-diff'
 import env from '~/env.mjs'
 import {codeComment} from '~/tools/codeComment'

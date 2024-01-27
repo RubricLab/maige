@@ -1,4 +1,4 @@
-import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
+import {OpenAIEmbeddings} from '@langchain/openai'
 import env from '~/env.mjs'
 import {type WeaviateConfig} from './db'
 
@@ -59,7 +59,8 @@ export default async function search(
 		})
 		.withNearVector({
 			vector: await new OpenAIEmbeddings({
-				openAIApiKey: env.OPENAI_API_KEY
+				openAIApiKey: env.OPENAI_API_KEY,
+				modelName: 'text-embedding-3-small'
 			}).embedQuery(question)
 		})
 		.withLimit(maxResults)

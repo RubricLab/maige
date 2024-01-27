@@ -1,6 +1,6 @@
+import {PromptTemplate} from '@langchain/core/prompts'
+import {OpenAI} from '@langchain/openai'
 import {LLMChain} from 'langchain/chains'
-import {OpenAI} from 'langchain/llms/openai'
-import {PromptTemplate} from 'langchain/prompts'
 
 const prompt = PromptTemplate.fromTemplate(
 	`You are AI that make desc of code snippet. Many keywords, straight to point, 1 line.

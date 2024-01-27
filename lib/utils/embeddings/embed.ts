@@ -1,6 +1,6 @@
-import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
+import {WeaviateStore} from '@langchain/community/vectorstores/weaviate'
+import {OpenAIEmbeddings} from '@langchain/openai'
 import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
-import {WeaviateStore} from 'langchain/vectorstores/weaviate'
 import {GITHUB} from '~/constants'
 import env from '~/env.mjs'
 import {getInstallationId, getInstallationToken} from '../github'
@@ -41,9 +41,8 @@ export default async function addRepo(
 		const cloneTimer = `Cloning repo ${repoUrl} @ ${branch}`
 		console.time(cloneTimer)
 
-		const installationToken = await getInstallationToken(
-			await getInstallationId(repoFullName)
-		)
+		const installationId = await getInstallationId(repoFullName)
+		const installationToken = await getInstallationToken(installationId)
 
 		const repo = await cloneRepo(
 			repoUrl,
@@ -76,7 +75,8 @@ export default async function addRepo(
 		console.time(embedTimer)
 
 		const embeddings = new OpenAIEmbeddings({
-			openAIApiKey: env.OPENAI_API_KEY
+			openAIApiKey: env.OPENAI_API_KEY,
+			modelName: 'text-embedding-3-small'
 		})
 
 		const store = await WeaviateStore.fromExistingIndex(embeddings, {
