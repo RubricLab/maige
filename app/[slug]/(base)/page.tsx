@@ -1,6 +1,6 @@
 import {redirect} from 'next/navigation'
 import {Suspense} from 'react'
-import {Repositories} from '~/components/dashboard/Repositories'
+import Projects from '~/components/dashboard/Projects/List'
 import {getCurrentUser} from '~/utils/session'
 
 export default async function Dashboard({params}: {params: {slug: string}}) {
@@ -16,12 +16,7 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 			userId: user.id,
 			teamId: team.id
 		},
-		select: {
-			id: true,
-			name: true,
-			createdAt: true,
-			userId: true,
-			teamId: true,
+		include: {
 			instructions: true
 		}
 	})
@@ -29,7 +24,11 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 	return (
 		<div className='flex flex-col items-center'>
 			<Suspense fallback={<p>Loading...</p>}>
-				<Repositories slug={params.slug} projects={projects} />
+				<Projects
+					teamId={team.id}
+					slug={params.slug}
+					projects={projects}
+				/>
 			</Suspense>
 		</div>
 	)

@@ -1,55 +1,22 @@
-import {PlusIcon} from 'lucide-react'
 import Link from 'next/link'
-import {ReactNode} from 'react'
-import env from '~/env.mjs'
 import {ProjectWithInstructions} from '~/types/prisma'
-import {cn, timeAgo} from '~/utils'
+import {timeAgo} from '~/utils'
+import AddProject from './Add'
 
-function RepoLayout({
-	children,
-	href,
-	className
-}: {
-	children: ReactNode
-	href: string
-	className?: string
-}) {
-	return (
-		<Link
-			className={cn(
-				className,
-				'border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border p-4 py-3.5 transition-opacity duration-300'
-			)}
-			href={href}>
-			{children}
-		</Link>
-	)
-}
-
-function AddRepository() {
-	return (
-		<RepoLayout
-			className='!border-dashed'
-			href={`https://github.com/apps/${env.GITHUB_APP_NAME}/installations/new`}>
-			<div className='flex h-full w-full items-center justify-center gap-2'>
-				<PlusIcon />
-				Add repository
-			</div>
-		</RepoLayout>
-	)
-}
-
-export function Repositories({
+export default function ProjectsList({
+	teamId,
 	slug,
 	projects
 }: {
+	teamId: string
 	slug: string
 	projects: ProjectWithInstructions[]
 }) {
 	return (
 		<div className='grid w-full gap-4 sm:grid-cols-4'>
 			{projects.map(project => (
-				<RepoLayout
+				<Link
+					className='border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border p-4 py-3.5 transition-opacity duration-300'
 					href={`${slug}/repo/${project.id}`}
 					key={project.id}>
 					<div className='flex w-full items-center justify-between'>
@@ -71,9 +38,9 @@ export function Repositories({
 							Added {timeAgo(project.createdAt)}
 						</span>
 					</div>
-				</RepoLayout>
+				</Link>
 			))}
-			<AddRepository />
+			<AddProject teamId={teamId} />
 		</div>
 	)
 }
