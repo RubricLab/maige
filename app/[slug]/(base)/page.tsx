@@ -13,7 +13,6 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 	})
 	const projects = await prisma.project.findMany({
 		where: {
-			userId: user.id,
 			teamId: team.id
 		},
 		include: {

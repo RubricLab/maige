@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken'
 import Stripe from 'stripe'
-import {Label} from '~/types'
+import {GITHUB} from '~/constants'
+import {Label, Repository} from '~/types'
 import {createPaymentLink} from '~/utils/payment'
+import Weaviate from './embeddings/db'
 
 /**
  * Add comment to issue
@@ -229,4 +231,170 @@ export const getInstallationToken = async (installationId: string) => {
 	const json = await res.json()
 
 	return json.token
+}
+
+/**
+ * Webhook handler for when a user adds Maige
+ */
+export async function handleInstall({
+	action,
+	payload,
+	userName
+}: {
+	action: string
+	payload: any
+	userName: string
+}) {
+	newUser: try {
+		if (action !== 'created') break newUser
+
+		// Repository data
+		const {repositories} = payload
+
+		// Get user & request to add project
+		const user = await prisma.user.findUnique({
+			where: {userName: userName},
+			include: {
+				addProject: {
+					take: 1,
+					orderBy: {createdAt: 'desc'}
+				}
+			}
+		})
+
+		// Create projects
+		const projects = await prisma.project.createMany({
+			data: repositories.map((repo: Repository) => ({
+				name: repo.name,
+				teamId: user.addProject[0].teamId,
+				createdBy: user.id
+			}))
+		})
+
+		// Clone, vectorize, and save public code to database
+		const vectorDB = new Weaviate(user.id)
+		for (const repo of repositories) {
+			const branch = await getMainBranch(repo.full_name)
+			await vectorDB.embedRepo(repo.full_name, branch)
+		}
+
+		return new Response(`Added customer ${userName}`)
+	} catch (error) {
+		console.error(error)
+		return new Response(`Unexpected error: ${JSON.stringify(error)}`, {
+			status: 500
+		})
+	}
+}
+
+/**
+ * Webhook handler for when a user uninstalls
+ */
+export async function handleUnInstall({
+	action,
+
+	userName
+}: {
+	action: string
+	userName: string
+}) {
+	deleteUser: try {
+		if (action !== 'deleted') break deleteUser
+		await prisma.user.delete({
+			where: {
+				userName: userName
+			}
+		})
+		return new Response(`Deleted customer ${userName}`)
+	} catch (error) {
+		console.error(error)
+		return new Response(`Unexpected error: ${JSON.stringify(error)}`, {
+			status: 500
+		})
+	}
+}
+
+/**
+ * Webhook handler for when a project is added or removed
+ */
+export async function handleAddOrDeleteProjects({
+	action,
+	payload,
+	userName
+}: {
+	action: string
+	payload: any
+	userName: string
+}) {
+	updateProjects: try {
+		if (!['added', 'removed'].includes(action)) break updateProjects
+
+		// Added or removed repos from GitHub App
+		const {repositories_added: addedRepos, repositories_removed: removedRepos} =
+			payload
+
+		const user = await prisma.user.findUnique({
+			where: {
+				userName: userName
+			},
+			select: {
+				id: true,
+				projects: {
+					select: {
+						name: true
+					}
+				},
+				addProject: {
+					take: 1,
+					orderBy: {createdAt: 'desc'}
+				}
+			}
+		})
+		if (!user?.id)
+			return new Response(`Could not find or create customer ${userName}`, {
+				status: 500
+			})
+
+		const newRepos = addedRepos.filter((repo: Repository) => {
+			return !user.projects.some(
+				(project: {name: string}) => project.name === repo.name
+			)
+		})
+
+		// Clone, vectorize, and save public code to database
+		const vectorDB = new Weaviate(user.id)
+
+		const createProjects = prisma.project.createMany({
+			data: newRepos.map((repo: Repository) => ({
+				name: repo.name,
+				createdBy: user.id,
+				teamId: user.addProject[0].teamId
+			})),
+			skipDuplicates: true
+		})
+
+		const deleteProjects = prisma.project.deleteMany({
+			where: {
+				createdBy: user.id,
+				name: {
+					in: removedRepos.map((repo: Repository) => repo.name)
+				}
+			}
+		})
+
+		// Sync repos to database in a single transaction
+		await prisma.$transaction([createProjects, deleteProjects])
+		for (const repo of addedRepos) {
+			const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
+			const branch = await getMainBranch(repo.full_name)
+			await vectorDB.embedRepo(repoUrl, branch)
+		}
+
+		return new Response(`Successfully updated repos for ${userName}`)
+	} catch (error) {
+		console.error(error)
+		return new Response(`Unexpected error: ${JSON.stringify(error)}`, {
+			status: 500
+		})
+	}
 }

@@ -37,32 +37,34 @@ model User {
   memberships  Membership[]
   invites      Invite[]
   instructions Instruction[]
-  AddProject   AddProject[]
+  addProject   AddProject[]
 }
 
 model Project {
   id        String   @id @default(cuid())
   name      String
-  userId    String
+  createdBy String
   teamId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
   usage        Usage[]
   instructions Instruction[]
 
-  @@index([userId])
+  @@index([createdBy])
   @@index([teamId])
 }
 
+// This table tracks requests made by users to add projects to specific teams
 model AddProject {
-  id        String   @id @default(cuid())
-  userId    String
-  teamId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String    @id @default(cuid())
+  userId      String
+  teamId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
@@ -167,7 +169,7 @@ model Team {
   memberships Membership[]
   invites     Invite[]
   Project     Project[]
-  AddProject  AddProject[]
+  addProject  AddProject[]
 
   @@index([createdBy])
 }
