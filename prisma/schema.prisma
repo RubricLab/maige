@@ -40,13 +40,13 @@ model User {
 }
 
 model Project {
-  id                 String        @id @default(cuid())
-  name               String
-  userId             String
-  createdAt          DateTime      @default(now())
-  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  usage              Usage[]
-  customInstructions Instruction[]
+  id           String        @id @default(cuid())
+  name         String
+  userId       String
+  createdAt    DateTime      @default(now())
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usage        Usage[]
+  instructions Instruction[]
 
   @@unique([userId, name])
   @@index([id, userId])
