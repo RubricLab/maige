@@ -6,7 +6,7 @@ import {cn} from '~/utils'
 
 const routes = [
 	{
-		name: 'Repositories',
+		name: 'Projects',
 		path: ''
 	},
 	{

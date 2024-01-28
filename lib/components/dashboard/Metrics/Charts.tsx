@@ -25,7 +25,7 @@ export async function UsageCharts({route}: {route: string}) {
 			SUM(U.totalTokens) AS totalTokens
     FROM Usage U
     INNER JOIN Project P ON U.projectId = P.id
-    INNER JOIN Customer C ON P.customerId = C.id
+    INNER JOIN User C ON P.createdBy = C.id
     WHERE U.createdAt >= ${dateStringByOffset(-14)} 
     AND U.createdAt <= ${dateStringByOffset(1)}
     AND C.id = ${session.user.id}

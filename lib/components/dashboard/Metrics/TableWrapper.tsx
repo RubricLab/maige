@@ -1,11 +1,10 @@
-import {getServerSession} from 'next-auth'
 import Link from 'next/link'
 import {redirect} from 'next/navigation'
 import z from 'zod'
-import {authOptions} from '~/authOptions'
 import {Button} from '~/components/ui/button'
 import prisma from '~/prisma'
 import {cn} from '~/utils'
+import {getCurrentUser} from '~/utils/session'
 import {CustomTable, TableSearch} from '.'
 
 type UsageProject = {
@@ -35,23 +34,25 @@ const UsageParamsSchema = z.object({
 })
 
 export async function UsageTable({
+	teamSlug,
 	searchParams,
 	route
 }: {
+	teamSlug: string
 	searchParams: {[key: string]: string | string[] | undefined}
 	route: string
 }) {
-	const session = await getServerSession(authOptions)
+	const user = await getCurrentUser()
 	const usageQuery = UsageParamsSchema.safeParse(searchParams)
 
 	if (!usageQuery.success) return <p>Bad request</p>
-	if (!session) redirect('/auth')
+	if (!user) redirect('/')
 
 	const pageSize = 5
 	const pageNum = usageQuery.data.p
 
 	const usageFilter = {
-		project: {user: {id: session.user.id}},
+		project: {user: {id: user.id}},
 		action: {contains: usageQuery.data.q}
 	}
 
@@ -94,12 +95,14 @@ export async function UsageTable({
 					<span className='text-green-400'>{timeTaken}</span> ms
 				</div>
 				<TableSearch
+					teamSlug={teamSlug}
 					route={route}
 					searchValue={usageQuery.data.q ? usageQuery.data.q : ''}
 				/>
 			</div>
 			<div className='flex max-w-full overflow-hidden'>
 				<CustomTable
+					teamSlug={teamSlug}
 					route={route}
 					params={usageQuery.data}
 					data={usage}
@@ -111,7 +114,7 @@ export async function UsageTable({
 						<Link
 							replace={true}
 							prefetch={false}
-							href={`/dashboard/usage/${route}?${params}&p=${i + 1}`}
+							href={`/${teamSlug}/usage/${route}?${params}&p=${i + 1}`}
 							key={i}>
 							<Button
 								className={cn({'bg-neutral-800': i + 1 === pageNum})}

@@ -52,10 +52,12 @@ const TableColNames = [
 export function CustomTable({
 	data,
 	params,
+	teamSlug,
 	route
 }: {
 	data: UsageRow[]
 	params: any
+	teamSlug: string
 	route: string
 }) {
 	return (
@@ -71,7 +73,7 @@ export function CustomTable({
 							)
 							searchParams.set('col', col.key)
 						}
-						const href = `/dashboard/usage/${route}?${searchParams.toString()}`
+						const href = `/${teamSlug}/usage/${route}?${searchParams.toString()}`
 
 						return (
 							<TableHead

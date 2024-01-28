@@ -23,7 +23,7 @@ function AddButton() {
 			className='border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border !border-dashed bg-transparent p-4 py-3.5 transition-opacity duration-300'
 			disabled={pending}>
 			<PlusIcon />
-			Add repository
+			Add project
 		</Button>
 	)
 }

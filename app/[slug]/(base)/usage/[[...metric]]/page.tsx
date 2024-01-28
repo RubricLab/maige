@@ -6,6 +6,7 @@ export default async function Usage({
 }: {
 	searchParams: {[key: string]: string | string[] | undefined}
 	params: {
+		slug: string
 		metric: string[] | undefined
 	}
 }) {
@@ -13,6 +14,7 @@ export default async function Usage({
 
 	return (
 		<UsageTable
+			teamSlug={params.slug}
 			route={route}
 			searchParams={searchParams}
 		/>
