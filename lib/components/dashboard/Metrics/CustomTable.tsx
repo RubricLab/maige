@@ -63,7 +63,7 @@ export function CustomTable({
 	return (
 		<Table>
 			<TableHeader>
-				<TableRow className='!border-b-2'>
+				<TableRow className='hover:bg-tertiary !border-b-2'>
 					{TableColNames.map(col => {
 						const searchParams = new URLSearchParams(params)
 						if (col.key !== 'project') {
@@ -78,9 +78,7 @@ export function CustomTable({
 						return (
 							<TableHead
 								key={col.key}
-								className={`text-neutral-200 ${
-									col.align === 'right' ? 'text-right' : ''
-								}`}>
+								className={`${col.align === 'right' ? 'text-right' : ''}`}>
 								<Link
 									prefetch={false}
 									href={href}

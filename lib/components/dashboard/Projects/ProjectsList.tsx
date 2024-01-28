@@ -23,7 +23,7 @@ export default function ProjectsList({
 						<div className='flex items-center gap-3'>
 							<div className='relative'>
 								<div className='h-6 w-6 rounded-full bg-foreground' />
-								<p className='text-secondary absolute left-0 right-0 top-1/2 m-auto -translate-y-1/2 text-center font-medium leading-none'>
+								<p className='absolute left-0 right-0 top-1/2 m-auto -translate-y-1/2 text-center font-medium leading-none text-background'>
 									{project.name.charAt(0).toUpperCase()}
 								</p>
 							</div>
