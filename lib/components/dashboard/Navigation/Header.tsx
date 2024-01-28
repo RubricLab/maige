@@ -23,7 +23,7 @@ export function DashboardHeader({user, teams}: {user: User; teams: Team[]}) {
 		<div className='sticky top-0 z-50 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 backdrop-blur-sm'>
 			<div className='flex items-center gap-4'>
 				<Link
-					href='/dashboard'
+					href='/'
 					className='group'>
 					<Maige className='group-hover:text-secondary text-tertiary h-8 transition-colors' />
 				</Link>
