@@ -6,7 +6,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {usePathname} from 'next/navigation'
 import {CommandMenu} from '~/components/CommandBar'
-import Feedback from '~/components/Feedback'
 import {Maige} from '~/components/logos'
 import {
 	DropdownMenu,
@@ -15,6 +14,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
+import FeedbackDialog from '../Feedback/FeedbackDialog'
 import TeamNav from './TeamNav'
 
 export function DashboardHeader({user, teams}: {user: User; teams: Team[]}) {
@@ -35,7 +35,7 @@ export function DashboardHeader({user, teams}: {user: User; teams: Team[]}) {
 				</span>
 			</div>
 			<div className='flex items-center gap-4'>
-				<Feedback />
+				<FeedbackDialog />
 				<CommandMenu />
 				<DropdownMenu>
 					<DropdownMenuTrigger className='focus-visible:outline-none'>

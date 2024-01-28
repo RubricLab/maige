@@ -111,12 +111,13 @@ model Usage {
 
 model Feedback {
   id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  content   String
+  createdBy String
+  content   String   @db.Text
   createdAt DateTime @default(now())
 
-  @@index([userId])
+  user User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([createdBy])
 }
 
 model Account {

@@ -29,7 +29,6 @@ export default function ProjectNav({
 	repoSlug: string
 	projectId: string
 }) {
-	console.log(repoSlug, projectId)
 	return (
 		<div className='border-tertiary relative z-10 flex gap-2 border-b'>
 			{routes.map((page, index) => (
