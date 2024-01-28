@@ -19,7 +19,7 @@ const routes = [
 	}
 ]
 
-export function MainNavigation() {
+export default function MainNav() {
 	const pathname = usePathname()
 	const slug = pathname.split('/')[1]
 

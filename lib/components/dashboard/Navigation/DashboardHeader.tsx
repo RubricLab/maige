@@ -17,7 +17,13 @@ import {
 import FeedbackDialog from '../Feedback/FeedbackDialog'
 import TeamNav from './TeamNav'
 
-export function DashboardHeader({user, teams}: {user: User; teams: Team[]}) {
+export default function DashboardHeader({
+	user,
+	teams
+}: {
+	user: User
+	teams: Team[]
+}) {
 	const pathname = usePathname()
 	return (
 		<div className='sticky top-0 z-50 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 backdrop-blur-sm'>

@@ -1,4 +1,4 @@
-import {DashboardHeader} from '~/components/dashboard/Navigation'
+import DashboardHeader from '~/components/dashboard/Navigation/DashboardHeader'
 import {getCurrentUser} from '~/utils/session'
 
 async function Teams() {
