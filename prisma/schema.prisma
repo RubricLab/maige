@@ -42,7 +42,8 @@ model User {
 
 model Project {
   id        String   @id @default(cuid())
-  name      String
+  slug      String?
+  name      String?
   createdBy String
   teamId    String
   createdAt DateTime @default(now())

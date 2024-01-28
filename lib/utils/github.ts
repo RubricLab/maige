@@ -266,6 +266,7 @@ export async function handleInstall({
 		const projects = await prisma.project.createMany({
 			data: repositories.map((repo: Repository) => ({
 				name: repo.name,
+				slug: repo.name,
 				teamId: user.addProject[0].teamId,
 				createdBy: user.id
 			}))
@@ -367,6 +368,7 @@ export async function handleAddOrDeleteProjects({
 		const createProjects = prisma.project.createMany({
 			data: newRepos.map((repo: Repository) => ({
 				name: repo.name,
+				slug: repo.name,
 				createdBy: user.id,
 				teamId: user.addProject[0].teamId
 			})),
@@ -376,7 +378,7 @@ export async function handleAddOrDeleteProjects({
 		const deleteProjects = prisma.project.deleteMany({
 			where: {
 				createdBy: user.id,
-				name: {
+				slug: {
 					in: removedRepos.map((repo: Repository) => repo.name)
 				}
 			}
