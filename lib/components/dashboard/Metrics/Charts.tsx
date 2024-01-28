@@ -11,11 +11,7 @@ type UsageDay = {
 
 export async function UsageCharts({route}: {route: string}) {
 	const session = await getServerSession(authOptions)
-
 	if (!session) return <div>Not authenticated</div>
-
-	// To mitigate SQL injection
-	if (session.user?.githubUserId?.length > 16) return <div>Bad GitHub ID</div>
 
 	const dateStringByOffset = (offset: number): string => {
 		const date = new Date()
@@ -32,7 +28,7 @@ export async function UsageCharts({route}: {route: string}) {
     INNER JOIN Customer C ON P.customerId = C.id
     WHERE U.createdAt >= ${dateStringByOffset(-14)} 
     AND U.createdAt <= ${dateStringByOffset(1)}
-    AND C.githubUserId = ${session.user.githubUserId}
+    AND C.id = ${session.user.id}
     GROUP BY usageDay
     ORDER BY usageDay;
 	`

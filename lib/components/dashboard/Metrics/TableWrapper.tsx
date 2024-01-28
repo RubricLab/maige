@@ -51,7 +51,7 @@ export async function UsageTable({
 	const pageNum = usageQuery.data.p
 
 	const usageFilter = {
-		project: {customer: {githubUserId: session.user.githubUserId}},
+		project: {user: {id: session.user.id}},
 		action: {contains: usageQuery.data.q}
 	}
 
