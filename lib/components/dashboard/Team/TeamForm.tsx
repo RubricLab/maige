@@ -22,11 +22,13 @@ function CreateButton() {
 	}, [pending])
 
 	return (
-		<Button
-			type='submit'
-			disabled={pending}>
-			Create
-		</Button>
+		<div className='flex w-full items-center justify-end'>
+			<Button
+				type='submit'
+				disabled={pending}>
+				Create
+			</Button>
+		</div>
 	)
 }
 
