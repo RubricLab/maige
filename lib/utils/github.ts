@@ -267,7 +267,7 @@ export async function handleInstall({
 			data: repositories.map((repo: Repository) => ({
 				name: repo.name,
 				slug: repo.name,
-				teamId: user.addProject[0].teamId,
+				teamId: user.addProject[0].teamId ?? '',
 				createdBy: user.id
 			}))
 		})
@@ -370,7 +370,7 @@ export async function handleAddOrDeleteProjects({
 				name: repo.name,
 				slug: repo.name,
 				createdBy: user.id,
-				teamId: user.addProject[0].teamId
+				teamId: user.addProject[0].teamId ?? ''
 			})),
 			skipDuplicates: true
 		})

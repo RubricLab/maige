@@ -21,7 +21,7 @@ export default async function addProject(prevState: any, formData: FormData) {
 	try {
 		const response = await prisma.addProject.create({
 			data: {
-				userId: user.id,
+				createdBy: user.id,
 				teamId: parsed.teamId
 			}
 		})
