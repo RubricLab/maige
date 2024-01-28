@@ -400,3 +400,30 @@ export async function handleAddOrDeleteProjects({
 		})
 	}
 }
+
+/**
+ * Handle all installation-related events. Sync repos/user to database.
+ */
+export async function handleInstallationEvents({payload}: {payload: any}) {
+	const {action} = payload
+	if (payload?.installation?.account?.login) {
+		const {
+			installation: {
+				account: {login}
+			}
+		} = payload
+
+		// Handlers for each use case
+		await handleInstall({
+			action: action,
+			payload: payload,
+			userName: login
+		})
+		await handleUnInstall({action: action, userName: login})
+		await handleAddOrDeleteProjects({
+			action: action,
+			payload: payload,
+			userName: login
+		})
+	}
+}
