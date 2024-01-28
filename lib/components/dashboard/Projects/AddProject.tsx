@@ -17,11 +17,6 @@ const initialState = {
 function AddButton() {
 	const {pending} = useFormStatus()
 
-	// Add loading state
-	useEffect(() => {
-		if (pending) toast.loading('Redirecting...')
-	}, [pending])
-
 	return (
 		<Button
 			type='submit'

@@ -10,7 +10,7 @@ type Props = {
 	projectId: string
 }
 
-export default function RepositoryOptions({projectId}: Props) {
+export default function ProjectOptions({projectId}: Props) {
 	return (
 		<>
 			<DropdownMenu>

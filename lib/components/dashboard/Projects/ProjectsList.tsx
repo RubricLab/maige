@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import {ProjectWithInstructions} from '~/types/prisma'
 import {timeAgo} from '~/utils'
-import AddProject from './Add'
+import AddProject from './AddProject'
 
 export default function ProjectsList({
 	teamId,

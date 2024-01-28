@@ -1,6 +1,6 @@
 import {redirect} from 'next/navigation'
 import {Suspense} from 'react'
-import Projects from '~/components/dashboard/Projects/List'
+import Projects from '~/components/dashboard/Projects/ProjectsList'
 import {getCurrentUser} from '~/utils/session'
 
 export default async function Dashboard({params}: {params: {slug: string}}) {

@@ -13,12 +13,6 @@ const initialState = {
 
 function SubmitButton() {
 	const {pending} = useFormStatus()
-
-	// Add loading state
-	useEffect(() => {
-		if (pending) toast.loading('Creating...')
-	}, [pending])
-
 	return (
 		<div className='flex w-full items-center justify-end gap-4'>
 			<Button
