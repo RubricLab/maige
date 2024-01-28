@@ -1,5 +1,4 @@
 'use client'
-import {useRouter} from 'next/navigation'
 import {Dispatch, SetStateAction, useEffect} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
 import {toast} from 'sonner'
@@ -37,14 +36,13 @@ export default function FeedbackForm({
 }: {
 	setDialogOpen: Dispatch<SetStateAction<boolean>>
 }) {
-	const router = useRouter()
 	const [state, formAction] = useFormState(submitFeedback, initialState)
 
 	// Trigger toast when state changes
 	useEffect(() => {
 		if (state?.type === 'success') {
 			toast.success(state?.message)
-			setTimeout(() => setDialogOpen(false), 2000)
+			setDialogOpen(false)
 		} else if (state?.type === 'error') {
 			toast.error(state?.message)
 			console.error(state?.message)
@@ -60,6 +58,7 @@ export default function FeedbackForm({
 				name='content'
 				contentEditable
 				maxLength={300}
+				minLength={10}
 				className='h-32 max-h-48'
 				placeholder='I wish that ...'
 			/>
