@@ -31,7 +31,7 @@ export default function TeamNav({teams, slug}: {teams: Team[]; slug: string}) {
 					aria-expanded={open}
 					className='w-[200px] justify-between'>
 					{value
-						? teams.find(team => team.id === value).name
+						? teams.find(team => team.slug === value).name
 						: teams.find(team => team.slug === slug).name}
 					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 				</Button>
@@ -43,8 +43,8 @@ export default function TeamNav({teams, slug}: {teams: Team[]; slug: string}) {
 					<CommandGroup>
 						{teams.map(team => (
 							<CommandItem
-								key={team.id}
-								value={team.id}
+								key={team.slug}
+								value={team.slug}
 								onSelect={currentValue => {
 									setValue(currentValue === value ? '' : currentValue)
 									router.push(`/${team.slug}`)
