@@ -53,7 +53,7 @@ export default function DashboardHeader({
 							alt='User avatar'
 						/>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent className='mr-6 mt-2 w-[235px]'>
+					<DropdownMenuContent className='mr-6 mt-2 w-64'>
 						{(user.name || user.email) && (
 							<>
 								<DropdownMenuItem disabled={true}>
