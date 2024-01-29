@@ -12,7 +12,7 @@ export default async function Page({
 	return (
 		<Suspense fallback={<PanelSkeletons amount={3} />}>
 			<div className='flex w-full flex-col gap-4'>
-				<div className='flex w-full items-center justify-between'>
+				<div className='flex w-full items-center gap-4'>
 					<h3>Instructions</h3>
 					<CreateInstruction projectId={params.projectId} />
 				</div>
