@@ -1,8 +1,8 @@
 import {redirect} from 'next/navigation'
 import {Suspense} from 'react'
 import Projects from '~/components/dashboard/Projects/ProjectsList'
-import {getCurrentUser} from '~/utils/session'
 import prisma from '~/prisma'
+import {getCurrentUser} from '~/utils/session'
 
 export default async function Dashboard({params}: {params: {slug: string}}) {
 	const user = await getCurrentUser()
@@ -10,16 +10,17 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 
 	const team = await prisma.team.findUnique({
 		where: {slug: params.slug},
-		select: {id: true}
-	})
-	const projects = await prisma.project.findMany({
-		where: {
-			teamId: team.id
-		},
-		include: {
-			instructions: true
+		select: {
+			id: true,
+			Project: {
+				include: {
+					instructions: true
+				}
+			}
 		}
 	})
+
+	const {Project: projects} = team
 
 	return (
 		<div className='flex flex-col items-center'>
