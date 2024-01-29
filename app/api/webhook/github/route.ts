@@ -1,6 +1,7 @@
 import {App} from '@octokit/app'
 import {maige} from '~/agents/maige'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
 import {stripe} from '~/stripe'
 import {Label} from '~/types'
 import {
