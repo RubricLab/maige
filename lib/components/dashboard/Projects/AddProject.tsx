@@ -4,7 +4,7 @@ import {PlusIcon} from 'lucide-react'
 import {useEffect} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
 import {toast} from 'sonner'
-import addProject from '~/actions/add-project'
+import createProjectIntent from '~/actions/create-project-intent'
 import {Button} from '~/components/ui/button'
 import {Input} from '~/components/ui/input'
 import env from '~/env.mjs'
@@ -29,7 +29,7 @@ function AddButton() {
 }
 
 export default function AddProject({teamId}: {teamId: string}) {
-	const [state, formAction] = useFormState(addProject, initialState)
+	const [state, formAction] = useFormState(createProjectIntent, initialState)
 
 	// Handle response
 	useEffect(() => {

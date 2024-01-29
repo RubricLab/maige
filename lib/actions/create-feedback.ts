@@ -7,7 +7,7 @@ const schema = z.object({
 	content: z.string()
 })
 
-export default async function submitFeedback(
+export default async function createFeedback(
 	prevState: any,
 	formData: FormData
 ) {
@@ -40,7 +40,7 @@ export default async function submitFeedback(
 				type: 'error'
 			}
 		return {
-			message: JSON.stringify(err),
+			message: `Unexpected error: ${JSON.stringify(err)}`,
 			type: 'error'
 		}
 	}

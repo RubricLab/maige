@@ -2,7 +2,7 @@
 import {Dispatch, SetStateAction, useEffect} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
 import {toast} from 'sonner'
-import submitFeedback from '~/actions/submit-feedback'
+import createFeedback from '~/actions/create-feedback'
 import {Button} from '~/components/ui/button'
 import {Textarea} from '~/components/ui/textarea'
 
@@ -30,7 +30,7 @@ export default function FeedbackForm({
 }: {
 	setDialogOpen: Dispatch<SetStateAction<boolean>>
 }) {
-	const [state, formAction] = useFormState(submitFeedback, initialState)
+	const [state, formAction] = useFormState(createFeedback, initialState)
 
 	// Trigger toast when state changes
 	useEffect(() => {
