@@ -68,7 +68,7 @@ export default function DashboardHeader({
 						<DropdownMenuItem
 							className='cursor-pointer'
 							onClick={() => signOut()}>
-							Sign out
+							Log out
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
