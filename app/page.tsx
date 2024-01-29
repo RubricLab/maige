@@ -51,7 +51,10 @@ const Page = async () => {
 		// If no team, create a playground team
 		const userData = await prisma.user.findFirst({
 			where: {id: user.id},
-			select: {userName: true, projects: {select: {id: true}}}
+			select: {
+				userName: true,
+				projects: {where: {teamId: '1'}, select: {id: true}}
+			}
 		})
 
 		const newTeam = await prisma.team.create({
