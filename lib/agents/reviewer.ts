@@ -2,11 +2,11 @@ import {ChatOpenAI} from '@langchain/openai'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
 import parse, {Change, Chunk} from 'parse-diff'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
 import {codeComment} from '~/tools/codeComment'
 import {codebaseSearch} from '~/tools/codeSearch'
 import {prComment} from '~/tools/prComment'
 import {isDev} from '~/utils/index'
-import prisma from '~/prisma'
 
 export async function reviewer({
 	customerId,
@@ -35,7 +35,7 @@ export async function reviewer({
 	}
 
 	const model = new ChatOpenAI({
-		modelName: 'gpt-4-0125-preview',
+		modelName: 'gpt-4-1106-preview',
 		openAIApiKey: env.OPENAI_API_KEY,
 		temperature: 0.3,
 		callbacks: [
@@ -111,7 +111,7 @@ export async function reviewer({
 							completionTokens: tokens.completion,
 							action: 'Review a PR with reviewer',
 							agent: 'reviewer',
-							model: 'gpt-4-0125-preview'
+							model: 'gpt-4-1106-preview'
 						}
 					})
 				}

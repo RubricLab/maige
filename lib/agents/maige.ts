@@ -42,7 +42,7 @@ export async function maige({
 	}
 
 	const model = new ChatOpenAI({
-		modelName: 'gpt-4-0125-preview',
+		modelName: 'gpt-4-1106-preview',
 		openAIApiKey: env.OPENAI_API_KEY,
 		temperature: 0,
 		streaming: false,
@@ -116,7 +116,7 @@ All repo labels: ${allLabels
 							completionTokens: tokens.completion,
 							action: 'Review an issue with maige',
 							agent: 'maige',
-							model: 'gpt-4-0125-preview'
+							model: 'gpt-4-1106-preview'
 						}
 					})
 				}
