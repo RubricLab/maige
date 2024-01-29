@@ -1,5 +1,5 @@
+import {DynamicStructuredTool} from '@langchain/core/tools'
 import {PrismaClient} from '@prisma/client'
-import {DynamicStructuredTool} from 'langchain/tools'
 import {z} from 'zod'
 import {addComment} from '~/utils/github'
 

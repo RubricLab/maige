@@ -1,7 +1,7 @@
 import {Sandbox} from '@e2b/sdk'
+import {ChatOpenAI} from '@langchain/openai'
 import {Octokit} from '@octokit/core'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
-import {ChatOpenAI} from 'langchain/chat_models/openai'
 import env from '~/env.mjs'
 import prisma from '~/prisma'
 import {codebaseSearch} from '~/tools/codeSearch'
@@ -31,7 +31,7 @@ export async function engineer({
 	}
 
 	const model = new ChatOpenAI({
-		modelName: 'gpt-4-1106-preview',
+		modelName: 'gpt-4-0125-preview',
 		openAIApiKey: env.OPENAI_API_KEY,
 		temperature: 0.3,
 		callbacks: [
@@ -112,7 +112,7 @@ Your final output message should be the message that will be included in the pul
 							completionTokens: tokens.completion,
 							action: 'Create some stuff with engineer',
 							agent: 'engineer',
-							model: 'gpt-4-1106-preview'
+							model: 'gpt-4-0125-preview'
 						}
 					})
 				}
