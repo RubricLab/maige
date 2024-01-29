@@ -1,4 +1,5 @@
 import {Suspense} from 'react'
+import CreateInstruction from '~/components/dashboard/Instructions/CreateInstruction'
 import {Instructions} from '~/components/dashboard/Instructions/Instructions'
 import {PanelSkeletons} from '~/components/dashboard/Loader'
 import prisma from '~/prisma'
@@ -11,7 +12,10 @@ export default async function Page({
 	return (
 		<Suspense fallback={<PanelSkeletons amount={3} />}>
 			<div className='flex w-full flex-col gap-4'>
-				<h3>Instructions</h3>
+				<div className='flex w-full items-center justify-between'>
+					<h3>Instructions</h3>
+					<CreateInstruction projectId={params.projectId} />
+				</div>
 				<InstructionsWrapper
 					teamSlug={params.slug}
 					projectId={params.projectId}
@@ -33,11 +37,9 @@ async function InstructionsWrapper({
 			projectId: projectId
 		}
 	})
-
 	return (
 		<Instructions
 			teamSlug={teamSlug}
-			projectId={projectId}
 			instructions={instructions}
 		/>
 	)
