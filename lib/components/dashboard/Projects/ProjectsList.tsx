@@ -16,7 +16,7 @@ export default function ProjectsList({
 		<div className='grid w-full gap-4 sm:grid-cols-4'>
 			{projects.map(project => (
 				<Link
-					className='border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-lg border p-4 py-3.5 transition-opacity duration-300'
+					className='border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer flex-col justify-between rounded-sm border p-4 py-3.5 transition-opacity duration-300'
 					href={`${slug}/project/${project.id}`}
 					key={project.id}>
 					<div className='flex w-full items-center justify-between'>
