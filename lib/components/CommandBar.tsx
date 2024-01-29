@@ -11,22 +11,25 @@ import {
 	CommandList
 } from '~/components/ui/command'
 
-const routes = [
-	{
-		name: 'Projects',
-		path: '/'
-	},
-	{
-		name: 'Usage',
-		path: '/usage'
-	}
-]
-
 export function CommandMenu() {
 	const [open, setOpen] = useState(false)
 	const router = useRouter()
 	const pathname = usePathname()
 	const teamSlug = pathname.split('/')[1] ?? ''
+	const routes = [
+		{
+			name: 'Projects',
+			path: `/${teamSlug}`
+		},
+		{
+			name: 'Usage',
+			path: `/${teamSlug}/usage`
+		},
+		{
+			name: 'Landing Page',
+			path: '/home'
+		}
+	]
 
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
@@ -72,7 +75,7 @@ export function CommandMenu() {
 							<CommandItem
 								key={path}
 								onSelect={() => {
-									router.push(`/${teamSlug}${path}`)
+									router.push(path)
 									setOpen(false)
 								}}>
 								{name}

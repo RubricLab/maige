@@ -62,6 +62,9 @@ export default function DashboardHeader({
 								<DropdownMenuSeparator />
 							</>
 						)}
+						<DropdownMenuItem className='cursor-pointer'>
+							<Link href='/home'>Home</Link>
+						</DropdownMenuItem>
 						<DropdownMenuItem
 							className='cursor-pointer'
 							onClick={() => signOut()}>
