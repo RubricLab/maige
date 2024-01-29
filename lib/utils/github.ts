@@ -255,7 +255,8 @@ export async function handleInstall({
 		// Get user & request to add project
 		const user = await prisma.user.findUnique({
 			where: {userName: userName},
-			include: {
+			select: {
+				id: true,
 				addProject: {
 					take: 1,
 					orderBy: {createdAt: 'desc'}
@@ -263,14 +264,20 @@ export async function handleInstall({
 			}
 		})
 
+		if (!user?.id)
+			return new Response(`Could not find user ${userName}`, {
+				status: 500
+			})
+
 		// Create projects
 		const projects = await prisma.project.createMany({
 			data: repositories.map((repo: Repository) => ({
 				name: repo.name,
 				slug: repo.name,
-				teamId: user.addProject[0].teamId ?? '',
-				createdBy: user.id
-			}))
+				createdBy: user.id,
+				teamId: user.addProject[0].teamId ?? ''
+			})),
+			skipDuplicates: true
 		})
 
 		// Clone, vectorize, and save public code to database
@@ -352,8 +359,9 @@ export async function handleAddOrDeleteProjects({
 				}
 			}
 		})
+
 		if (!user?.id)
-			return new Response(`Could not find or create customer ${userName}`, {
+			return new Response(`Could not find user ${userName}`, {
 				status: 500
 			})
 
