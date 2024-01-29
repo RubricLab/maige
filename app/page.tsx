@@ -10,6 +10,7 @@ import {Auth} from '~/components/Auth'
 import {Header} from '~/components/Header'
 import {Cal, Highlight, Precedent, Trigger} from '~/components/logos'
 import {Nuxt} from '~/components/logos/Nuxt'
+import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
 
 const loomConfig = {
