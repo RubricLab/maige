@@ -1,12 +1,13 @@
 'use client'
 import {useRouter} from 'next/navigation'
-import {Dispatch, SetStateAction, useEffect} from 'react'
+import {Dispatch, SetStateAction, useEffect, useState} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
 import {toast} from 'sonner'
 import createInstruction from '~/actions/create-instruction'
 import {Button} from '~/components/ui/button'
 import {Input} from '~/components/ui/input'
 import {Textarea} from '~/components/ui/textarea'
+import InstructionTemplates from './InstructionTemplates'
 
 const initialState = {
 	type: null,
@@ -36,6 +37,7 @@ export default function InstructionForm({
 }) {
 	const router = useRouter()
 	const [state, formAction] = useFormState(createInstruction, initialState)
+	const [content, setContent] = useState('')
 
 	// Trigger toast when state changes
 	useEffect(() => {
@@ -50,24 +52,29 @@ export default function InstructionForm({
 	}, [state])
 
 	return (
-		<form
-			className='flex w-full flex-col gap-4'
-			action={formAction}>
-			<h3>Add instruction</h3>
-			<Input
-				name='projectId'
-				type='hidden'
-				value={projectId}
-			/>
-			<Textarea
-				name='content'
-				contentEditable
-				maxLength={300}
-				minLength={10}
-				className='h-32 max-h-48'
-				placeholder='Maige ...'
-			/>
-			<SubmitButton />
-		</form>
+		<>
+			<form
+				className='flex w-full flex-col gap-4'
+				action={formAction}>
+				<h3>Add instruction</h3>
+				<Input
+					name='projectId'
+					type='hidden'
+					value={projectId}
+				/>
+				<Textarea
+					name='content'
+					value={content}
+					onChange={e => setContent(e.target.value)}
+					contentEditable
+					maxLength={300}
+					minLength={10}
+					className='h-32 max-h-48'
+					placeholder='Maige ...'
+				/>
+				<SubmitButton />
+			</form>
+			<InstructionTemplates setContent={setContent} />
+		</>
 	)
 }
