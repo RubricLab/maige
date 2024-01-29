@@ -51,7 +51,7 @@ const Page = async () => {
 		// If no team, create a playground team
 		const userData = await prisma.user.findFirst({
 			where: {id: user.id},
-			select: {userName: true}
+			select: {userName: true, projects: {select: {id: true}}}
 		})
 
 		const newTeam = await prisma.team.create({
@@ -59,7 +59,12 @@ const Page = async () => {
 				createdBy: user.id,
 				slug: userData.userName,
 				name: user.name,
-				memberships: {create: [{userId: user.id, role: 'ADMIN'}]}
+				memberships: {create: [{userId: user.id, role: 'ADMIN'}]},
+
+				// onboarding flow for legacy accounts
+				...(userData.projects && {
+					Project: {connect: userData.projects.map(({id}) => ({id}))}
+				})
 			}
 		})
 		if (newTeam) redirect(`/${newTeam.slug}`)
