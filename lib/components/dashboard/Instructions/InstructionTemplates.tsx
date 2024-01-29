@@ -1,12 +1,13 @@
 'use client'
 
+import {PlusIcon} from 'lucide-react'
 import {Dispatch, SetStateAction, useEffect, useState} from 'react'
 
 const templates = [
-	'Label all news issues',
-	'Assign @elonmusk when an issue is created regarding frontend changes',
+	'Label all new issues',
+	'Assign @milton when a UI-related issue is opened',
 	'Recommend a solution when a question is asked',
-	'Maige beta dispatch an engineer to resolve incoming issues'
+	'[beta] dispatch an engineer to resolve incoming issues'
 ]
 
 function Template({template, setContent}) {
@@ -18,11 +19,12 @@ function Template({template, setContent}) {
 
 	return (
 		<div
-			className={`hover:bg-tertiary border-tertiary cursor-pointer rounded-sm border p-2 ${selected ? 'bg-tertiary' : ''}`}
+			className={`hover:bg-tertiary border-tertiary flex cursor-pointer items-center gap-2 rounded-sm border p-2 ${selected ? 'bg-tertiary' : ''}`}
 			onClick={() => {
 				setSelected(prev => !prev)
 				setContent(template)
 			}}>
+			<PlusIcon className='h-5 w-5' />
 			{template}
 		</div>
 	)
@@ -34,8 +36,8 @@ export default function InstructionTemplates({
 	setContent: Dispatch<SetStateAction<string>>
 }) {
 	return (
-		<div className='flex w-full flex-col gap-2'>
-			<h3>Templates</h3>
+		<div className='text-secondary flex w-full flex-col gap-2'>
+			<h3>Examples</h3>
 			{templates.map((template, i) => (
 				<Template
 					key={i}

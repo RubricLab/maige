@@ -12,12 +12,15 @@ type Props = {
 
 export default function CreateInstruction({projectId}: Props) {
 	const [open, setOpen] = useState(false)
+
 	return (
 		<Dialog
 			open={open}
 			onOpenChange={() => setOpen(prev => !prev)}>
 			<DialogTrigger>
-				<Button className='w-fit '>
+				<Button
+					type='submit'
+					className='border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer items-center justify-center gap-2 rounded-sm border !border-dashed bg-transparent p-4 py-3.5 text-base transition-opacity duration-300'>
 					<PlusIcon />
 					Add instruction
 				</Button>

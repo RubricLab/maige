@@ -11,11 +11,9 @@ export default async function Page({
 }) {
 	return (
 		<Suspense fallback={<PanelSkeletons amount={3} />}>
-			<div className='flex w-full flex-col gap-4'>
-				<div className='flex w-full items-center gap-4'>
-					<h3>Instructions</h3>
-					<CreateInstruction projectId={params.projectId} />
-				</div>
+			<div className='flex max-w-lg flex-col gap-4'>
+				<h3>Instructions</h3>
+				<CreateInstruction projectId={params.projectId} />
 				<InstructionsWrapper
 					teamSlug={params.slug}
 					projectId={params.projectId}
