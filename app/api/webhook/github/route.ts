@@ -95,8 +95,6 @@ export const POST = async (req: Request) => {
 	const instructions =
 		projects?.[0]?.instructions.map(ci => ci.content).join('. ') || ''
 
-	console.log(`Instructions for ${owner}/${name}: ${instructions}`)
-
 	const projectId = projects?.[0]?.id
 
 	// Get GitHub app instance access token
