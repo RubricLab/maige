@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import {redirect} from 'next/navigation'
 import fullFlow from '~/assets/full-flow.png'
 import future from '~/assets/future.png'
 import joshuaTreeDay from '~/assets/joshua-tree-day.png'
@@ -9,6 +10,7 @@ import {Auth} from '~/components/Auth'
 import {Header} from '~/components/Header'
 import {Cal, Highlight, Precedent, Trigger} from '~/components/logos'
 import {Nuxt} from '~/components/logos/Nuxt'
+import {getCurrentUser} from '~/utils/session'
 
 const loomConfig = {
 	hide_owner: 'true',
@@ -34,7 +36,43 @@ const DemoVideo = () => (
 
 const todayString = new Date().toISOString().split('T')[0].replaceAll('-', '/')
 
-const Page = () => {
+const Page = async () => {
+	const user = await getCurrentUser()
+	if (user) {
+		// Check if a team already exists
+		const existingTeam = await prisma.membership.findFirst({
+			where: {userId: user.id},
+			include: {
+				team: true
+			}
+		})
+		if (existingTeam) redirect(`/${existingTeam.team.slug}`)
+
+		// If no team, create a playground team
+		const userData = await prisma.user.findFirst({
+			where: {id: user.id},
+			select: {
+				userName: true,
+				projects: {where: {teamId: '1'}, select: {id: true}}
+			}
+		})
+
+		const newTeam = await prisma.team.create({
+			data: {
+				createdBy: user.id,
+				slug: userData.userName,
+				name: user.name,
+				memberships: {create: [{userId: user.id, role: 'ADMIN'}]},
+
+				// onboarding flow for legacy accounts
+				...(userData.projects && {
+					Project: {connect: userData.projects.map(({id}) => ({id}))}
+				})
+			}
+		})
+		if (newTeam) redirect(`/${newTeam.slug}`)
+	}
+
 	return (
 		<div className='relative w-screen space-y-6 overflow-hidden sm:space-y-12'>
 			<Header />

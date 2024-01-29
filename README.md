@@ -1,7 +1,5 @@
 # Maige
 
-_Staging3._
-
 Repo maintenance made simpler.
 
 Quickly set up Maige and let AI handle your issue labels with ease. Get started at [Maige.app](https://maige.app).

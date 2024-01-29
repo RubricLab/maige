@@ -24,16 +24,15 @@ export default function updateInstructions({
 		description:
 			'User will explicitly ask for custom instructions to be updated.',
 		func: async ({newInstructions}) => {
-			const project = await prisma.project.findUnique({
+			const project = await prisma.project.findFirst({
 				where: {
-					customerId_name: {
-						customerId,
-						name: repoFullName.split('/')[1]
-					}
+					createdBy: customerId,
+					slug: repoFullName.split('/')[1]
 				}
 			})
 			const res = await prisma.instruction.create({
 				data: {
+					createdBy: customerId,
 					projectId: project.id,
 					content: newInstructions,
 					creatorUsername: instructionCreator,

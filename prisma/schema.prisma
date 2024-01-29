@@ -9,36 +9,70 @@ datasource db {
   relationMode = "prisma"
 }
 
-model Customer {
-  id                   String  @id @default(cuid())
-  name                 String  @unique
-  githubUserId         String? @unique
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  userName      String?   @unique
+  email         String?   @unique @default(cuid())
+  emailVerified DateTime?
+  githubUserId  String?
+  image         String?
+  createdAt     DateTime  @default("2021-01-01T00:00:00.000Z")
+  updatedAt     DateTime  @default("2021-01-01T00:00:00.000Z") @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+
   stripeSubscriptionId String? @unique
   stripeCustomerId     String? @unique
-
-  projects Project[]
-  feedback Feedback[]
 
   usage          Int      @default(0)
   totalUsage     Int      @default(0)
   usageLimit     Int      @default(30)
   usageUpdatedAt DateTime @default(now())
+  usageWarned    Boolean  @default(false)
 
-  usageWarned Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  projects     Project[]
+  feedback     Feedback[]
+  teams        Team[]
+  memberships  Membership[]
+  invites      Invite[]
+  instructions Instruction[]
+  addProject   AddProject[]
 }
 
 model Project {
-  id                 String        @id @default(cuid())
-  name               String
-  customerId         String
-  createdAt          DateTime      @default(now())
-  customer           Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  usage              Usage[]
-  customInstructions Instruction[]
+  id        String   @id @default(cuid())
+  slug      String?
+  name      String?
+  createdBy String   @default(cuid())
+  teamId    String   @default("1")
+  createdAt DateTime @default("2021-01-01T00:00:00.000Z")
+  updatedAt DateTime @default("2021-01-01T00:00:00.000Z") @updatedAt
 
-  @@unique([customerId, name])
-  @@index([customerId])
+  user         User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  usage        Usage[]
+  instructions Instruction[]
+
+  @@index([createdBy])
+  @@index([teamId])
+}
+
+// This table tracks requests made by users to add projects to specific teams
+model AddProject {
+  id          String    @id @default(cuid())
+  createdBy   String
+  teamId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  user User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([createdBy])
+  @@index([teamId])
 }
 
 model Instruction {
@@ -47,16 +81,20 @@ model Instruction {
   content           String   @db.VarChar(1000)
   creatorUsername   String?
   githubCommentLink String?
+  createdBy         String   @default(cuid())
   createdAt         DateTime @default(now())
-  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  updatedAt         DateTime @updatedAt
+
+  user    User    @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
+  @@index([createdBy])
 }
 
 model Usage {
   id               String   @id @default(cuid())
   projectId        String
-  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   action           String
   agent            String
   promptTokens     Int
@@ -65,6 +103,8 @@ model Usage {
   model            String
   createdAt        DateTime @default(now())
 
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
   @@index([projectId])
   @@fulltext([action])
   @@fulltext([agent])
@@ -72,11 +112,105 @@ model Usage {
 }
 
 model Feedback {
-  id         String   @id @default(cuid())
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  customerId String
-  content    String
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  createdBy String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
 
-  @@index([customerId])
+  user User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([createdBy])
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  refresh_token_expires_in Int?
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String?
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  creator     User         @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  memberships Membership[]
+  invites     Invite[]
+  Project     Project[]
+  addProject  AddProject[]
+
+  @@index([createdBy])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  userId    String
+  teamId    String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([teamId])
+}
+
+model Invite {
+  id           String    @id @default(cuid())
+  invitedBy    String
+  invitedEmail String
+  invitedRole  Role      @default(USER)
+  teamId       String
+  inviteSent   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  inviter User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+  team    Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([invitedBy])
+  @@index([teamId])
 }

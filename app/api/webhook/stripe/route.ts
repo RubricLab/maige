@@ -51,7 +51,7 @@ export const POST = async (req: Request) => {
 				{status: 400}
 			)
 
-		await prisma.customer.update({
+		await prisma.user.update({
 			where: {
 				id: customerId
 			},
@@ -76,7 +76,7 @@ export const POST = async (req: Request) => {
 				{status: 400}
 			)
 
-		await prisma.customer.update({
+		await prisma.user.update({
 			where: {
 				stripeCustomerId: customer
 			},
@@ -89,7 +89,7 @@ export const POST = async (req: Request) => {
 		 * Customer deleted
 		 */
 		try {
-			await prisma.customer.delete({
+			await prisma.user.delete({
 				where: {
 					stripeCustomerId: customer
 				}
@@ -116,7 +116,7 @@ export const POST = async (req: Request) => {
 			)
 
 		try {
-			await prisma.customer.update({
+			await prisma.user.update({
 				where: {
 					stripeCustomerId: customer
 				},

@@ -1,14 +1,15 @@
-import {createInstruction} from 'app/dashboard/repo/[projectId]/instructions/actions'
 import {useState} from 'react'
+import createInstruction from '~/actions/create-instruction'
 import {Button} from '~/components/ui/button'
 import {Popover, PopoverContent, PopoverTrigger} from '~/components/ui/popover'
 import {Textarea} from '~/components/ui/textarea'
 
 type Props = {
+	teamSlug: string
 	projectId: string
 }
 
-export default function NewInstruction({projectId}: Props) {
+export default function NewInstruction({teamSlug, projectId}: Props) {
 	const [content, setContent] = useState('')
 
 	return (
@@ -26,7 +27,7 @@ export default function NewInstruction({projectId}: Props) {
 					/>
 					<Button
 						onClick={() => {
-							setContent(''), createInstruction(projectId, content)
+							setContent(''), createInstruction(teamSlug, projectId, content)
 						}}
 						size='sm'
 						variant='outline'
