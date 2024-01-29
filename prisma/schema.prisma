@@ -13,12 +13,12 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   userName      String?   @unique
-  email         String?   @unique @default(cuid())
+  email         String?   @unique
   emailVerified DateTime?
   githubUserId  String?
   image         String?
-  createdAt     DateTime  @default("2021-01-01T00:00:00.000Z")
-  updatedAt     DateTime  @default("2021-01-01T00:00:00.000Z") @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   accounts Account[]
   sessions Session[]
@@ -45,10 +45,10 @@ model Project {
   id        String   @id @default(cuid())
   slug      String?
   name      String?
-  createdBy String   @default(cuid())
-  teamId    String   @default("1")
-  createdAt DateTime @default("2021-01-01T00:00:00.000Z")
-  updatedAt DateTime @default("2021-01-01T00:00:00.000Z") @updatedAt
+  createdBy String
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user         User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
@@ -81,7 +81,7 @@ model Instruction {
   content           String   @db.VarChar(1000)
   creatorUsername   String?
   githubCommentLink String?
-  createdBy         String   @default(cuid())
+  createdBy         String
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
