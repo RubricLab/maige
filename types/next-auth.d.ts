@@ -1,3 +1,4 @@
+import 'next-auth'
 import {DefaultSession} from 'next-auth'
 
 declare module 'next-auth' {
@@ -6,8 +7,15 @@ declare module 'next-auth' {
 	 */
 	interface Session {
 		user: {
-			/** The user's githuber User ID */
-			githubUserId: string
+			id: string
 		} & DefaultSession['user']
+	}
+
+	interface Profile {
+		id: string
+		name: string
+		email: string
+		image: string
+		userName: string
 	}
 }

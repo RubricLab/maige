@@ -8,9 +8,9 @@ import {Tier} from '~/types'
  * Increment usage count for a customer
  */
 export async function incrementUsage(prisma: PrismaClient, owner: string) {
-	await prisma.customer.update({
+	await prisma.user.update({
 		where: {
-			name: owner
+			userName: owner
 		},
 		data: {
 			usage: {

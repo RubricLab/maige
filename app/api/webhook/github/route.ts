@@ -1,12 +1,13 @@
 import {App} from '@octokit/app'
 import {maige} from '~/agents/maige'
-import {GITHUB} from '~/constants'
 import env from '~/env.mjs'
-import prisma from '~/prisma'
 import {stripe} from '~/stripe'
-import {Label, Repository} from '~/types'
-import Weaviate from '~/utils/embeddings/db'
-import {getMainBranch, getRepoMeta, openUsageIssue} from '~/utils/github'
+import {Label} from '~/types'
+import {
+	getRepoMeta,
+	handleInstallationEvents,
+	openUsageIssue
+} from '~/utils/github'
 import {validateSignature} from '~/utils/index'
 import {incrementUsage} from '~/utils/payment'
 
@@ -29,131 +30,13 @@ export const POST = async (req: Request) => {
 	}
 
 	const payload = JSON.parse(text)
-	const {action} = payload
-
-	/**
-	 * Installation-related events. Sync repos/user to database.
-	 */
-	if (payload?.installation?.account?.login) {
-		const {
-			installation: {
-				account: {login}
-			}
-		} = payload
-
-		if (action === 'created') {
-			// Installed GitHub App
-
-			const {repositories} = payload
-
-			const customer = await prisma.customer.create({
-				data: {
-					name: login,
-					projects: {
-						create: repositories.map((repo: Repository) => ({
-							name: repo.name
-						}))
-					}
-				}
-			})
-
-			// Clone, vectorize, and save public code to database
-			const vectorDB = new Weaviate(customer.id)
-
-			for (const repo of repositories) {
-				const branch = await getMainBranch(repo.full_name)
-
-				await vectorDB.embedRepo(repo.full_name, branch)
-			}
-
-			return new Response(`Added customer ${login}`)
-		} else if (action === 'deleted') {
-			// Uninstalled GitHub App
-
-			try {
-				await prisma.customer.delete({
-					where: {
-						name: login
-					}
-				})
-			} catch (error) {
-				console.warn(error)
-			}
-
-			return new Response(`Deleted customer ${login}`)
-		} else if (['added', 'removed'].includes(action)) {
-			// Added or removed repos from GitHub App
-
-			const {repositories_added: addedRepos, repositories_removed: removedRepos} =
-				payload
-
-			const customer = await prisma.customer.upsert({
-				where: {
-					name: login
-				},
-				create: {
-					name: login
-				},
-				update: {},
-				select: {
-					id: true,
-					projects: {
-						select: {
-							name: true
-						}
-					}
-				}
-			})
-
-			if (!customer?.id)
-				return new Response(`Could not find or create customer ${login}`, {
-					status: 500
-				})
-
-			const newRepos = addedRepos.filter((repo: Repository) => {
-				return !customer.projects.some(
-					(project: {name: string}) => project.name === repo.name
-				)
-			})
-
-			// Clone, vectorize, and save public code to database
-			const vectorDB = new Weaviate(customer.id)
-
-			const createProjects = prisma.project.createMany({
-				data: newRepos.map((repo: Repository) => ({
-					name: repo.name,
-					customerId: customer.id
-				})),
-				skipDuplicates: true
-			})
-
-			const deleteProjects = prisma.project.deleteMany({
-				where: {
-					customerId: customer.id,
-					name: {
-						in: removedRepos.map((repo: Repository) => repo.name)
-					}
-				}
-			})
-
-			// Sync repos to database in a single transaction
-			await prisma.$transaction([createProjects, deleteProjects])
-
-			for (const repo of addedRepos) {
-				const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
-				const branch = await getMainBranch(repo.full_name)
-
-				await vectorDB.embedRepo(repoUrl, branch)
-			}
-
-			return new Response(`Successfully updated repos for ${login}`)
-		}
-	}
+	await handleInstallationEvents({payload: payload})
 
 	/**
 	 * Issue-related events. We care about new issues and comments.
 	 */
 	const {
+		action,
 		comment,
 		sender: {login: sender},
 		installation: {id: instanceId}
@@ -183,9 +66,9 @@ export const POST = async (req: Request) => {
 		}
 	} = payload
 
-	const customer = await prisma.customer.findUnique({
+	const user = await prisma.user.findUnique({
 		where: {
-			name: owner || undefined
+			userName: owner || undefined
 		},
 		select: {
 			id: true,
@@ -199,17 +82,17 @@ export const POST = async (req: Request) => {
 				select: {
 					id: true,
 					name: true,
-					customInstructions: true
+					instructions: true
 				}
 			}
 		}
 	})
 
-	if (!customer) return new Response('Could not find customer', {status: 500})
+	if (!user) return new Response('Could not find user', {status: 500})
 
-	const {id: customerId, usage, usageLimit, usageWarned, projects} = customer
+	const {id: userId, usage, usageLimit, usageWarned, projects} = user
 	const instructions =
-		projects?.[0]?.customInstructions.map(ci => ci.content).join('. ') || ''
+		projects?.[0]?.instructions.map(ci => ci.content).join('. ') || ''
 
 	const projectId = projects?.[0]?.id
 
@@ -228,10 +111,10 @@ export const POST = async (req: Request) => {
 	if (usage > usageLimit) {
 		if (!usageWarned || usage == usageLimit + 10)
 			try {
-				await openUsageIssue(stripe, octokit, customerId, repoId)
-				await prisma.customer.update({
+				await openUsageIssue(stripe, octokit, userId, repoId)
+				await prisma.user.update({
 					where: {
-						id: customerId
+						id: userId
 					},
 					data: {
 						usageWarned: true
@@ -270,39 +153,37 @@ export const POST = async (req: Request) => {
 			owner,
 			name
 		})
-
 		const isComment = action === 'created'
 		const beta =
 			comment?.body && comment.body.toLowerCase().includes('maige beta')
 		const labels = issue?.existingLabels?.map((l: Label) => l.name).join(', ')
-
 		const prompt = `
-Hey, here's an incoming ${isComment ? 'comment' : pr ? 'PR' : 'issue'}.
-First, some context:
-Repo full name: ${owner}/${name}.
-Repo description: ${repoDescription}.
-${
-	pr || prComment
-		? `
-PR number: ${pr?.number || issue.number}.
-PR title: ${pr?.title || issue.title}.
-PR body: ${pr?.body || issue.body}.
-	`
-		: `
-Issue number: ${issue.number}.
-Issue title: ${issue.title}.
-Issue body: ${issue.body}.
-Issue labels: ${labels}.
-`
-}
-${isComment ? `The comment by @${comment.user.login}: ${comment?.body}.` : ''}
-Your instructions: ${instructions || 'do nothing'}.
-`.replaceAll('\n', ' ')
+		Hey, here's an incoming ${isComment ? 'comment' : pr ? 'PR' : 'issue'}.
+		First, some context:
+		Repo full name: ${owner}/${name}.
+		Repo description: ${repoDescription}.
+		${
+			pr || prComment
+				? `
+		PR number: ${pr?.number || issue.number}.
+		PR title: ${pr?.title || issue.title}.
+		PR body: ${pr?.body || issue.body}.
+			`
+				: `
+		Issue number: ${issue.number}.
+		Issue title: ${issue.title}.
+		Issue body: ${issue.body}.
+		Issue labels: ${labels}.
+		`
+		}
+		${isComment ? `The comment by @${comment.user.login}: ${comment?.body}.` : ''}
+		Your instructions: ${instructions || 'do nothing'}.
+		`.replaceAll('\n', ' ')
 
 		await maige({
 			input: prompt,
 			octokit,
-			customerId,
+			customerId: userId,
 			projectId,
 			repoFullName: `${owner}/${name}`,
 			issueNumber: issue?.number,
@@ -312,7 +193,6 @@ Your instructions: ${instructions || 'do nothing'}.
 			comment,
 			beta
 		})
-
 		return new Response('ok', {status: 200})
 	} catch (error) {
 		console.error(error)

@@ -52,16 +52,18 @@ const TableColNames = [
 export function CustomTable({
 	data,
 	params,
+	teamSlug,
 	route
 }: {
 	data: UsageRow[]
 	params: any
+	teamSlug: string
 	route: string
 }) {
 	return (
 		<Table>
 			<TableHeader>
-				<TableRow className='!border-b-2'>
+				<TableRow className='hover:bg-tertiary !border-b-2'>
 					{TableColNames.map(col => {
 						const searchParams = new URLSearchParams(params)
 						if (col.key !== 'project') {
@@ -71,14 +73,12 @@ export function CustomTable({
 							)
 							searchParams.set('col', col.key)
 						}
-						const href = `/dashboard/usage/${route}?${searchParams.toString()}`
+						const href = `/${teamSlug}/usage/${route}?${searchParams.toString()}`
 
 						return (
 							<TableHead
 								key={col.key}
-								className={`text-neutral-200 ${
-									col.align === 'right' ? 'text-right' : ''
-								}`}>
+								className={`${col.align === 'right' ? 'text-right' : ''}`}>
 								<Link
 									prefetch={false}
 									href={href}
@@ -107,7 +107,7 @@ export function CustomTable({
 					<TableRow key={usage.id}>
 						<TableCell className='group font-medium'>
 							<Link
-								href={`/dashboard/repo/${usage.project.id}`}
+								href={`/dashboard/project/${usage.project.id}`}
 								className='inline-flex items-center justify-between gap-2'>
 								{usage.project.name}{' '}
 								<ArrowRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />

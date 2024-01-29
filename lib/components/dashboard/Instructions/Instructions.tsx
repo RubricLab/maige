@@ -2,24 +2,25 @@
 
 import {type Instruction} from '@prisma/client'
 import {ArrowTopRightIcon} from '@radix-ui/react-icons'
-import {deleteInstruction} from 'app/dashboard/repo/[projectId]/instructions/actions'
 import {PenSquare, XIcon} from 'lucide-react'
 import Link from 'next/link'
 import React, {useCallback, useState} from 'react'
 import {toast} from 'sonner'
-import {updateInstruction} from '~/actions/instructions'
+import deleteInstruction from '~/actions/delete-instruction'
+import {updateInstruction} from '~/actions/update-instruction'
 import {Button, buttonVariants} from '~/components/ui/button'
 import {cn} from '~/utils'
 import {PrimaryButton} from '../Buttons'
 import {TextArea} from '../Input'
-import {MediumBody, Subtext} from '../Text'
 import NewInstruction from './new-instruction'
 
 export function Instructions({
 	instructions,
+	teamSlug,
 	projectId
 }: {
 	instructions: Instruction[]
+	teamSlug: string
 	projectId: string
 }) {
 	return (
@@ -27,6 +28,7 @@ export function Instructions({
 			{instructions.map((instruction, i) => (
 				<React.Fragment key={instruction.id}>
 					<Instruction
+						teamSlug={teamSlug}
 						instruction={instruction}
 						index={i}
 						key={instruction.id}
@@ -40,16 +42,23 @@ export function Instructions({
 				</React.Fragment>
 			))}
 			<div className='fixed bottom-0 left-0 right-0 mx-auto w-fit pb-10'>
-				{projectId && <NewInstruction projectId={projectId} />}
+				{projectId && (
+					<NewInstruction
+						teamSlug={teamSlug}
+						projectId={projectId}
+					/>
+				)}
 			</div>
 		</div>
 	)
 }
 
 function Instruction({
+	teamSlug,
 	instruction,
 	index
 }: {
+	teamSlug: string
 	instruction: Instruction
 	index: number
 }) {
@@ -89,7 +98,7 @@ function Instruction({
 				<button
 					onClick={() => {
 						setDelete(true)
-						deleteInstruction(instruction.projectId, instruction.id)
+						deleteInstruction(teamSlug, instruction.projectId, instruction.id)
 					}}
 					className='absolute -right-3 -top-3 hidden rounded-sm bg-red-500 p-1 opacity-0 transition-opacity duration-200 ease-in-out group-hover:block group-hover:opacity-100'>
 					<XIcon
@@ -102,7 +111,7 @@ function Instruction({
 				<div className='text flex items-center justify-center rounded-sm bg-gray-800 px-2.5 text-gray-500'>
 					{index + 1}
 				</div>
-				<Subtext>
+				<p>
 					{instruction.githubCommentLink ? (
 						<Link
 							href={instruction.githubCommentLink}
@@ -116,11 +125,11 @@ function Instruction({
 							{instruction.creatorUsername}
 						</span>
 					)}
-				</Subtext>
+				</p>
 			</div>
 			{!isEditing && (
 				<div className='flex flex-col gap-2'>
-					<MediumBody>&quot;{content}&quot;</MediumBody>
+					<p>&quot;{content}&quot;</p>
 					<div
 						className='flex w-full cursor-pointer justify-end'
 						onClick={() => setIsEditing(true)}>
