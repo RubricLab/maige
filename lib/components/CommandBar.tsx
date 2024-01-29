@@ -1,5 +1,5 @@
 import {CommandIcon, Search as SearchIcon} from 'lucide-react'
-import {useRouter} from 'next/navigation'
+import {usePathname, useRouter} from 'next/navigation'
 import {useEffect, useState} from 'react'
 import {Button} from '~/components/ui/button'
 import {
@@ -13,7 +13,7 @@ import {
 
 const routes = [
 	{
-		name: 'Home',
+		name: 'Projects',
 		path: '/'
 	},
 	{
@@ -25,6 +25,8 @@ const routes = [
 export function CommandMenu() {
 	const [open, setOpen] = useState(false)
 	const router = useRouter()
+	const pathname = usePathname()
+	const teamSlug = pathname.split('/')[1] ?? ''
 
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
@@ -70,7 +72,7 @@ export function CommandMenu() {
 							<CommandItem
 								key={path}
 								onSelect={() => {
-									router.push(`/dashboard/${path}`)
+									router.push(`/${teamSlug}${path}`)
 									setOpen(false)
 								}}>
 								{name}
