@@ -37,8 +37,8 @@ export default function MainNav() {
 					<div
 						className={cn(
 							'border-secondary w-full border-b transition-opacity',
-							(page.path === '' && pathname === '/[slug]') ||
-								(page.path !== '' && pathname.startsWith(`/[slug]/${page.path}`))
+							(page.path === '' && pathname === `/${slug}`) ||
+								(page.path !== '' && pathname.startsWith(`/${slug}/${page.path}`))
 								? 'opacity-100'
 								: 'opacity-0 group-hover:opacity-100'
 						)}
