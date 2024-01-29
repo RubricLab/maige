@@ -1,5 +1,6 @@
 'use server'
 import {z} from 'zod'
+import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
 
 const schema = z.object({

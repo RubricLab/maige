@@ -2,6 +2,7 @@
 import {z} from 'zod'
 import {slugify} from '~/utils'
 import {getCurrentUser} from '~/utils/session'
+import prisma from '~/prisma'
 
 const schema = z.object({
 	name: z.string()

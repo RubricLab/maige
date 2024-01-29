@@ -1,3 +1,5 @@
+import prisma from '~/prisma'
+
 export default async function Page({params}: {params: {projectId: string}}) {
 	const project = await prisma.project.findUnique({
 		where: {id: params.projectId}

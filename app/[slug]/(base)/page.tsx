@@ -2,6 +2,7 @@ import {redirect} from 'next/navigation'
 import {Suspense} from 'react'
 import Projects from '~/components/dashboard/Projects/ProjectsList'
 import {getCurrentUser} from '~/utils/session'
+import prisma from '~/prisma'
 
 export default async function Dashboard({params}: {params: {slug: string}}) {
 	const user = await getCurrentUser()

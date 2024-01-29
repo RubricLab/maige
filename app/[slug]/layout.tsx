@@ -1,4 +1,5 @@
 import DashboardHeader from '~/components/dashboard/Navigation/DashboardHeader'
+import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
 
 async function Teams() {

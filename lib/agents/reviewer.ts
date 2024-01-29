@@ -6,6 +6,7 @@ import {codeComment} from '~/tools/codeComment'
 import {codebaseSearch} from '~/tools/codeSearch'
 import {prComment} from '~/tools/prComment'
 import {isDev} from '~/utils/index'
+import prisma from '~/prisma'
 
 export async function reviewer({
 	customerId,

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import Stripe from 'stripe'
 import {GITHUB} from '~/constants'
+import prisma from '~/prisma'
 import {Label, Repository} from '~/types'
 import {createPaymentLink} from '~/utils/payment'
 import Weaviate from './embeddings/db'

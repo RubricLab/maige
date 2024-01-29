@@ -1,6 +1,7 @@
 'use server'
 import {revalidatePath} from 'next/cache'
 import {redirect} from 'next/navigation'
+import prisma from '~/prisma'
 
 export default async function deleteInstruction(
 	teamSlug: string,
