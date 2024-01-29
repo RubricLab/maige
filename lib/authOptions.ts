@@ -1,11 +1,25 @@
 import {PrismaAdapter} from '@auth/prisma-adapter'
 import {AuthOptions} from 'next-auth'
+import {AdapterUser} from 'next-auth/adapters'
 import GithubProvider, {type GithubProfile} from 'next-auth/providers/github'
 import prisma from '~/prisma'
 import env from './env.mjs'
 
+const prismaAdapter = PrismaAdapter(prisma)
+
+prismaAdapter.createUser = (data: AdapterUser & {userName: string}) => {
+	return prisma.user.upsert({
+		// migration flow
+		where: {userName: data.userName},
+		update: data,
+
+		// default flow
+		create: data
+	})
+}
+
 export const authOptions: AuthOptions = {
-	adapter: PrismaAdapter(prisma),
+	adapter: prismaAdapter,
 	session: {
 		strategy: 'jwt'
 	},
