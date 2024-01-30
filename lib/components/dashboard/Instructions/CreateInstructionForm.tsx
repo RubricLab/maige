@@ -28,7 +28,7 @@ function SubmitButton() {
 	)
 }
 
-export default function InstructionForm({
+export default function CreateInstructionForm({
 	projectId,
 	setDialogOpen
 }: {
