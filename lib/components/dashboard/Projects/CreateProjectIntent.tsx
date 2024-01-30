@@ -28,7 +28,7 @@ function AddButton() {
 	)
 }
 
-export default function AddProject({teamId}: {teamId: string}) {
+export default function CreateProjectIntent({teamId}: {teamId: string}) {
 	const [state, formAction] = useFormState(createProjectIntent, initialState)
 
 	// Handle response

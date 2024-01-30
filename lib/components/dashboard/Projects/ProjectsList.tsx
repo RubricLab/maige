@@ -2,7 +2,7 @@ import {ArrowRight} from 'lucide-react'
 import Link from 'next/link'
 import {ProjectWithInstructions} from '~/types/prisma'
 import {timeAgo} from '~/utils'
-import AddProject from './AddProject'
+import CreateProjectIntent from './CreateProjectIntent'
 
 const EmptyState = () => (
 	<div className='center gap-4 text-center'>
@@ -58,7 +58,7 @@ export default function ProjectsList({
 			) : (
 				<EmptyState />
 			)}
-			<AddProject teamId={teamId} />
+			<CreateProjectIntent teamId={teamId} />
 		</div>
 	)
 }
