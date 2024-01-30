@@ -16,7 +16,7 @@ export function Instructions({
 	return (
 		<div className='grid grid-cols-3 gap-4'>
 			<CreateInstruction projectId={projectId} />
-			{instructions.map((instruction, i) => (
+			{instructions.map(instruction => (
 				<InstructionCard
 					instruction={instruction}
 					teamSlug={teamSlug}

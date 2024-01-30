@@ -1,14 +1,8 @@
 'use client'
 
 import {PlusIcon} from 'lucide-react'
+import {useSession} from 'next-auth/react'
 import {Dispatch, SetStateAction, useEffect, useState} from 'react'
-
-const templates = [
-	'Label all new issues',
-	'Assign @milton when a UI-related issue is opened',
-	'Recommend a solution when a question is asked',
-	'[beta] dispatch an engineer to resolve incoming issues'
-]
 
 function Template({template, setContent}) {
 	const [selected, setSelected] = useState(false)
@@ -35,6 +29,19 @@ export default function InstructionTemplates({
 }: {
 	setContent: Dispatch<SetStateAction<string>>
 }) {
+	const {
+		data: {
+			user: {name: userName}
+		}
+	} = useSession()
+
+	const templates = [
+		'Label all new issues',
+		`Assign ${userName || '@username'} when a UI-related issue is opened`,
+		'Recommend a solution when a question is asked',
+		'[beta] dispatch an engineer to resolve incoming issues'
+	]
+
 	return (
 		<div className='text-secondary flex w-full flex-col gap-2'>
 			<h3>Examples</h3>
