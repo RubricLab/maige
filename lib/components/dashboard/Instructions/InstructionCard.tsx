@@ -24,7 +24,7 @@ export default function InstructionCard({
 }) {
 	const [dialogOpen, setDialogOpen] = useState(false)
 	return (
-		<div className='border-border flex flex-col justify-between gap-3 rounded-sm border p-3'>
+		<div className='border-border flex min-h-36 flex-col justify-between gap-3 rounded-sm border p-3'>
 			<div>
 				<p>{instruction.content}</p>
 			</div>
@@ -46,9 +46,7 @@ export default function InstructionCard({
 									<DropdownMenuItem>Edit</DropdownMenuItem>
 								</DialogTrigger>
 								<DropdownMenuItem
-									onClick={() =>
-										deleteInstruction(teamSlug, instruction.projectId, instruction.id)
-									}>
+									onClick={() => deleteInstruction(teamSlug, instruction)}>
 									Delete
 								</DropdownMenuItem>
 							</DropdownMenuContent>

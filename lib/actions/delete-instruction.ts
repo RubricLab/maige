@@ -1,12 +1,12 @@
 'use server'
+import {Instruction} from '@prisma/client'
 import {revalidatePath} from 'next/cache'
 import {redirect} from 'next/navigation'
 import {getCurrentUser} from '~/utils/session'
 
 export default async function deleteInstruction(
 	teamSlug: string,
-	projectId: string,
-	instructionId: string
+	instruction: Instruction
 ) {
 	const user = await getCurrentUser()
 	if (!user)
@@ -18,11 +18,11 @@ export default async function deleteInstruction(
 	try {
 		await prisma.instruction.delete({
 			where: {
-				id: instructionId
+				id: instruction.id
 			}
 		})
-		revalidatePath(`/${teamSlug}/project/${projectId}/instructions`)
-		redirect(`/${teamSlug}/project/${projectId}/instructions`)
+		revalidatePath(`/${teamSlug}/project/${instruction.projectId}/instructions`)
+		redirect(`/${teamSlug}/project/${instruction.projectId}/instructions`)
 	} catch (err) {
 		if (err instanceof Error)
 			return {
