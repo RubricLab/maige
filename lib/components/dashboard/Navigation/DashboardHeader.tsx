@@ -4,7 +4,7 @@ import {Project, Team, User} from '@prisma/client'
 import {signOut} from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import {usePathname} from 'next/navigation'
+import {usePathname, useRouter} from 'next/navigation'
 import {CommandMenu} from '~/components/CommandBar'
 import {Maige} from '~/components/logos'
 import {
@@ -27,6 +27,7 @@ export default function DashboardHeader({
 	projects: Project[]
 }) {
 	const pathname = usePathname()
+	const router = useRouter()
 
 	return (
 		<div className='sticky top-0 z-50 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 backdrop-blur-sm'>
@@ -65,8 +66,10 @@ export default function DashboardHeader({
 								<DropdownMenuSeparator />
 							</>
 						)}
-						<DropdownMenuItem className='cursor-pointer'>
-							<Link href='/home'>Home</Link>
+						<DropdownMenuItem
+							onClick={() => router.push('/home')}
+							className='cursor-pointer'>
+							Landing Page
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className='cursor-pointer'
