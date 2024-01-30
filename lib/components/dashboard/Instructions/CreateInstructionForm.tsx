@@ -7,7 +7,6 @@ import createInstruction from '~/actions/create-instruction'
 import {Button} from '~/components/ui/button'
 import {Input} from '~/components/ui/input'
 import {Textarea} from '~/components/ui/textarea'
-import InstructionTemplates from './InstructionTemplates'
 
 const initialState = {
 	type: null,
@@ -74,7 +73,7 @@ export default function CreateInstructionForm({
 				/>
 				<SubmitButton />
 			</form>
-			<InstructionTemplates setContent={setContent} />
+			{/* <InstructionTemplates setContent={setContent} /> */}
 		</>
 	)
 }

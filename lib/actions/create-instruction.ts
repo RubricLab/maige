@@ -1,4 +1,5 @@
 'use server'
+
 import {z} from 'zod'
 import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
@@ -9,7 +10,7 @@ const schema = z.object({
 })
 
 export default async function createInstruction(
-	prevState: any,
+	_prevState: any, // required by useFormState
 	formData: FormData
 ) {
 	const user = await getCurrentUser()
