@@ -9,7 +9,11 @@ import commitCode from '~/tools/commitCode'
 import listFiles from '~/tools/listFiles'
 import readFile from '~/tools/readFile'
 import writeFile from '~/tools/writeFile'
-import {getInstallationId, getInstallationToken} from '~/utils/github'
+import {
+	editComment,
+	getInstallationId,
+	getInstallationToken
+} from '~/utils/github'
 import {isDev} from '~/utils/index'
 
 export async function engineer({
@@ -17,14 +21,24 @@ export async function engineer({
 	repoFullName,
 	issueNumber,
 	customerId,
-	projectId
+	projectId,
+	commentId,
+	title
 }: {
 	task: string
 	repoFullName: string
 	issueNumber: number
 	customerId: string
 	projectId: string
+	commentId: string
+	title: string
 }) {
+	const installationToken = await getInstallationToken(
+		await getInstallationId(repoFullName)
+	)
+
+	const octokit = new Octokit({auth: installationToken})
+
 	let tokens = {
 		prompt: 0,
 		completion: 0
@@ -47,7 +61,7 @@ export async function engineer({
 		]
 	})
 
-	const {content: title} = await model.call([
+	const {content: PRTitle} = await model.call([
 		'Could you output a very concise PR title for this request?',
 		`Task: ${task}`
 	])
@@ -58,10 +72,6 @@ export async function engineer({
 		onStdout: data => console.log(data.line),
 		cwd: '/code'
 	})
-
-	const installationToken = await getInstallationToken(
-		await getInstallationId(repoFullName)
-	)
 
 	const branch = `maige/${issueNumber}-${Date.now()}`
 	const [owner, repo] = repoFullName.split('/')
@@ -133,18 +143,36 @@ Your final output message should be the message that will be included in the pul
 		cmd: `cd ${repo} && git push -u origin ${branch}`
 	})
 
-	const octokit = new Octokit({auth: installationToken})
-
-	await octokit.request(`POST /repos/${repoFullName}/pulls`, {
-		owner,
-		repo,
-		title,
-		body,
-		head: branch,
-		base: 'main'
-	})
+	try {
+		await octokit.request(`POST /repos/${repoFullName}/pulls`, {
+			owner,
+			repo,
+			title: PRTitle,
+			body,
+			head: branch,
+			base: 'main'
+		})
+	} catch (e) {
+		await editComment({
+			octokit,
+			commentId,
+			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
+| **Name** | **Status** | **Message** | **Updated (UTC)** |
+|:---------|:-----------|:------------|:------------------|
+| **${title}** | ❌ Error ([inspect](https://maige.app)) | Errored | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+		})
+	}
 
 	await shell.close()
+
+	const comment = await editComment({
+		octokit,
+		commentId,
+		comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
+| **Name** | **Status** | **Message** | **Updated (UTC)** |
+|:---------|:-----------|:------------|:------------------|
+| **${title}** | ✅ Complete ([inspect](https://maige.app)) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+	})
 
 	return
 }

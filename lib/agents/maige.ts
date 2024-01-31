@@ -75,7 +75,14 @@ export async function maige({
 		...(issueId
 			? [
 					commentTool({octokit, issueId}),
-					dispatchEngineer({issueNumber, repoFullName, customerId, projectId})
+					dispatchEngineer({
+						octokit,
+						issueId,
+						issueNumber,
+						repoFullName,
+						customerId,
+						projectId
+					})
 				]
 			: []),
 		...(pullUrl && beta
