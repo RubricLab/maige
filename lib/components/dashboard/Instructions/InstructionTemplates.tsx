@@ -4,7 +4,7 @@ import {PlusIcon} from 'lucide-react'
 import {useSession} from 'next-auth/react'
 import {Dispatch, SetStateAction, useEffect, useState} from 'react'
 
-function Template({template, setContent}) {
+function Template({title, content, setContent}) {
 	const [selected, setSelected] = useState(false)
 
 	useEffect(() => {
@@ -16,10 +16,10 @@ function Template({template, setContent}) {
 			className={`hover:bg-tertiary border-tertiary flex cursor-pointer items-center gap-2 rounded-sm border p-2 ${selected ? 'bg-tertiary' : ''}`}
 			onClick={() => {
 				setSelected(prev => !prev)
-				setContent(template)
+				setContent(content)
 			}}>
 			<PlusIcon className='h-5 w-5' />
-			{template}
+			{title}
 		</div>
 	)
 }
@@ -36,19 +36,32 @@ export default function InstructionTemplates({
 	} = useSession()
 
 	const templates = [
-		'Label all new issues',
-		`Assign ${userName || '@username'} when a UI-related issue is opened`,
-		'Recommend a solution when a question is asked',
-		'[beta] dispatch an engineer to resolve incoming issues'
+		{
+			title: 'Label issues',
+			content: 'Label all incoming issues'
+		},
+		{
+			title: 'Assign issues',
+			content: `Assign @${userName || 'username'} when a UI-related issue is opened`
+		},
+		{
+			title: 'Recommend solutions',
+			content: 'Comment a suggested solution to incoming issues'
+		},
+		{
+			title: 'Code Generation [beta]',
+			content: 'Dispatch an engineer to resolve incoming issues'
+		}
 	]
 
 	return (
 		<div className='text-secondary flex w-full flex-col gap-2'>
 			<h3>Examples</h3>
-			{templates.map((template, i) => (
+			{templates.map(({title, content}, i) => (
 				<Template
 					key={i}
-					template={template}
+					title={title}
+					content={content}
 					setContent={setContent}
 				/>
 			))}
