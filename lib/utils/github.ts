@@ -22,16 +22,50 @@ export async function addComment({
 		`
 			mutation($issueId: ID!, $comment: String!) {
 				addComment(input: { subjectId: $issueId, body: $comment }) {
-					clientMutationId
+					commentEdge {
+						node {
+							id
+						}
+					}
 				}
 			}
-    `,
+	`,
 		{issueId, comment}
 	)
 
 	if (!commentResult) throw new Error('Could not add comment')
 
-	return commentResult
+	return commentResult.addComment.commentEdge.node.id
+}
+
+/**
+ * Edit comment
+ */
+export async function editComment({
+	octokit,
+	commentId,
+	comment
+}: {
+	octokit: any
+	commentId: string
+	comment: string
+}): Promise<string> {
+	const commentResult = await octokit.graphql(
+		`
+			mutation($commentId: ID!, $comment: String!) {
+				updateIssueComment(input: { id: $commentId, body: $comment }) {
+					issueComment {
+						id
+					}
+				}
+			}
+	`,
+		{commentId, comment}
+	)
+
+	if (!commentResult) throw new Error('Could not edit comment')
+
+	return commentResult.updateIssueComment.issueComment.id
 }
 
 export async function getRepoMeta({
