@@ -1,10 +1,9 @@
 import {Webhooks} from '@octokit/webhooks'
 import {headers} from 'next/headers'
 import env from '~/env.mjs'
-import prisma from '~/prisma'
-import {Repository} from '~/types'
 import handleInstall from '~/utils/github/handle-install'
 import handleUnInstall from '~/utils/github/handle-uninstall'
+import handleUpdates from '~/utils/github/handle-updates'
 
 export const maxDuration = 300
 
@@ -20,6 +19,7 @@ const webhook = new Webhooks({
 export const POST = async (req: Request) => {
 	const hdrs = headers()
 
+	// Verify webhook signature
 	await webhook.verifyAndReceive({
 		id: hdrs.get('x-github-delivery')!,
 		name: hdrs.get('x-github-event') as any,
@@ -28,21 +28,6 @@ export const POST = async (req: Request) => {
 	})
 
 	return new Response()
-
-	// // Verify webhook signature
-	// const text = await req.text()
-	// const signature = req.headers.get('x-hub-signature-256') || ''
-
-	// const validSignature = await validateSignature(text, signature)
-	// if (!validSignature) {
-	// 	console.error('Bad GitHub webhook secret.')
-	// 	return new Response('Bad GitHub webhook secret.', {status: 403})
-	// }
-
-	// const payload: Payload = JSON.parse(text)
-
-	// // Handle app install, app uninstall, project(s) created, and project(s) deleted
-	// await handleInstallationEvents({payload: payload})
 
 	// /**
 	//  * Issue-related events. We care about new issues and comments.
@@ -212,157 +197,6 @@ export const POST = async (req: Request) => {
 	// }
 }
 
-/**
- * Repository added and/or removed
- */
-webhook.on(
-	['installation_repositories.added', 'installation_repositories.removed'],
-	async ({payload}) => {
-		// Added or removed repos from GitHub App
-		const {
-			repositories_added: addedRepos,
-			repositories_removed: removedRepos,
-			installation: {
-				account: {
-					id: githubOrgId,
-					login: githubOrgSlug,
-					avatar_url: githubOrgImage,
-					type
-				}
-			},
-			sender: {id: githubUserId, login: userName}
-		} = payload
-
-		// Get user & request to add project
-		// const user = await prisma.addProject.findFirst({
-		// 	where: {
-		// 		user: {
-		// 			id: githubUserId.toString()
-		// 		}
-		// 	},
-		// 	orderBy: {createdAt: 'desc'}
-		// })
-
-		const user = await prisma.user.findUnique({
-			where: {
-				githubUserId: githubUserId.toString()
-			},
-			select: {
-				id: true,
-				// projects: {
-				// 	select: {
-				// 		githubProjectId: true,
-				// 		name: true
-				// 	}
-				// },
-				addProject: {
-					take: 1,
-					orderBy: {createdAt: 'desc'}
-				}
-			}
-		})
-
-		console.log('addedRepos', addedRepos)
-		console.log('user', user)
-
-		if (!user?.id)
-			return new Response(`Could not find user ${userName}`, {
-				status: 500
-			})
-
-		// const newRepos = addedRepos.filter((repo: Repository) => {
-		// 	return !user.projects.some(project => project.githubProjectId === repo.id)
-		// })
-
-		try {
-			let createProjectsAndOrg = null
-			if (type === 'Organization') {
-				console.log('We here')
-				// Create projects with matching organization
-				createProjectsAndOrg = prisma.organization.upsert({
-					where: {githubOrganizationId: githubOrgId.toString()},
-					create: {
-						githubOrganizationId: githubOrgId.toString(),
-						slug: githubOrgSlug,
-						name: githubOrgSlug,
-						image: githubOrgImage,
-						projects: {
-							createMany: {
-								data: addedRepos.map((repo: Repository) => ({
-									githubProjectId: repo.id.toString(),
-									slug: repo.name,
-									name: repo.name,
-									private: repo.private,
-									createdBy: user.id,
-									teamId: user.addProject[0].teamId
-								})),
-								skipDuplicates: true
-							}
-						}
-					},
-					update: {
-						slug: githubOrgSlug,
-						name: githubOrgSlug,
-						image: githubOrgImage,
-						projects: {
-							createMany: {
-								data: addedRepos.map((repo: Repository) => ({
-									githubProjectId: repo.id.toString(),
-									slug: repo.name,
-									name: repo.name,
-									private: repo.private,
-									createdBy: user.id,
-									teamId: user.addProject[0].teamId
-								})),
-								skipDuplicates: true
-							}
-						}
-					}
-				})
-			} else if (type === 'User')
-				createProjectsAndOrg = prisma.project.createMany({
-					data: addedRepos.map((repo: Repository) => ({
-						githubProjectId: repo.id.toString(),
-						slug: repo.name,
-						name: repo.name,
-						private: repo.private,
-						createdBy: user.id,
-						teamId: user.addProject[0].teamId
-					})),
-					skipDuplicates: true
-				})
-
-			const deleteProjects = prisma.project.deleteMany({
-				where: {
-					githubProjectId: {
-						in: removedRepos.map((repo: Repository) => repo.id.toString())
-					}
-				}
-			})
-			// Sync repos to database in a single transaction
-			await prisma.$transaction([createProjectsAndOrg, deleteProjects])
-		} catch (err) {
-			console.log('error', JSON.stringify(err))
-		}
-
-		// prisma.project.createMany({
-		// 	data: addedRepos.map((repo: Repository) => ({
-		// 		createdBy: user.createdBy,
-		// 		teamId: user.teamId
-		// 	})),
-		// 	skipDuplicates: true
-		// })
-
-		// // Clone, vectorize, and save public code to database
-		// for (const repo of addedRepos) {
-		// 	const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
-		// 	const branch = await getMainBranch(repo.full_name)
-		// 	const vectorDB = new Weaviate(repo.id.toString())
-		// 	await vectorDB.embedRepo(repoUrl, branch)
-		// }
-
-		return new Response(`Successfully updated repos for ${userName}`)
-	}
-)
 handleInstall(webhook)
+handleUpdates(webhook)
 handleUnInstall(webhook)
