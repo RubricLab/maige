@@ -1,8 +1,6 @@
 'use client'
 
-import Link from 'next/link'
-import {usePathname} from 'next/navigation'
-import {cn} from '~/utils'
+import {TabList} from './TabList'
 
 const routes = [
 	{
@@ -24,6 +22,17 @@ function evaluatePath(path: string, repoSlug: string, projectId: string) {
 	return `/${repoSlug}/project/${projectId}/${path}`
 }
 
+function evaluateActive({
+	path,
+	activePath
+}: {
+	path: string
+	activePath: string
+}) {
+	if (path === '') return activePath.split('/').length === 4
+	return activePath.endsWith(path)
+}
+
 export default function ProjectNav({
 	repoSlug,
 	projectId
@@ -31,30 +40,11 @@ export default function ProjectNav({
 	repoSlug: string
 	projectId: string
 }) {
-	const pathname = usePathname()
-
 	return (
-		<div className='border-tertiary relative z-10 flex border-b'>
-			{routes.map((page, index) => (
-				<div
-					key={index}
-					className='group relative -bottom-px flex flex-col items-center'>
-					<Link
-						className='hover:bg-primary/10 mb-1 rounded-sm px-2.5 py-0.5'
-						href={evaluatePath(page.path, repoSlug, projectId)}>
-						{page.name}
-					</Link>
-					<div
-						className={cn(
-							'border-secondary w-full border-b transition-opacity',
-							(page.path === '' && pathname.split('/').length === 4) ||
-								(page.path !== '' && pathname.endsWith(page.path))
-								? 'opacity-100'
-								: 'opacity-0 group-hover:opacity-100'
-						)}
-					/>
-				</div>
-			))}
-		</div>
+		<TabList
+			routes={routes}
+			isActive={evaluateActive}
+			evaluateHref={page => evaluatePath(page.path, repoSlug, projectId)}
+		/>
 	)
 }
