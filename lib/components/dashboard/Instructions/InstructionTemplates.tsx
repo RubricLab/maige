@@ -31,7 +31,7 @@ export default function InstructionTemplates({
 }) {
 	const {
 		data: {
-			user: {name: userName}
+			user: {userName}
 		}
 	} = useSession()
 
