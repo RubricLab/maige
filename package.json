@@ -74,6 +74,7 @@
 	"scripts": {
 		"bleed": "ncu -u && bun i",
 		"build": "next build",
+		"clean": "rm -rf .next && rm -rf node_modules && rm -f bun.lockb",
 		"db:push": "prisma db push",
 		"db:studio": "dotenv -e .env.local -- prisma studio",
 		"dev": "next dev",
