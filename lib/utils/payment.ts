@@ -1,21 +1,17 @@
-import {PrismaClient} from '@prisma/client'
 import Stripe from 'stripe'
 import {STRIPE, TIERS} from '~/constants'
 import env from '~/env.mjs'
 import {Tier} from '~/types'
 
 /**
- * Increment usage count for a customer
+ * Increment usage count for a project
  */
-export async function incrementUsage(prisma: PrismaClient, owner: string) {
-	await prisma.user.update({
+export async function incrementUsage(githubProjectId: number) {
+	await prisma.project.update({
 		where: {
-			userName: owner
+			githubProjectId: githubProjectId.toString()
 		},
 		data: {
-			usage: {
-				increment: 1
-			},
 			totalUsage: {
 				increment: 1
 			},

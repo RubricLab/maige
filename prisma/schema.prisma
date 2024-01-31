@@ -53,10 +53,9 @@ model Project {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  totalUsage     Int       @default(0)
-  usageLimit     Int       @default(30)
-  usageUpdatedAt DateTime  @default(now())
-  usageWarnedAt  DateTime?
+  totalUsage     Int      @default(0)
+  usageLimit     Int      @default(30)
+  usageUpdatedAt DateTime @default(now())
 
   user         User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
