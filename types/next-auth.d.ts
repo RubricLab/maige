@@ -1,27 +1,34 @@
+import {User} from '@prisma/client'
 import 'next-auth'
 import type {Profile as DefaultProfile} from 'next-auth'
 import {DefaultSession, DefaultUser} from 'next-auth'
 import type {AdapterUser as DefaultAdapterUser} from 'next-auth/adapters'
 
-// Make changes to the ExtendedUser interface to see them in session, profile, DB
-interface ExtendedUser extends DefaultUser {
-	userName: string
-}
+// Make changes to the ExtendedUser and ExtendedSessionUser interfaces
+// Pick these from DB schema ex. 'username' | 'usage' | ...
+
+/* ************ EDIT ************ */
+
+interface ExtendedUser extends DefaultUser, Pick<User, 'userName'> {}
+
+interface ExtendedSessionUser extends ExtendedUser, Pick<User, 'usage'> {}
+
+/* ********* DON'T EDIT ********* */
 
 declare module 'next-auth' {
-	/**
-	 * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-	 */
+	interface Profile extends DefaultProfile, ExtendedUser {}
 
 	interface User extends ExtendedUser {}
 
 	interface Session extends DefaultSession {
-		user: User
+		user: ExtendedSessionUser
 	}
-
-	interface Profile extends DefaultProfile, ExtendedUser {}
 }
 
 declare module '@auth/core/adapters' {
 	interface AdapterUser extends DefaultAdapterUser, ExtendedUser {}
+}
+
+declare module 'next-auth/adapters' {
+	interface AdapterUser extends DefaultAdapterUser, ExtendedSessionUser {}
 }

@@ -1,7 +1,6 @@
 import {PrismaAdapter} from '@auth/prisma-adapter'
-import type {Profile} from 'next-auth'
-import {AuthOptions} from 'next-auth'
-import GithubProvider, {type GithubProfile} from 'next-auth/providers/github'
+import {AuthOptions, Profile} from 'next-auth'
+import GithubProvider from 'next-auth/providers/github'
 import prisma from '~/prisma'
 import env from './env.mjs'
 
@@ -24,7 +23,7 @@ export const authOptions: AuthOptions = {
 		GithubProvider({
 			clientId: env.GITHUB_CLIENT_ID as string,
 			clientSecret: env.GITHUB_CLIENT_SECRET as string,
-			profile(profile: GithubProfile): Profile {
+			profile(profile): Profile {
 				// Add user profile information
 				return {
 					id: profile.id.toString(),
