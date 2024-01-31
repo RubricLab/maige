@@ -1,4 +1,4 @@
-import {DynamicStructuredTool} from 'langchain/tools'
+import {DynamicStructuredTool} from '@langchain/core/tools'
 import {z} from 'zod'
 import {engineer} from '~/agents/engineer'
 

@@ -2,7 +2,6 @@
 
 import {motion} from 'framer-motion'
 import {ReactNode} from 'react'
-import {SmallBody} from '../Text'
 
 export function SecondaryButton({
 	onClick,
@@ -19,9 +18,9 @@ export function SecondaryButton({
 					duration: 0.5
 				}
 			}}
-			className='rounded-[10px] border-2 bg-primary px-4 py-2'
+			className='bg-primary rounded-[10px] border-2 px-4 py-2'
 			onClick={onClick}>
-			<SmallBody>{children}</SmallBody>
+			<p>{children}</p>
 		</motion.button>
 	)
 }

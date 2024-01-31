@@ -60,7 +60,6 @@
 		@apply border-tertiary;
 	}
 	html {
-		@apply bg-primary text-primary;
 		@apply bg-background text-foreground;
 	}
 	h1 {

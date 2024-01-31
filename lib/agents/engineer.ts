@@ -1,7 +1,7 @@
 import {Sandbox} from '@e2b/sdk'
+import {ChatOpenAI} from '@langchain/openai'
 import {Octokit} from '@octokit/core'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
-import {ChatOpenAI} from 'langchain/chat_models/openai'
 import env from '~/env.mjs'
 import prisma from '~/prisma'
 import {codebaseSearch} from '~/tools/codeSearch'
@@ -65,8 +65,8 @@ export async function engineer({
 
 	const branch = `maige/${issueNumber}-${Date.now()}`
 	const [owner, repo] = repoFullName.split('/')
-	const botUserName = `${env.GITHUB_APP_NAME}[bot]` // Replace with your GitHub App's bot user name
-	const botUserEmail = `${env.GITHUB_APP_ID}+${env.GITHUB_APP_NAME}[bot]@users.noreply.github.com` // Replace with your GitHub App's bot user email
+	const botUserName = `${env.NEXT_PUBLIC_GITHUB_APP_NAME}[bot]` // Replace with your GitHub App's bot user name
+	const botUserEmail = `${env.GITHUB_APP_ID}+${env.NEXT_PUBLIC_GITHUB_APP_NAME}[bot]@users.noreply.github.com` // Replace with your GitHub App's bot user email
 
 	const repoSetup = `git config --global user.email "${botUserEmail}" && git config --global user.name "${botUserName}" && git clone https://x-access-token:${installationToken}@github.com/${repoFullName}.git && cd ${repo} && git checkout -b ${branch}`
 

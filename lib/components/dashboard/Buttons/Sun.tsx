@@ -6,7 +6,7 @@ import {cn} from '~/utils'
 export const Sun = ({className}: {className?: string}) => {
 	return (
 		<Button
-			onClick={() => signIn('github', {callbackUrl: '/dashboard'})}
+			onClick={() => signIn('github', {callbackUrl: '/'})}
 			className={cn(
 				className,
 				'center group h-9 w-9 rounded-full border border-white bg-gradient-to-t from-sunset to-orange-500 drop-shadow-glow transition-all hover:w-32 hover:border-sunset hover:from-white dark:border-black dark:hover:from-black'

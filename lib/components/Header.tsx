@@ -8,14 +8,16 @@ export const Header = () => {
 			<Link
 				href='/'
 				className='text-primary group flex flex-col'>
-				<div className='flex items-baseline gap-2 opacity-80 transition-all hover:text-orange-200 hover:opacity-100 dark:text-orange-100'>
+				<div className='flex items-center gap-2 opacity-80 transition-all hover:text-orange-200 hover:opacity-100 dark:text-orange-100'>
 					<Maige className='h-8' />
-					<div className='font-monocraft text-3xl font-bold !tracking-tighter'>
-						maige
+					<div className='flex flex-col items-end justify-center'>
+						<span className='text-sm leading-3 opacity-80 dark:text-orange-100'>
+							alpha
+						</span>
+						<div className='font-monocraft text-3xl font-bold leading-4 !tracking-tighter'>
+							maige
+						</div>
 					</div>
-				</div>
-				<div className='flex justify-end'>
-					<span className='text-sm opacity-80 dark:text-orange-100'>alpha</span>
 				</div>
 			</Link>
 			<div className='grow'>{/* Divider */}</div>

@@ -1,42 +1,47 @@
+import {PrismaAdapter} from '@auth/prisma-adapter'
 import {AuthOptions, Profile} from 'next-auth'
 import GithubProvider, {GithubProfile} from 'next-auth/providers/github'
 import prisma from '~/prisma'
 import env from './env.mjs'
 
+const prismaAdapter = PrismaAdapter(prisma)
+
+prismaAdapter.createUser = data => {
+	return prisma.user.upsert({
+		// migration flow
+		where: {userName: data.userName},
+		update: data,
+
+		// default flow
+		create: data
+	})
+}
+
 export const authOptions: AuthOptions = {
+	adapter: prismaAdapter,
 	providers: [
 		GithubProvider({
 			clientId: env.GITHUB_CLIENT_ID as string,
 			clientSecret: env.GITHUB_CLIENT_SECRET as string,
-			profile(profile: GithubProfile) {
+			profile(profile: GithubProfile): Profile {
+				// Add user profile information
 				return {
 					id: profile.id.toString(),
+					githubUserId: profile.id.toString(),
 					name: profile.name,
-					userName: profile.login,
 					email: profile.email,
-					image: profile.avatar_url
+					image: profile.avatar_url,
+					userName: profile.login
 				}
 			}
 		})
 	],
-	// attach the githubUserId that we store server side below to our session
 	callbacks: {
-		async session({session, token}) {
-			session.user.githubUserId = token.sub
+		session: async ({session, user}) => {
+			session.user.id = user.id
+			session.user.userName = user.userName
+			session.user.usage = user.usage
 			return session
-		}
-	},
-	// by design, NextAuth does not expose a user's Github username to the client and in our session object, only their github numeric user ID. So, we need to store this numeric ID in our DB
-	// this is so we can know who is making the request on the server
-	events: {
-		async signIn({account, profile}) {
-			const typedProfile: Profile & {userName?: string} = profile
-			await prisma.customer.update({
-				where: {name: typedProfile.userName},
-				data: {
-					githubUserId: account.providerAccountId
-				}
-			})
 		}
 	}
 }

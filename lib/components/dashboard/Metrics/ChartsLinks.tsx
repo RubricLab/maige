@@ -1,7 +1,9 @@
 import Link from 'next/link'
+import {buttonVariants} from '~/components/ui/button'
 import {cn} from '~/utils'
 
 type Props = {
+	teamSlug: string
 	route: string
 }
 
@@ -20,7 +22,7 @@ const routes = [
 	}
 ]
 
-export function ChartsLinks({route}: Props) {
+export function ChartsLinks({teamSlug, route}: Props) {
 	return (
 		<div className='flex justify-start gap-2 pb-2'>
 			{routes.map((page, index) => (
@@ -30,10 +32,10 @@ export function ChartsLinks({route}: Props) {
 					<Link
 						prefetch={false}
 						className={cn(
-							'mb-1 rounded-sm border bg-gray-900 px-2.5 py-0.5 transition-colors hover:border-gray-700 hover:bg-gray-800',
-							{'border-gray-700 bg-gray-800': route == page.path}
+							buttonVariants({variant: 'outline', size: 'sm'}),
+							route === page.path ? 'bg-tertiary' : ''
 						)}
-						href={`/dashboard/usage/${page.path}`}>
+						href={`/${teamSlug}/usage/${page.path}`}>
 						{page.name}
 					</Link>
 				</div>

@@ -1,5 +1,5 @@
+import {ChatOpenAI} from '@langchain/openai'
 import {initializeAgentExecutorWithOptions} from 'langchain/agents'
-import {ChatOpenAI} from 'langchain/chat_models/openai'
 import env from '~/env.mjs'
 import prisma from '~/prisma'
 import {codebaseSearch} from '~/tools/codeSearch'

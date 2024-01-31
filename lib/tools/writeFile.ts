@@ -1,5 +1,5 @@
 import Sandbox from '@e2b/sdk'
-import {DynamicStructuredTool} from 'langchain/tools'
+import {DynamicStructuredTool} from '@langchain/core/tools'
 import path from 'path'
 import {z} from 'zod'
 

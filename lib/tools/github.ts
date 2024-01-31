@@ -1,4 +1,4 @@
-import {DynamicStructuredTool} from 'langchain/tools'
+import {DynamicStructuredTool} from '@langchain/core/tools'
 import {z} from 'zod'
 
 /**
@@ -22,7 +22,7 @@ export function githubTool({octokit}: {octokit: any}) {
 
 				return res.data
 					? // TODO: find a better way to ignore most of the GitHub API response
-					  JSON.stringify(res.data).replaceAll(apiUrl, '').slice(0, 1000)
+						JSON.stringify(res.data).replaceAll(apiUrl, '').slice(0, 1000)
 					: 'Something went wrong. Read the docs.'
 			} catch (error: any) {
 				return `Something went wrong: ${error.message || 'unknown error'}`

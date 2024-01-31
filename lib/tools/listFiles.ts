@@ -1,5 +1,5 @@
 import Sandbox from '@e2b/sdk'
-import {DynamicStructuredTool} from 'langchain/tools'
+import {DynamicStructuredTool} from '@langchain/core/tools'
 import {z} from 'zod'
 
 export default function listFiles({shell, dir}: {shell: Sandbox; dir: string}) {
