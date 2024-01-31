@@ -14,6 +14,7 @@ declare module 'next-auth' {
 
 	interface Profile {
 		id: string
+		githubUserId: string
 		name: string
 		email: string
 		image: string

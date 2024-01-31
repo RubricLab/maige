@@ -28,6 +28,7 @@ export const authOptions: AuthOptions = {
 				// Add user profile information
 				return {
 					id: profile.id.toString(),
+					githubUserId: profile.id.toString(),
 					name: profile.name,
 					email: profile.email,
 					image: profile.avatar_url,
