@@ -20,9 +20,6 @@ prismaAdapter.createUser = (data: AdapterUser & {userName: string}) => {
 
 export const authOptions: AuthOptions = {
 	adapter: prismaAdapter,
-	session: {
-		strategy: 'jwt'
-	},
 	providers: [
 		GithubProvider({
 			clientId: env.GITHUB_CLIENT_ID as string,
@@ -40,13 +37,9 @@ export const authOptions: AuthOptions = {
 		})
 	],
 	callbacks: {
-		session: async ({token, session}) => {
-			if (token) {
-				session.user.id = token.sub
-				session.user.name = token.name
-				session.user.email = token.email
-				session.user.image = token.picture
-			}
+		session: async ({session, user}) => {
+			session.user.id = user.id
+			session.user.userName = (user as AdapterUser & {userName: string}).userName
 			return session
 		}
 	}
