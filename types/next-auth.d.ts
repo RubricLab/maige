@@ -13,7 +13,9 @@ interface ExtendedUser
 	extends DefaultUser,
 		Pick<User, 'userName' | 'githubUserId'> {}
 
-interface ExtendedSessionUser extends DefaultUser, Pick<User, 'userName'> {}
+interface ExtendedSessionUser
+	extends DefaultUser,
+		Pick<User, 'userName' | 'usage'> {}
 
 /* ********* DON'T EDIT ********* */
 

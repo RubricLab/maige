@@ -39,6 +39,7 @@ export const authOptions: AuthOptions = {
 		session: async ({session, user}) => {
 			session.user.id = user.id
 			session.user.userName = user.userName
+			session.user.usage = user.usage
 			return session
 		}
 	}
