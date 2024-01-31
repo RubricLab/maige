@@ -9,9 +9,7 @@ import type {AdapterUser as DefaultAdapterUser} from 'next-auth/adapters'
 
 /* ************ EDIT ************ */
 
-interface ExtendedUser
-	extends Omit<ExtendedUser, 'id'>,
-		Pick<User, 'userName' | 'githubUserId'> {}
+interface ExtendedUser extends Pick<User, 'userName' | 'githubUserId'> {}
 
 interface ExtendedSessionUser extends DefaultUser, Pick<User, 'userName'> {}
 
@@ -21,7 +19,7 @@ declare module 'next-auth' {
 	interface Profile extends DefaultProfile, ExtendedUser {}
 
 	interface User extends ExtendedUser {
-		id?: string
+		id?: User['id']
 	}
 
 	interface Session extends DefaultSession {
