@@ -209,7 +209,7 @@ export const Homepage = () => {
 			{/* Footer */}
 			<section className='center text-primary relative h-screen w-screen space-y-4'>
 				<div className='from-primary to-primary absolute h-full w-full bg-gradient-to-b via-transparent opacity-30' />
-				<div className='space-x-1 px-4 text-center font-jakarta text-xl'>
+				<div className='z-10 space-x-1 px-4 text-center font-jakarta text-xl'>
 					<span>an</span>
 					<Link
 						className='underline'
