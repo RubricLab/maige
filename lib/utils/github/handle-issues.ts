@@ -91,8 +91,6 @@ export default function handleIssues(webhook: Webhooks<unknown>) {
 			comment: comment
 		})
 
-		console.log('prompt', prompt)
-
 		// Increase usage per project
 		await incrementUsage(repository.id)
 
