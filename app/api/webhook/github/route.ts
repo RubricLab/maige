@@ -56,6 +56,4 @@ webhook.on('installation.deleted', async ({payload}) => {
 webhook.on(['issues.opened', 'issue_comment.created'], async ({payload}) => {
 	await handleIssues(payload)
 })
-webhook.on(['pull_request'], async ({payload}) => {
-	await handlePullRequests(payload)
-})
+webhook.on(['pull_request'], handlePullRequests)

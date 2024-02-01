@@ -61,16 +61,22 @@ export default async function handleIssues(
 	})
 
 	// Remove later: Handle user requests for existing users (Feb 1st, 2024)
-	if (!project)
+	if (!project) {
 		// Not ideal since a slug isn't always unique (only unique to organization)
 		// But the number of existing projects is small, so there would be low conflicts
 		project = await prisma.project.findFirst({
-			where: {slug: repository.name},
+			where: {
+				slug: repository.name,
+				user: {userName: repository.owner.login}
+			},
 			select: {
 				id: true,
 				instructions: true
 			}
 		})
+		if (!project)
+			return new Response('Project not found in database', {status: 400})
+	}
 
 	// Get GitHub app instance access token
 	const app = new App({
