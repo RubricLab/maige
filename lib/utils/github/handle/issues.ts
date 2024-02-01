@@ -13,9 +13,11 @@ import {getPrompt} from '../../prompt'
 /**
  * Handle when a new issue is created or a comment is created on an existing issue
  */
-export default async function handleIssues(
+export default async function handleIssues({
+	payload
+}: {
 	payload: IssueCommentCreatedEvent | IssuesOpenedEvent
-) {
+}) {
 	const {
 		sender: {login: senderGithubUserName},
 		installation: {id: instanceId},

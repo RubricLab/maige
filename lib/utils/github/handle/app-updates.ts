@@ -10,11 +10,13 @@ import {getMainBranch} from '../../github'
 /**
  * Handles if a repository(s) is added or removed for an existing installation
  */
-export default async function handleAppUpdates(
+export default async function handleAppUpdates({
+	payload
+}: {
 	payload:
 		| InstallationRepositoriesAddedEvent
 		| InstallationRepositoriesRemovedEvent
-) {
+}) {
 	const {
 		repositories_added: addedRepos,
 		repositories_removed: removedRepos,

@@ -6,9 +6,11 @@ import {getMainBranch} from '../../github'
 /**
  * App installation
  */
-export default async function handleAppInstall(
+export default async function handleAppInstall({
+	payload
+}: {
 	payload: InstallationCreatedEvent
-) {
+}) {
 	const {
 		repositories,
 		installation: {

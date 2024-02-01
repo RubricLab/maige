@@ -3,9 +3,11 @@ import {Repository} from '~/types'
 /**
  * App un-installation
  */
-export default async function handleAppUnInstall(
+export default async function handleAppUnInstall({
+	payload
+}: {
 	payload: InstallationDeletedEvent
-) {
+}) {
 	const {
 		repositories,
 		installation: {
