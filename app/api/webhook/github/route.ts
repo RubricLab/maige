@@ -40,60 +40,7 @@ export const POST = async (req: Request) => {
 			)
 		})
 
-		const result = await prisma.run.create({
-			data: {
-				projectId: projectId,
-				issueNum: issue?.number,
-				issueUrl: issue?.html_url
-			}
-		})
-
-		try {
-			await maige({
-				input: prompt,
-				octokit,
-				runId: result.id,
-				customerId: userId,
-				projectId,
-				repoFullName: `${owner}/${name}`,
-				issueNumber: issue?.number,
-				issueId: issue?.node_id,
-				pullUrl: issue?.pull_request?.url || pr?.url || null,
-				allLabels,
-				comment,
-				beta
-			})
-		} catch (error) {
-			console.error(error)
-			await prisma.run.update({
-				where: {
-					id: result.id
-				},
-				data: {
-					status: 'failed',
-					finishedAt: new Date()
-				}
-			})
-			return new Response(`Something went wrong: ${error}`, {status: 500})
-		}
-
-		await prisma.run.update({
-			where: {
-				id: result.id
-			},
-			data: {
-				status: 'completed',
-				finishedAt: new Date()
-			}
-		})
-
-		return new Response('ok', {status: 200})
-	} catch (error) {
-		console.error(error)
-		return new Response(`Something went wrong: ${error}`, {status: 500})
-	}
-
-  return new Response('Webhook received', {status: 203})
+	return new Response('Webhook received', {status: 203})
 }
 
 // Handle webhooks
