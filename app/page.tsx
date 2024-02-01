@@ -1,4 +1,5 @@
 import {redirect} from 'next/navigation'
+import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
 import {Homepage} from './home/page'
 
