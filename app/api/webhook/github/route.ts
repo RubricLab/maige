@@ -22,12 +22,21 @@ export const POST = async (req: Request) => {
 	const hdrs = headers()
 
 	// Verify webhook signature
-	await webhook.verifyAndReceive({
-		id: hdrs.get('x-github-delivery')!,
-		name: hdrs.get('x-github-event') as any,
-		signature: hdrs.get('x-hub-signature')!,
-		payload: await req.text()
-	})
+	await webhook
+		.verifyAndReceive({
+			id: hdrs.get('x-github-delivery')!,
+			name: hdrs.get('x-github-event') as any,
+			signature: hdrs.get('x-hub-signature')!,
+			payload: await req.text()
+		})
+		.catch(err => {
+			return new Response(
+				`Webhook signature could not be verified: ${JSON.stringify(err)}`,
+				{
+					status: 500
+				}
+			)
+		})
 
 	return new Response()
 }
