@@ -71,12 +71,12 @@ export async function maige({
 			instructionCommentLink: comment?.html_url
 		}),
 		githubTool({octokit}),
-		codebaseSearch({customerId, repoFullName}),
-		...(beta
+		...(customerId ? [codebaseSearch({customerId, repoFullName})] : []),
+		...(beta && customerId
 			? [dispatchEngineer({issueNumber, repoFullName, customerId, projectId})]
 			: []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
-		...(pullUrl && beta
+		...(pullUrl && beta && customerId
 			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId, projectId})]
 			: [])
 	]
