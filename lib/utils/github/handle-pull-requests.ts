@@ -1,13 +1,10 @@
-import {Webhooks} from '@octokit/webhooks'
+import {PullRequestEvent} from '@octokit/webhooks-types'
 
 /**
  * Handle pull requests
  */
-export default function handlePullRequests(webhook: Webhooks<unknown>) {
-	webhook.on(['pull_request'], async ({payload}) => {
-		const {pull_request: pr} = payload
-
-		// TODO: add code to optimize PR reviewing
-		if (pr) return new Response('PR received', {status: 202})
-	})
+export default function handlePullRequests(payload: PullRequestEvent) {
+	const {pull_request: pr} = payload
+	// TODO: add code to optimize PR reviewing
+	if (pr) return new Response('PR received', {status: 202})
 }

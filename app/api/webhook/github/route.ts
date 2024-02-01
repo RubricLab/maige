@@ -41,8 +41,21 @@ export const POST = async (req: Request) => {
 	return new Response()
 }
 
-handleAppInstall(webhook)
-handleAppUpdates(webhook)
-handleAppUnInstall(webhook)
-handleIssues(webhook)
-handlePullRequests(webhook)
+// Handle webhooks
+webhook.on(
+	'installation.created',
+	async ({payload}) => await handleAppInstall(payload)
+)
+webhook.on(
+	['installation_repositories.added', 'installation_repositories.removed'],
+	async ({payload}) => await handleAppUpdates(payload)
+)
+webhook.on('installation.deleted', async ({payload}) => {
+	await handleAppUnInstall(payload)
+})
+webhook.on(['issues.opened', 'issue_comment.created'], async ({payload}) => {
+	await handleIssues(payload)
+})
+webhook.on(['pull_request'], async ({payload}) => {
+	await handlePullRequests(payload)
+})
