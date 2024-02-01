@@ -20,7 +20,7 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 		}
 	})
 
-	const {Project: projects} = team || {Project: []}
+	const {Project: projects} = team
 
 	return (
 		<div className='flex flex-col items-center'>
