@@ -103,7 +103,7 @@ export async function maige({
 		githubTool({octokit}),
 		codebaseSearch({customerId, repoFullName}),
 		...(beta
-			? [dispatchEngineer({issueNumber, repoFullName, customerId, projectId})]
+			? [dispatchEngineer({runId, issueNumber, repoFullName, customerId, projectId})]
 			: []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
 		...(pullUrl && beta
