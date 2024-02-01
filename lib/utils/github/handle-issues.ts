@@ -72,11 +72,6 @@ export default async function handleIssues(
 			}
 		})
 
-	if (!project)
-		return new Response(`Project does not exist in database`, {
-			status: 500
-		})
-
 	// Get GitHub app instance access token
 	const app = new App({
 		appId: env.GITHUB_APP_ID || '',
@@ -114,7 +109,7 @@ export default async function handleIssues(
 	})
 
 	// Increase usage per project
-	await incrementUsage(repository.id)
+	await incrementUsage(project.id)
 
 	// Check if user exists
 	// TODO: ideally we want to use senderGithubId since userName can change but id stays the same
@@ -128,10 +123,20 @@ export default async function handleIssues(
 		? await prisma.project.findFirst({
 				where: {
 					githubProjectId: repository.id.toString(),
-					team: {memberships: {some: {userId: user.id}}}
+					team: {
+						memberships: {
+							some: {
+								userId: user.id
+							}
+						}
+					}
 				},
 				include: {
-					team: {include: {memberships: true}}
+					team: {
+						include: {
+							memberships: true
+						}
+					}
 				}
 			})
 		: null

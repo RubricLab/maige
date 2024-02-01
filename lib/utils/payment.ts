@@ -6,10 +6,10 @@ import {Tier} from '~/types'
 /**
  * Increment usage count for a project
  */
-export async function incrementUsage(githubProjectId: number) {
+export async function incrementUsage(projectId: string) {
 	await prisma.project.update({
 		where: {
-			githubProjectId: githubProjectId.toString()
+			id: projectId
 		},
 		data: {
 			totalUsage: {
