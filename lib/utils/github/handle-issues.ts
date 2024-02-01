@@ -47,13 +47,31 @@ export default function handleIssues(webhook: Webhooks<unknown>) {
 		}
 
 		// Get project
-		const project = await prisma.project.findUnique({
+		let project = null
+		project = await prisma.project.findUnique({
 			where: {githubProjectId: repository.id.toString()},
 			select: {
 				id: true,
 				instructions: true
 			}
 		})
+
+		// Remove later: Handle user requests for existing users (Feb 1st, 2024)
+		if (!project)
+			// Not ideal since a slug isn't always unique (only unique to organization)
+			// But the number of existing projects is small, so there would be low conflicts
+			project = await prisma.project.findFirst({
+				where: {slug: repository.name},
+				select: {
+					id: true,
+					instructions: true
+				}
+			})
+
+		if (!project)
+			return new Response(`Project does not exist in database`, {
+				status: 500
+			})
 
 		// Get GitHub app instance access token
 		const app = new App({
