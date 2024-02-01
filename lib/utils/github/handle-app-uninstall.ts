@@ -4,7 +4,7 @@ import {Repository} from '~/types'
 /**
  * App un-installation
  */
-export default function handleUnInstall(webhook: Webhooks<unknown>) {
+export default function handleAppUnInstall(webhook: Webhooks<unknown>) {
 	webhook.on('installation.deleted', async ({payload}) => {
 		const {
 			repositories,

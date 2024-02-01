@@ -6,7 +6,7 @@ import {getMainBranch} from '../github'
 /**
  * App installation
  */
-export default function handleInstall(webhook: Webhooks<unknown>) {
+export default function handleAppInstall(webhook: Webhooks<unknown>) {
 	webhook.on('installation.created', async ({payload}) => {
 		const {
 			repositories,

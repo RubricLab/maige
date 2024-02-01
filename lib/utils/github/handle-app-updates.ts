@@ -7,7 +7,7 @@ import {getMainBranch} from '../github'
 /**
  * Handles if a repository(s) is added or removed for an existing installation
  */
-export default function handleUpdates(webhook: Webhooks<unknown>) {
+export default function handleAppUpdates(webhook: Webhooks<unknown>) {
 	webhook.on(
 		['installation_repositories.added', 'installation_repositories.removed'],
 		async ({payload}) => {

@@ -1,10 +1,11 @@
 import {Webhooks} from '@octokit/webhooks'
 import {headers} from 'next/headers'
 import env from '~/env.mjs'
-import handleInstall from '~/utils/github/handle-install'
+import handleAppInstall from '~/utils/github/handle-app-install'
+import handleAppUnInstall from '~/utils/github/handle-app-uninstall'
+import handleAppUpdates from '~/utils/github/handle-app-updates'
 import handleIssues from '~/utils/github/handle-issues'
-import handleUnInstall from '~/utils/github/handle-uninstall'
-import handleUpdates from '~/utils/github/handle-updates'
+import handlePullRequests from '~/utils/github/handle-pull-requests'
 
 export const maxDuration = 300
 
@@ -31,16 +32,8 @@ export const POST = async (req: Request) => {
 	return new Response()
 }
 
-handleInstall(webhook)
-handleUpdates(webhook)
-handleUnInstall(webhook)
+handleAppInstall(webhook)
+handleAppUpdates(webhook)
+handleAppUnInstall(webhook)
 handleIssues(webhook)
-
-/**
- * Pull request related events.
- */
-webhook.on('pull_request', ({payload}) => {
-	const {pull_request: pr} = payload
-	// TODO: remove this once we optimize PR reviewing
-	if (pr) return new Response('PR received', {status: 202})
-})
+handlePullRequests(webhook)
