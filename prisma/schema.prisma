@@ -43,7 +43,7 @@ model User {
 
 model Project {
   id              String   @id @default(cuid())
-  githubProjectId String?  @unique @default(cuid())
+  githubProjectId String?  @unique
   slug            String?
   name            String?
   private         Boolean  @default(true)
