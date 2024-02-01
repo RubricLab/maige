@@ -1,6 +1,6 @@
 # Maige
 
-Repo maintenance made simpler.
+Repo maintenance made simple.
 
 Quickly set up Maige and let AI handle your issue labels with ease. Get started at [Maige.app](https://maige.app).
 
