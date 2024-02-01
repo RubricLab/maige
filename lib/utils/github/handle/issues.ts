@@ -6,9 +6,9 @@ import {
 import {maige} from '~/agents/maige'
 import env from '~/env.mjs'
 import {Comment} from '~/types'
-import {getRepoMeta} from '../github'
-import {incrementUsage} from '../payment'
-import {getPrompt} from '../prompt'
+import {getRepoMeta} from '../../github'
+import {incrementUsage} from '../../payment'
+import {getPrompt} from '../../prompt'
 
 /**
  * Handle when a new issue is created or a comment is created on an existing issue

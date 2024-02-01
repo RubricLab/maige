@@ -1,7 +1,7 @@
 import {InstallationCreatedEvent} from '@octokit/webhooks-types'
 import {Repository} from '~/types'
-import Weaviate from '../embeddings/db'
-import {getMainBranch} from '../github'
+import Weaviate from '../../embeddings/db'
+import {getMainBranch} from '../../github'
 
 /**
  * App installation
@@ -23,18 +23,31 @@ export default async function handleAppInstall(
 	} = payload
 
 	// Get user & request to add project
-	const user = await prisma.user.findUnique({
-		where: {
-			githubUserId: githubUserId.toString()
-		},
-		select: {
-			id: true,
-			addProject: {
-				take: 1,
-				orderBy: {createdAt: 'desc'}
+	const user =
+		(await prisma.user.findUnique({
+			where: {
+				githubUserId: githubUserId.toString()
+			},
+			select: {
+				id: true,
+				addProject: {
+					take: 1,
+					orderBy: {createdAt: 'desc'}
+				}
 			}
-		}
-	})
+		})) ||
+		(await prisma.user.findUnique({
+			where: {
+				userName
+			},
+			select: {
+				id: true,
+				addProject: {
+					take: 1,
+					orderBy: {createdAt: 'desc'}
+				}
+			}
+		}))
 
 	if (!user?.id)
 		return new Response(`Could not find user ${userName}`, {

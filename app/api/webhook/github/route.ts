@@ -1,11 +1,13 @@
 import {Webhooks} from '@octokit/webhooks'
 import {headers} from 'next/headers'
 import env from '~/env.mjs'
-import handleAppInstall from '~/utils/github/handle-app-install'
-import handleAppUnInstall from '~/utils/github/handle-app-uninstall'
-import handleAppUpdates from '~/utils/github/handle-app-updates'
-import handleIssues from '~/utils/github/handle-issues'
-import handlePullRequests from '~/utils/github/handle-pull-requests'
+import {
+	handleAppInstall,
+	handleAppUnInstall,
+	handleAppUpdates,
+	handleIssues,
+	handlePullRequests
+} from '~/utils/github/handle/'
 
 export const maxDuration = 300
 

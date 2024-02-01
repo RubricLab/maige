@@ -4,8 +4,8 @@ import {
 } from '@octokit/webhooks-types'
 import {GITHUB} from '~/constants'
 import {Repository} from '~/types'
-import Weaviate from '../embeddings/db'
-import {getMainBranch} from '../github'
+import Weaviate from '../../embeddings/db'
+import {getMainBranch} from '../../github'
 
 /**
  * Handles if a repository(s) is added or removed for an existing installation
