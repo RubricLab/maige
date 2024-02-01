@@ -22,8 +22,6 @@ export default async function handleAppInstall(
 		sender: {id: githubUserId, login: userName}
 	} = payload
 
-	// TODO: add aditional check to use username to get github ID
-
 	// Get user & request to add project
 	const user = await prisma.user.findUnique({
 		where: {
