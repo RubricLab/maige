@@ -2,21 +2,49 @@ import {App} from '@octokit/app'
 import {Webhooks} from '@octokit/webhooks'
 import {maige} from '~/agents/maige'
 import env from '~/env.mjs'
+import {Comment} from '~/types'
 import {getRepoMeta} from '../github'
 import {incrementUsage} from '../payment'
-import {getPromptForIssue} from '../prompt'
+import {getPrompt} from '../prompt'
 
 /**
- * Handle when a new issue is created
+ * Handle when a new issue is created or a comment is created on an existing issue
  */
 export default function handleIssues(webhook: Webhooks<unknown>) {
-	webhook.on('issues.opened', async ({payload}) => {
+	webhook.on(['issues.opened', 'issue_comment.created'], async ({payload}) => {
 		const {
-			sender: {login: senderGithubUserName, id: senderGithubId},
+			sender: {login: senderGithubUserName},
 			installation: {id: instanceId},
 			repository,
-			issue
+			issue,
+			action
 		} = payload
+
+		// Handle comment being created on an issue
+		let comment: Comment = null
+		if (action === 'created') {
+			const {
+				comment: {
+					user: {login: commenterUserName},
+					body: commentBody,
+					html_url: commentHtmlUrl
+				}
+			} = payload
+
+			// Comment is made by Maige
+			if (senderGithubUserName.includes('maige'))
+				return new Response('Comment by Maige', {status: 202})
+
+			// Comment did not include reference to Maige
+			if (!payload.comment.body.toLowerCase().includes('maige'))
+				return new Response('Irrelevant comment', {status: 202})
+
+			comment = {
+				name: commenterUserName,
+				body: commentBody,
+				html_url: commentHtmlUrl
+			}
+		}
 
 		// Get project
 		const project = await prisma.project.findUnique({
@@ -42,7 +70,7 @@ export default function handleIssues(webhook: Webhooks<unknown>) {
 		})
 
 		// Construct prompt
-		const prompt = getPromptForIssue({
+		const prompt = getPrompt({
 			repo: {
 				id: repository.id,
 				description: repoDescription,
@@ -55,16 +83,15 @@ export default function handleIssues(webhook: Webhooks<unknown>) {
 			instructions: project.instructions,
 			labels: allLabels,
 			issue: {
-				// @ts-ignore
 				id: issue.id,
-				// @ts-ignore
 				title: issue.title,
-				// @ts-ignore
 				body: issue.body,
-				// @ts-ignore
 				number: issue.number
-			}
+			},
+			comment: comment
 		})
+
+		console.log('prompt', prompt)
 
 		// Increase usage per project
 		await incrementUsage(repository.id)
@@ -95,14 +122,11 @@ export default function handleIssues(webhook: Webhooks<unknown>) {
 			customerId: membership ? user.id : null,
 			projectId: project.id,
 			repoFullName: repository.full_name,
-			// @ts-ignore
 			issueNumber: issue?.number,
-			// @ts-ignore
 			issueId: issue?.node_id,
-			// @ts-ignore
 			pullUrl: issue?.pull_request?.url || null,
 			allLabels,
-			comment: null,
+			comment: comment,
 			beta: true
 		})
 	})

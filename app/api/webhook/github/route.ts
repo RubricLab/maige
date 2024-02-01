@@ -37,23 +37,6 @@ handleUnInstall(webhook)
 handleIssues(webhook)
 
 /**
- * Comments on issues. We care about new comments.
- */
-webhook.on(['issue_comment'], ({payload}) => {
-	const {
-		comment,
-		sender: {login: sender},
-		installation: {id: instanceId}
-	} = payload
-
-	if (sender.includes('maige'))
-		return new Response('Comment by Maige', {status: 202})
-
-	if (comment && !comment.body.toLowerCase().includes('maige'))
-		return new Response('Irrelevant comment', {status: 202})
-})
-
-/**
  * Pull request related events.
  */
 webhook.on('pull_request', ({payload}) => {

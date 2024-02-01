@@ -23,4 +23,10 @@ export type Issue = {
 	body: string
 }
 
+export type Comment = {
+	name: string
+	body: string
+	html_url: string
+}
+
 export type Tier = keyof typeof TIERS
