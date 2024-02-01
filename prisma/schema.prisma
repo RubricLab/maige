@@ -52,7 +52,7 @@ model Project {
 
   user         User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  usage        Usage[]
+  runs         Run[]
   instructions Instruction[]
 
   @@index([createdBy])
@@ -66,7 +66,7 @@ model AddProject {
   teamId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  completedAt DateTime?
+  completedAt DateTime? @db.DateTime()
 
   user User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
@@ -92,23 +92,54 @@ model Instruction {
   @@index([createdBy])
 }
 
-model Usage {
-  id               String   @id @default(cuid())
-  projectId        String
-  action           String
-  agent            String
-  promptTokens     Int
-  completionTokens Int
-  totalTokens      Int
-  model            String
-  createdAt        DateTime @default(now())
+enum Status {
+  in_progress
+  completed
+  failed
+}
 
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+enum Model {
+  gpt_3_turbo //GPT-3.5-turbo
+  gpt_4_turbo_preview //GPT-4-turbo
+}
+
+enum Agent {
+  labeler
+  reviewer
+  engineer
+}
+
+model Run {
+  id         String    @id @default(cuid())
+  issueNum   Int       @db.Int
+  issueUrl   String    @db.Text
+  projectId  String
+  createdAt  DateTime  @default(now())
+  finishedAt DateTime?
+  status     Status    @default(in_progress)
+  project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  logs       Log[]
 
   @@index([projectId])
-  @@fulltext([action])
-  @@fulltext([agent])
-  @@fulltext([action, agent])
+  @@index([issueNum])
+}
+
+model Log {
+  id               String    @id @default(cuid())
+  runId            String
+  action           String
+  agent            Agent
+  model            Model
+  status           Status    @default(in_progress)
+  promptTokens     Int?
+  completionTokens Int?
+  totalTokens      Int?
+  createdAt        DateTime  @default(now())
+  finishedAt       DateTime?
+
+  run Run @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
 }
 
 model Feedback {
