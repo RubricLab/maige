@@ -1,15 +1,17 @@
-import {Cal, Highlight, Precedent, Trigger} from './'
+import {Cal, Documenso, Highlight, Nuxt, Precedent, Trigger} from './'
 
 export const Logos = () => {
 	return (
-		<div className='flex flex-col items-center gap-2 py-8'>
-			<p className='text-sm text-white/60'>Used by 1.7k+ repos</p>
-			<div className='flex flex-row flex-wrap items-center justify-center gap-5 text-white/60'>
-				<Highlight className='h-6 hover:text-white' />
-				<Precedent className='group h-6 hover:text-white' />
-				<Cal className='h-5 hover:text-white' />
-				<Trigger className='h-6 hover:text-white' />
+		<>
+			<p className='text-tertiary font-monocraft'>Used by 1.8k++ repos:</p>
+			<div className='center gap-12 sm:gap-14'>
+				<Documenso className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+				<Nuxt className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+				<Highlight className='h-9 opacity-60 transition-opacity hover:opacity-100' />
+				<Cal className='h-8 opacity-60 transition-opacity hover:opacity-100' />
+				<Trigger className='h-9 opacity-60 transition-opacity hover:opacity-100' />
+				<Precedent className='h-9 opacity-60 transition-opacity hover:opacity-100' />
 			</div>
-		</div>
+		</>
 	)
 }

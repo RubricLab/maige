@@ -2,13 +2,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import fullFlow from '~/assets/full-flow.png'
 import future from '~/assets/future.png'
+import instructionsUi from '~/assets/instructions-ui.png'
 import joshuaTreeDay from '~/assets/joshua-tree-day.png'
 import joshuaTreeNight from '~/assets/joshua-tree-night.png'
-import labelFlow from '~/assets/label-flow.png'
+import spaceGreenhouse from '~/assets/spaceship-greenhouse.png'
 import {Auth} from '~/components/Auth'
 import {Header} from '~/components/Header'
-import {Cal, Highlight, Precedent, Trigger} from '~/components/logos'
-import {Nuxt} from '~/components/logos/Nuxt'
+import {LabelFlow} from '~/components/assets/LabelFlow'
+import {Logos} from '~/components/logos/Logos'
 
 const loomConfig = {
 	hide_owner: 'true',
@@ -32,9 +33,8 @@ const DemoVideo = () => (
 	</div>
 )
 
-const todayString = new Date().toISOString().split('T')[0].replaceAll('-', '/')
-
-const Page = async () => {
+export const Homepage = () => {
+	const todayString = new Date().toISOString().split('T')[0].replaceAll('-', '/')
 	return (
 		<div className='relative w-screen space-y-6 overflow-hidden sm:space-y-12'>
 			<Header />
@@ -62,41 +62,36 @@ const Page = async () => {
 				</div>
 			</section>
 			{/* Logos */}
-			<section className='center space-y-16 p-4 sm:p-24'>
-				<p className='text-tertiary font-monocraft'>Used by 1.8k++ repos:</p>
-				<div className='center gap-12 sm:gap-14'>
-					<Cal className='h-10 opacity-60 transition-opacity hover:opacity-100' />
-					<Trigger className='h-10 opacity-60 transition-opacity hover:opacity-100' />
-					<Precedent className='h-10 opacity-60 transition-opacity hover:opacity-100' />
-					<Highlight className='h-10 opacity-60 transition-opacity hover:opacity-100' />
-					<Nuxt className='h-10 opacity-60 transition-opacity hover:opacity-100' />
-				</div>
+			<section className='center space-y-14 p-4 sm:p-24'>
+				<Logos />
 			</section>
 			{/* How-to */}
-			<section className='center text-secondary min-h-screen space-y-12 px-4 py-20 sm:space-y-20 sm:py-40'>
+			<section className='center text-secondary min-h-screen space-y-12 px-4 py-20 sm:space-y-16 sm:py-40'>
 				<h1 className='text-tertiary'>Get started in a few clicks:</h1>
-				<div className='max-w-xl space-y-4'>
-					<h2 className='text-primary'>1. Connect your repo</h2>
+				<div className='max-w-xl space-y-3 text-center'>
+					<span className='text-tertiary font-monocraft text-7xl'>1</span>
+					<h2 className='text-primary font-jakarta'>Connect your repo</h2>
 					<p className='text-xl'>
 						When you connect, we create three things: a webhook, embeddings of your
 						entire codebase, and a sandbox environment.
 					</p>
 				</div>
-				<div className='flex w-full flex-wrap items-center gap-12'>
-					<div className='center relative w-full sm:w-1/2 sm:p-6'>
+				<div className='flex w-full flex-wrap items-center gap-12 sm:gap-16 sm:p-6'>
+					<div className='center relative w-full sm:w-1/2 '>
 						<Image
-							src={joshuaTreeDay}
-							alt='Joshua tree at day'
+							src={spaceGreenhouse}
+							alt='Astronaut attending to a spaceship greenhouse'
 							className='rounded-sm object-cover opacity-80'
 						/>
 						<Image
-							src={labelFlow}
+							src={instructionsUi}
 							alt='Maige labelling flow'
 							className='absolute w-11/12 rounded-sm shadow-2xl sm:w-5/6'
 						/>
 					</div>
-					<div className='max-w-md space-y-4'>
-						<h2 className='text-primary'>2. Write your rules</h2>
+					<div className='max-w-md space-y-3'>
+						<span className='text-tertiary font-monocraft text-7xl'>2</span>
+						<h2 className='text-primary font-jakarta'>Write your rules</h2>
 						<p className='text-xl'>
 							Simply describe what should happen when issues and PRs are opened.
 						</p>
@@ -106,22 +101,33 @@ const Page = async () => {
 						</p>
 					</div>
 				</div>
-				<div className='max-w-xl space-y-4'>
-					<h2 className='text-primary'>3. Watch it run</h2>
-					<p className='text-xl'>
-						Tell your community how to leverage your workflows. Monitor runs and
-						provide feedback in our dashboard.
-					</p>
+				<div className='flex w-full flex-wrap items-center justify-end gap-12'>
+					<div className='max-w-md space-y-3 text-right sm:pl-8'>
+						<span className='text-tertiary font-monocraft text-7xl'>3</span>
+						<h2 className='text-primary font-jakarta'>Watch it run</h2>
+						<p className='text-xl'>
+							Tell your community how to leverage your workflows. Monitor runs and
+							provide feedback in our dashboard.
+						</p>
+					</div>
+					<div className='center relative w-full sm:w-1/2 sm:p-6'>
+						<Image
+							src={joshuaTreeDay}
+							alt='Joshua tree at day'
+							className='rounded-sm object-cover opacity-80'
+						/>
+						<LabelFlow className='absolute w-11/12 rounded-sm shadow-2xl sm:w-5/6' />
+					</div>
 				</div>
 			</section>
 			{/* Examples */}
 			<section className='text-tertiary px-4 pb-20 sm:px-12'>
 				<div className='flex max-w-3xl flex-col space-y-8 '>
-					<h2>Maige flexibly works with the GitHub API to find a way.</h2>
+					<h2>Maige works flexibly with the GitHub API to find a way.</h2>
 					<div className='text-secondary space-y-6 text-2xl'>
 						<p>
 							+ maige always <span className='text-green-600'>assign</span>{' '}
-							<span className='text-yellow-600'>UI-related</span> issues to @milton
+							<span className='text-yellow-600'>UI-related</span> issues to @username
 						</p>
 						<p>
 							+ maige <span className='text-green-600'>label</span> .env PRs as
@@ -139,7 +145,7 @@ const Page = async () => {
 			<section className='center relative min-h-screen gap-8 py-8 font-monocraft sm:flex-row'>
 				<div className='absolute right-4 top-10 h-screen w-9 bg-sunset sm:right-10' />
 				<div className='z-10 flex w-full flex-col text-xl text-green-600 sm:pl-16'>
-					<div className='max-w-sm space-y-10 px-4 sm:max-w-lg sm:space-y-20'>
+					<div className='max-w-sm space-y-10 px-4 sm:max-w-lg sm:space-y-16'>
 						<p>
 							+ maige is an AI with access to GitHub. it can do anything you could do
 							in the UI.
@@ -174,42 +180,46 @@ const Page = async () => {
 					</p>
 				</div>
 				<div className='flex flex-wrap gap-4'>
-					<div className='center border-primary w-full rounded-sm border-2 p-4 sm:w-96 sm:p-10'>
+					<div className='center border-primary w-full rounded-sm border p-4 sm:w-96 sm:p-10'>
 						<div className='text-tertiary space-y-3 pb-8'>
-							<h2 className='text-secondary'>Standard Plan</h2>
+							<h2 className='text-secondary font-jakarta'>Standard Plan</h2>
 							<p className='text-primary text-2xl font-medium'>
 								$30.00 USD/<span className='text-secondary'>month</span>
 							</p>
-							<p>First 30 issues free to push Maige to its limits.</p>
-							<p>+ Auto-labelling</p>
-							<p>+ Auto-assignment</p>
-							<p>+ Auto-comments</p>
-							<p>+ Custom instructions</p>
-							<p>+ Code review</p>
-							<p>+ Code generation</p>
+							<div className='space-y-2'>
+								<p>First 30 issues free to push Maige to its limits.</p>
+								<p>+ Auto-labelling</p>
+								<p>+ Auto-assignment</p>
+								<p>+ Auto-comments</p>
+								<p>+ Custom instructions</p>
+								<p>+ Code review</p>
+								<p>+ Code generation</p>
+							</div>
 						</div>
-						<Auth text='Get started now' />
+						<Auth text='Start for free' />
+						<p className='text-tertiary mt-1 text-sm'>No credit card required</p>
 					</div>
-					<div className='text-tertiary border-tertiary w-full space-y-3 rounded-sm border-2 p-4 sm:w-96 sm:p-8'>
-						<h2>Enterprise</h2>
+					<div className='text-tertiary border-tertiary w-full space-y-3 rounded-sm border p-4 sm:w-96 sm:p-10'>
+						<h2 className='font-jakarta'>Enterprise</h2>
 						<p>Best for large teams.</p>
 						<p>Coming soon.</p>
 					</div>
 				</div>
 			</section>
 			{/* Footer */}
-			<section className='center text-primary relative h-screen w-screen space-y-4 dark:text-green-100'>
-				<div className='space-x-1 px-4 text-center text-lg'>
-					<span>maige is an</span>
+			<section className='center text-primary relative h-screen w-screen space-y-4'>
+				<div className='from-primary to-primary absolute h-full w-full bg-gradient-to-b via-transparent opacity-30' />
+				<div className='z-10 space-x-1 px-4 text-center font-jakarta text-xl'>
+					<span>an</span>
 					<Link
-						className='font-bold'
+						className='underline'
 						href='https://github.com/RubricLab/maige'
 						target='_blank'>
-						open-source experiment
+						open-source
 					</Link>
-					<span>by</span>
+					<span>experiment by</span>
 					<Link
-						className='font-bold'
+						className='underline'
 						href='https://rubriclabs.com'
 						target='_blank'>
 						Rubric Labs
@@ -218,11 +228,15 @@ const Page = async () => {
 				<Image
 					src={future}
 					alt='Future desert scene'
-					className='absolute -z-10 h-full w-full object-cover opacity-20'
+					className='absolute -z-10 h-full w-full object-cover opacity-50'
 				/>
 			</section>
 		</div>
 	)
+}
+
+const Page = async () => {
+	return <Homepage />
 }
 
 export default Page
