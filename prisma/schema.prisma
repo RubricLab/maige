@@ -193,7 +193,7 @@ model Team {
   creator     User         @relation(fields: [createdBy], references: [id], onDelete: Restrict)
   memberships Membership[]
   invites     Invite[]
-  Project     Project[]
+  projects    Project[]
   addProject  AddProject[]
 
   @@index([createdBy])

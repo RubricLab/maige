@@ -12,6 +12,15 @@ export type Repository = {
 	name: string
 	full_name: string
 	private: boolean
+	owner?: string
+	description?: string
+}
+
+export type Issue = {
+	id: number
+	number: number
+	title: string
+	body: string
 }
 
 export type Tier = keyof typeof TIERS
