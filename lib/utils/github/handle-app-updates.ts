@@ -30,18 +30,31 @@ export default async function handleAppUpdates(
 	} = payload
 
 	// Get user
-	const user = await prisma.user.findUnique({
-		where: {
-			githubUserId: githubUserId.toString()
-		},
-		select: {
-			id: true,
-			addProject: {
-				take: 1,
-				orderBy: {createdAt: 'desc'}
+	const user =
+		(await prisma.user.findUnique({
+			where: {
+				githubUserId: githubUserId.toString()
+			},
+			select: {
+				id: true,
+				addProject: {
+					take: 1,
+					orderBy: {createdAt: 'desc'}
+				}
 			}
-		}
-	})
+		})) ||
+		(await prisma.user.findUnique({
+			where: {
+				userName
+			},
+			select: {
+				id: true,
+				addProject: {
+					take: 1,
+					orderBy: {createdAt: 'desc'}
+				}
+			}
+		}))
 
 	if (!user?.id)
 		return new Response(`Could not find user ${userName}`, {
