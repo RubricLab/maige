@@ -7,29 +7,41 @@ import {cn} from '~/utils'
 import {getCurrentUser} from '~/utils/session'
 import {CustomTable, TableSearch} from '.'
 
-type UsageProject = {
+type RunProject = {
 	name: string
 	id: string
 }
 
-export type UsageRow = {
+export type RunLog = {
 	id: string
-	createdAt: Date
+	runId: string
 	action: string
 	agent: string
-	totalTokens: number
-	promptTokens: number
-	completionTokens: number
 	model: string
-	project: UsageProject
+	status: string
+	promptTokens?: number
+	completionTokens?: number
+	totalTokens?: number
+	createdAt: Date
+	finishedAt?: Date
+}
+
+export type RunRow = {
+	id: string
+	issueNum: number
+	issueUrl: string
+	projectId: string
+	createdAt: Date
+	finishedAt?: Date
+	status: string
+	project: RunProject
+	logs?: RunLog[]
 }
 
 const UsageParamsSchema = z.object({
 	q: z.coerce.string().optional(),
 	p: z.coerce.number().min(1).optional().default(1),
-	col: z
-		.enum(['createdAt', 'totalTokens', 'action', 'agent', 'model'])
-		.optional(),
+	col: z.enum(['createdAt', 'finishedAt', 'project', 'issueNum']).optional(),
 	dir: z.enum(['asc', 'desc']).optional()
 })
 
@@ -51,20 +63,20 @@ export async function UsageTable({
 	const pageSize = 5
 	const pageNum = usageQuery.data.p
 
-	const usageFilter = {
-		project: {user: {id: user.id}},
-		action: {contains: usageQuery.data.q}
-	}
+	// const usageFilter = {
+	// 	project: {user: {id: user.id}},
+	// 	agent: {contains: usageQuery.data.q}
+	// }
 
 	const usageOrder = {
 		...(usageQuery.data.col && {[usageQuery.data.col]: usageQuery.data.dir})
 	}
 
 	const start = performance.now()
-	const usage: UsageRow[] = await prisma.usage.findMany({
+	const runs: RunRow[] = await prisma.run.findMany({
 		take: pageSize,
 		skip: pageSize * (pageNum - 1),
-		where: usageFilter,
+		// where: usageFilter,
 		orderBy: usageOrder,
 		include: {
 			project: {
@@ -78,7 +90,7 @@ export async function UsageTable({
 
 	const end = performance.now()
 	const timeTaken = Math.floor(end - start)
-	const usageNum = usage?.length || 0
+	const usageNum = runs?.length || 0
 
 	const params = new URLSearchParams({
 		...(usageQuery.data.q ? {q: usageQuery.data.q} : {}),
@@ -105,7 +117,7 @@ export async function UsageTable({
 					teamSlug={teamSlug}
 					route={route}
 					params={usageQuery.data}
-					data={usage}
+					data={runs}
 				/>
 			</div>
 			<div className='flex justify-end space-x-2'>
