@@ -9,7 +9,6 @@ import dispatchReviewer from '~/tools/dispatchReviewer'
 import {githubTool} from '~/tools/github'
 import {labelTool} from '~/tools/label'
 import updateInstructionsTool from '~/tools/updateInstructions'
-import {Comment} from '~/types'
 import {isDev} from '~/utils/index'
 
 export async function maige({
@@ -34,7 +33,7 @@ export async function maige({
 	issueId?: string
 	pullUrl?: string
 	allLabels: any[]
-	comment: Comment
+	comment: any
 	beta?: boolean
 }) {
 	let tokens = {
@@ -68,16 +67,16 @@ export async function maige({
 			customerId,
 			issueId,
 			repoFullName,
-			instructionCreator: comment?.name,
+			instructionCreator: comment?.user?.login,
 			instructionCommentLink: comment?.html_url
 		}),
 		githubTool({octokit}),
-		...(customerId ? [codebaseSearch({customerId, repoFullName})] : []),
-		...(beta && customerId
+		codebaseSearch({customerId, repoFullName}),
+		...(beta
 			? [dispatchEngineer({issueNumber, repoFullName, customerId, projectId})]
 			: []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
-		...(pullUrl && beta && customerId
+		...(pullUrl && beta
 			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId, projectId})]
 			: [])
 	]
