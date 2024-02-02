@@ -43,4 +43,4 @@ Try these commands:
 
 Enjoy streamlined issue management with Maige! 🚀
 
-deploy
+deploy2
