@@ -31,32 +31,18 @@ export default async function handleAppUpdates({
 		sender: {id: githubUserId, login: userName}
 	} = payload
 
-	// Get user
-	const user =
-		(await prisma.user.findUnique({
-			where: {
-				githubUserId: githubUserId.toString()
-			},
-			select: {
-				id: true,
-				addProject: {
-					take: 1,
-					orderBy: {createdAt: 'desc'}
-				}
+	// Get user & request to add project
+	// TODO: Only use githubUserId eventually & replace with findUnique since userNames are mutable (added as a fallback for users before the migration) (Feb 2, 2024)
+	const user = await prisma.user.findFirst({
+		where: {OR: [{githubUserId: githubUserId.toString()}, {userName: userName}]},
+		select: {
+			id: true,
+			addProject: {
+				take: 1,
+				orderBy: {createdAt: 'desc'}
 			}
-		})) ||
-		(await prisma.user.findUnique({
-			where: {
-				userName
-			},
-			select: {
-				id: true,
-				addProject: {
-					take: 1,
-					orderBy: {createdAt: 'desc'}
-				}
-			}
-		}))
+		}
+	})
 
 	if (!user?.id)
 		return new Response(`Could not find user ${userName}`, {
