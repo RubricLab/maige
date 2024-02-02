@@ -46,7 +46,7 @@ export default function TeamForm() {
 			toast.error(state?.message)
 			console.error(state?.message)
 		}
-	}, [state])
+	}, [router, state])
 
 	return (
 		<form
