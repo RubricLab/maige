@@ -7,10 +7,26 @@ export type Label = {
 }
 
 export type Repository = {
-	id: string
+	id: number
+	node_id: string
 	name: string
 	full_name: string
 	private: boolean
+	owner?: string
+	description?: string
+}
+
+export type Issue = {
+	id: number
+	number: number
+	title: string
+	body: string
+}
+
+export type Comment = {
+	name: string
+	body: string
+	html_url: string
 }
 
 export type Tier = keyof typeof TIERS

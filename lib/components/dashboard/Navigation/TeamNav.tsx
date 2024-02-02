@@ -31,8 +31,8 @@ export default function TeamNav({teams, slug}: {teams: Team[]; slug: string}) {
 					aria-expanded={open}
 					className='w-[200px] justify-between'>
 					{value
-						? teams.find(team => team.slug === value).name
-						: teams.find(team => team.slug === slug).name}
+						? teams.find(team => team.slug === value)?.name
+						: teams.find(team => team.slug === slug)?.name}
 					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 				</Button>
 			</PopoverTrigger>

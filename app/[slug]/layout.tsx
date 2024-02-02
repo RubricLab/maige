@@ -9,14 +9,28 @@ async function Teams() {
 	const teams = await prisma.membership
 		.findMany({
 			where: {userId: user.id},
-			select: {team: true}
+			select: {
+				team: {
+					include: {
+						Project: {
+							select: {
+								id: true,
+								name: true
+							}
+						}
+					}
+				}
+			}
 		})
 		.then(memberships => memberships.map(m => m.team))
+
+	const projects = teams.reduce((projs, {Project}) => [...projs, ...Project], [])
 
 	return (
 		<DashboardHeader
 			user={user}
 			teams={teams}
+			projects={projects}
 		/>
 	)
 }

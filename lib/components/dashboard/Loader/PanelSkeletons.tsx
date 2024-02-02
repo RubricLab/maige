@@ -8,14 +8,15 @@ export function PanelSkeletons({amount}: {amount: number}) {
 			{new Array(amount).fill(null).map((_scratch, i) => (
 				<motion.div
 					key={i}
-					className='h-[200px] w-[400px] rounded-lg border-2 bg-primary'
+					className='bg-primary h-[200px] w-[400px] rounded-lg border-2'
 					animate={{opacity: 0.8}}
 					transition={{
 						from: 1,
 						duration: 1,
 						repeat: Infinity,
 						repeatType: 'loop'
-					}}></motion.div>
+					}}
+				/>
 			))}
 		</div>
 	)

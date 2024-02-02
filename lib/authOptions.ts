@@ -1,13 +1,12 @@
 import {PrismaAdapter} from '@auth/prisma-adapter'
-import {AuthOptions} from 'next-auth'
-import {AdapterUser} from 'next-auth/adapters'
-import GithubProvider, {type GithubProfile} from 'next-auth/providers/github'
+import {AuthOptions, Profile} from 'next-auth'
+import GithubProvider, {GithubProfile} from 'next-auth/providers/github'
 import prisma from '~/prisma'
 import env from './env.mjs'
 
 const prismaAdapter = PrismaAdapter(prisma)
 
-prismaAdapter.createUser = (data: AdapterUser & {userName: string}) => {
+prismaAdapter.createUser = data => {
 	return prisma.user.upsert({
 		// migration flow
 		where: {userName: data.userName},
@@ -20,17 +19,15 @@ prismaAdapter.createUser = (data: AdapterUser & {userName: string}) => {
 
 export const authOptions: AuthOptions = {
 	adapter: prismaAdapter,
-	session: {
-		strategy: 'jwt'
-	},
 	providers: [
 		GithubProvider({
 			clientId: env.GITHUB_CLIENT_ID as string,
 			clientSecret: env.GITHUB_CLIENT_SECRET as string,
-			profile(profile: GithubProfile) {
+			profile(profile: GithubProfile): Profile {
 				// Add user profile information
 				return {
 					id: profile.id.toString(),
+					githubUserId: profile.id.toString(),
 					name: profile.name,
 					email: profile.email,
 					image: profile.avatar_url,
@@ -40,13 +37,10 @@ export const authOptions: AuthOptions = {
 		})
 	],
 	callbacks: {
-		session: async ({token, session}) => {
-			if (token) {
-				session.user.id = token.sub
-				session.user.name = token.name
-				session.user.email = token.email
-				session.user.image = token.picture
-			}
+		session: async ({session, user}) => {
+			session.user.id = user.id
+			session.user.userName = user.userName
+			session.user.usage = user.usage
 			return session
 		}
 	}

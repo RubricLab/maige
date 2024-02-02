@@ -1,13 +1,16 @@
 'use server'
 import {z} from 'zod'
-import {getCurrentUser} from '~/utils/session'
 import prisma from '~/prisma'
+import {getCurrentUser} from '~/utils/session'
 
 const schema = z.object({
 	teamId: z.string()
 })
 
-export default async function addProject(prevState: any, formData: FormData) {
+export default async function createProjectIntent(
+	prevState: any,
+	formData: FormData
+) {
 	const user = await getCurrentUser()
 	if (!user)
 		return {

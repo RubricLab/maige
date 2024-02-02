@@ -1,5 +1,6 @@
+import {Project} from '@prisma/client'
 import {CommandIcon, Search as SearchIcon} from 'lucide-react'
-import {useRouter} from 'next/navigation'
+import {usePathname, useRouter} from 'next/navigation'
 import {useEffect, useState} from 'react'
 import {Button} from '~/components/ui/button'
 import {
@@ -11,20 +12,46 @@ import {
 	CommandList
 } from '~/components/ui/command'
 
-const routes = [
-	{
-		name: 'Home',
-		path: '/'
-	},
-	{
-		name: 'Usage',
-		path: '/usage'
-	}
-]
+type Props = {
+	projects: Project[]
+}
 
-export function CommandMenu() {
+export function CommandMenu({projects}: Props) {
 	const [open, setOpen] = useState(false)
 	const router = useRouter()
+	const pathname = usePathname()
+	const teamSlug = pathname.split('/')[1] ?? ''
+	const groups = [
+		{
+			title: 'Pages',
+			actions: [
+				{
+					name: 'Projects',
+					path: `/${teamSlug}`
+				},
+				{
+					name: 'Usage',
+					path: `/${teamSlug}/usage`
+				},
+				{
+					name: 'Settings',
+					path: `/${teamSlug}/settings`
+				},
+
+				{
+					name: 'Landing Page',
+					path: '/home'
+				}
+			]
+		},
+		{
+			title: 'Projects',
+			actions: projects.map(project => ({
+				name: project.name,
+				path: `/${teamSlug}/project/${project.id}`
+			}))
+		}
+	]
 
 	useEffect(() => {
 		const down = (e: KeyboardEvent) => {
@@ -65,18 +92,22 @@ export function CommandMenu() {
 				<CommandInput placeholder='Type a command or search...' />
 				<CommandList>
 					<CommandEmpty>No results found.</CommandEmpty>
-					<CommandGroup heading='Pages'>
-						{routes.map(({name, path}) => (
-							<CommandItem
-								key={path}
-								onSelect={() => {
-									router.push(`/dashboard/${path}`)
-									setOpen(false)
-								}}>
-								{name}
-							</CommandItem>
-						))}
-					</CommandGroup>
+					{groups.map(({title, actions}) => (
+						<CommandGroup
+							heading={title}
+							key={title}>
+							{actions.map(({name, path}) => (
+								<CommandItem
+									key={path}
+									onSelect={() => {
+										router.push(path)
+										setOpen(false)
+									}}>
+									{name}
+								</CommandItem>
+							))}
+						</CommandGroup>
+					))}
 				</CommandList>
 			</CommandDialog>
 		</>

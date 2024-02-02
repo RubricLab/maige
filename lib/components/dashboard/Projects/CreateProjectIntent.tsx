@@ -4,7 +4,7 @@ import {PlusIcon} from 'lucide-react'
 import {useEffect} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
 import {toast} from 'sonner'
-import addProject from '~/actions/add-project'
+import createProjectIntent from '~/actions/create-project-intent'
 import {Button} from '~/components/ui/button'
 import {Input} from '~/components/ui/input'
 import env from '~/env.mjs'
@@ -20,7 +20,7 @@ function AddButton() {
 	return (
 		<Button
 			type='submit'
-			className='border-tertiary hover:border-secondary relative flex h-36 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border !border-dashed bg-transparent p-4 py-3.5 transition-opacity duration-300'
+			className='border-tertiary hover:border-secondary relative flex h-full min-h-36 w-full cursor-pointer items-center justify-center gap-2 rounded-sm border !border-dashed bg-transparent p-4 py-3.5 text-base transition-opacity duration-300'
 			disabled={pending}>
 			<PlusIcon />
 			Add project
@@ -28,8 +28,8 @@ function AddButton() {
 	)
 }
 
-export default function AddProject({teamId}: {teamId: string}) {
-	const [state, formAction] = useFormState(addProject, initialState)
+export default function CreateProjectIntent({teamId}: {teamId: string}) {
+	const [state, formAction] = useFormState(createProjectIntent, initialState)
 
 	// Handle response
 	useEffect(() => {

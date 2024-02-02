@@ -1,10 +1,10 @@
 'use client'
 
-import {Team, User} from '@prisma/client'
+import {Project, Team, User} from '@prisma/client'
 import {signOut} from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import {usePathname} from 'next/navigation'
+import {usePathname, useRouter} from 'next/navigation'
 import {CommandMenu} from '~/components/CommandBar'
 import {Maige} from '~/components/logos'
 import {
@@ -19,12 +19,16 @@ import TeamNav from './TeamNav'
 
 export default function DashboardHeader({
 	user,
-	teams
+	teams,
+	projects
 }: {
 	user: User
 	teams: Team[]
+	projects: Project[]
 }) {
 	const pathname = usePathname()
+	const router = useRouter()
+
 	return (
 		<div className='sticky top-0 z-50 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 backdrop-blur-sm'>
 			<div className='flex items-center gap-4'>
@@ -42,7 +46,7 @@ export default function DashboardHeader({
 			</div>
 			<div className='flex items-center gap-4'>
 				<FeedbackDialog />
-				<CommandMenu />
+				<CommandMenu projects={projects} />
 				<DropdownMenu>
 					<DropdownMenuTrigger className='focus-visible:outline-none'>
 						<Image
@@ -63,9 +67,14 @@ export default function DashboardHeader({
 							</>
 						)}
 						<DropdownMenuItem
+							onClick={() => router.push('/home')}
+							className='cursor-pointer'>
+							Landing Page
+						</DropdownMenuItem>
+						<DropdownMenuItem
 							className='cursor-pointer'
 							onClick={() => signOut()}>
-							Sign out
+							Log out
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
