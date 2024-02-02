@@ -37,6 +37,8 @@ export async function maige({
 	comment: Comment
 	beta?: boolean
 }) {
+	console.log('_________6__________')
+
 	let tokens = {
 		prompt: 0,
 		completion: 0
@@ -126,6 +128,8 @@ All repo labels: ${allLabels
 	})
 
 	const {output} = await executor.call({input})
+
+	console.log('_________7__________')
 
 	return output
 }

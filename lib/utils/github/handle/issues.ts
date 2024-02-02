@@ -18,6 +18,7 @@ export default async function handleIssues({
 }: {
 	payload: IssueCommentCreatedEvent | IssuesOpenedEvent
 }) {
+	console.log('_________0__________')
 	const {
 		sender: {login: senderGithubUserName},
 		installation: {id: instanceId},
@@ -62,6 +63,8 @@ export default async function handleIssues({
 		}
 	})
 
+	console.log('_________1__________')
+
 	// Remove later: Handle user requests for existing users (Feb 1st, 2024)
 	if (!project) {
 		// Not ideal since a name isn't always unique (only unique to organization)
@@ -81,6 +84,8 @@ export default async function handleIssues({
 			return new Response('Project not found in database', {status: 400})
 	}
 
+	console.log('_________2__________')
+
 	// Get GitHub app instance access token
 	const app = new App({
 		appId: env.GITHUB_APP_ID || '',
@@ -94,6 +99,8 @@ export default async function handleIssues({
 		owner: repository.owner.login,
 		octokit
 	})
+
+	console.log('_________3__________')
 
 	// Construct prompt
 	const prompt = getPrompt({
@@ -119,6 +126,8 @@ export default async function handleIssues({
 
 	// Increase usage per project
 	await incrementUsage(project.id)
+
+	console.log('_________4__________')
 
 	// Check if user exists
 	// TODO: ideally we want to use senderGithubId since userName can change but id stays the same
@@ -149,6 +158,8 @@ export default async function handleIssues({
 				}
 			})
 		: null
+
+	console.log('_________5__________')
 
 	await maige({
 		input: prompt,
