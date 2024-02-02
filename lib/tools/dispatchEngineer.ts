@@ -7,11 +7,13 @@ import {engineer} from '~/agents/engineer'
  */
 export default function dispatchEngineer({
 	repoFullName,
+	runId,
 	issueNumber,
 	customerId,
 	projectId
 }: {
 	repoFullName: string
+	runId: string
 	issueNumber: number
 	customerId: string
 	projectId: string
@@ -24,6 +26,7 @@ export default function dispatchEngineer({
 
 			engineer({
 				task,
+				runId,
 				repoFullName,
 				issueNumber,
 				customerId,

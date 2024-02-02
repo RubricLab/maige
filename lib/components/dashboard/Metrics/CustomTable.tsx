@@ -14,7 +14,11 @@ import {
 	TableRow
 } from '~/components/ui/table'
 import {cn} from '~/utils'
-import {type UsageRow} from './TableWrapper'
+import DialogWrapper from './DialogWrapper'
+import LogsView from './LogsView'
+import {type RunRow} from './TableWrapper'
+
+const excludedCols = ['project', 'timeTaken', 'logs']
 
 const TableColNames = [
 	{
@@ -23,28 +27,28 @@ const TableColNames = [
 		align: 'left'
 	},
 	{
-		key: 'totalTokens',
-		value: 'Tokens',
+		key: 'issueNum',
+		value: 'Issue #',
 		align: 'left'
-	},
-	{
-		key: 'action',
-		value: 'Action',
-		align: 'left'
-	},
-	{
-		key: 'agent',
-		value: 'Agent',
-		align: 'right'
-	},
-	{
-		key: 'model',
-		value: 'Model',
-		align: 'right'
 	},
 	{
 		key: 'createdAt',
-		value: 'Time',
+		value: 'Created',
+		align: 'right'
+	},
+	{
+		key: 'finishedAt',
+		value: 'Finished',
+		align: 'right'
+	},
+	{
+		key: 'timeTaken',
+		value: 'Time Taken',
+		align: 'right'
+	},
+	{
+		key: 'logs',
+		value: 'Logs',
 		align: 'right'
 	}
 ]
@@ -55,7 +59,7 @@ export function CustomTable({
 	teamSlug,
 	route
 }: {
-	data: UsageRow[]
+	data: RunRow[]
 	params: any
 	teamSlug: string
 	route: string
@@ -66,7 +70,7 @@ export function CustomTable({
 				<TableRow className='!border-b-2'>
 					{TableColNames.map(col => {
 						const searchParams = new URLSearchParams(params)
-						if (col.key !== 'project') {
+						if (!excludedCols.includes(col.key)) {
 							searchParams.set(
 								'dir',
 								col.key == params.col && params.dir == 'asc' ? 'desc' : 'asc'
@@ -83,10 +87,10 @@ export function CustomTable({
 									prefetch={false}
 									href={href}
 									className={cn('inline-flex items-center', {
-										'pointer-events-none': col.key === 'project'
+										'pointer-events-none': excludedCols.includes(col.key)
 									})}>
 									{col.value}{' '}
-									{col.key !== 'project' &&
+									{!excludedCols.includes(col.key) &&
 										(params.col == col.key ? (
 											params.dir == 'asc' ? (
 												<ChevronUpIcon className='ml-2 h-4 w-4' />
@@ -113,12 +117,49 @@ export function CustomTable({
 								<ArrowRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
 							</Link>
 						</TableCell>
-						<TableCell>{usage.totalTokens}</TableCell>
-						<TableCell>{usage.action}</TableCell>
-						<TableCell className='text-right'>{usage.agent}</TableCell>
-						<TableCell className='text-right'>{usage.model}</TableCell>
+						<TableCell className='group text-left font-medium'>
+							<Link
+								target='_blank'
+								href={usage.issueUrl}
+								className='inline-flex items-center justify-between gap-2'>
+								{usage.issueNum}{' '}
+								<ArrowRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
+							</Link>
+						</TableCell>
 						<TableCell className='text-right'>
-							{usage.createdAt.toDateString()}
+							{usage.createdAt.toLocaleString('en-US', {
+								year: '2-digit',
+								month: 'short',
+								day: 'numeric',
+								hour: '2-digit',
+								minute: '2-digit',
+								second: '2-digit'
+							})}
+						</TableCell>
+						<TableCell className='text-right'>
+							{usage.finishedAt?.toLocaleString('en-US', {
+								year: '2-digit',
+								month: 'short',
+								day: 'numeric',
+								hour: '2-digit',
+								minute: '2-digit',
+								second: '2-digit'
+							}) ?? 'N/A'}
+						</TableCell>
+						<TableCell className='text-right'>
+							{usage.finishedAt
+								? (
+										(usage.finishedAt?.getTime() - usage.createdAt.getTime()) /
+										1000
+									).toFixed(2) + 's'
+								: '...'}
+						</TableCell>
+						<TableCell className='flex items-center justify-end text-right'>
+							<DialogWrapper
+								title={'Run Logs'}
+								runId={usage.id}>
+								<LogsView runId={usage.id} />
+							</DialogWrapper>
 						</TableCell>
 					</TableRow>
 				))}

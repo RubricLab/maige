@@ -151,17 +151,50 @@ export default async function handleIssues({
 			})
 		: null
 
-	await maige({
-		input: prompt,
-		octokit,
-		customerId: membership ? user.id : null,
-		projectId: project.id,
-		repoFullName: repository.full_name,
-		issueNumber: issue?.number,
-		issueId: issue?.node_id,
-		pullUrl: issue?.pull_request?.url || null,
-		allLabels,
-		comment: comment,
-		beta: true
+	const result = await prisma.run.create({
+		data: {
+			projectId: project.id,
+			issueNum: issue?.number,
+			issueUrl: issue?.html_url
+		}
+	})
+
+	try {
+		await maige({
+			input: prompt,
+			runId: result.id,
+			octokit,
+			customerId: membership ? user.id : null,
+			projectId: project.id,
+			repoFullName: repository.full_name,
+			issueNumber: issue?.number,
+			issueId: issue?.node_id,
+			pullUrl: issue?.pull_request?.url || null,
+			allLabels,
+			comment: comment,
+			beta: true
+		})
+	} catch (error) {
+		console.error(error)
+		await prisma.run.update({
+			where: {
+				id: result.id
+			},
+			data: {
+				status: 'failed',
+				finishedAt: new Date()
+			}
+		})
+		return new Response(`Something went wrong: ${error}`, {status: 500})
+	}
+
+	await prisma.run.update({
+		where: {
+			id: result.id
+		},
+		data: {
+			status: 'completed',
+			finishedAt: new Date()
+		}
 	})
 }
