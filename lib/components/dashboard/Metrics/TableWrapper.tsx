@@ -89,10 +89,10 @@ export async function UsageTable({
 	return (
 		<div className='flex w-full flex-col gap-2'>
 			<div className='inline-flex flex-col justify-between gap-3 lg:flex-row lg:items-center'>
-				<div className='inline-flex w-fit gap-2 rounded-md bg-green-900 bg-opacity-50 px-2 py-0.5 font-mono text-xs'>
-					<span className='text-green-400'>{usageNum}</span>
+				<div className='text-tertiary inline-flex w-fit gap-2 rounded-md bg-green-100 px-2 py-0.5 font-mono text-xs dark:bg-green-950'>
+					<span className='text-green-700 dark:text-green-400'>{usageNum}</span>
 					results in
-					<span className='text-green-400'>{timeTaken}</span> ms
+					<span className='text-green-700 dark:text-green-400'>{timeTaken}</span> ms
 				</div>
 				<TableSearch
 					teamSlug={teamSlug}
