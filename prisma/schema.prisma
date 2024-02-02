@@ -15,7 +15,7 @@ model User {
   userName      String?   @unique
   email         String?   @unique
   emailVerified DateTime?
-  githubUserId  String?
+  githubUserId  String?   @unique
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -42,21 +42,42 @@ model User {
 }
 
 model Project {
-  id        String   @id @default(cuid())
-  slug      String?
-  name      String?
-  createdBy String
-  teamId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  githubProjectId String?  @unique
+  slug            String?
+  name            String?
+  private         Boolean  @default(true)
+  createdBy       String
+  teamId          String
+  organizationId  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  totalUsage     Int      @default(0)
+  usageLimit     Int      @default(30)
+  usageUpdatedAt DateTime @default(now())
 
   user         User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   team         Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   usage        Usage[]
   instructions Instruction[]
 
   @@index([createdBy])
   @@index([teamId])
+  @@index([organizationId])
+}
+
+model Organization {
+  id                   String   @id @default(cuid())
+  githubOrganizationId String   @unique @default(cuid())
+  name                 String?
+  slug                 String?
+  image                String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  projects Project[]
 }
 
 // This table tracks requests made by users to add projects to specific teams
