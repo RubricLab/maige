@@ -1,4 +1,4 @@
-import {ArrowRight} from 'lucide-react'
+import {ArrowLeft, ExternalLink} from 'lucide-react'
 import Link from 'next/link'
 import {ProjectWithInstructions} from '~/types/prisma'
 import {timeAgo} from '~/utils'
@@ -8,8 +8,8 @@ const EmptyState = () => (
 	<div className='center gap-4 text-center'>
 		<h3>Welcome to Maige!</h3>
 		<div className='flex items-center gap-2'>
+			<ArrowLeft className='h-5 w-5' />
 			<p className='text-secondary'>To get started, add a repo</p>
-			<ArrowRight className='h-5 w-5' />
 		</div>
 		<p className='text-tertiary text-sm'>
 			If you expect to see a repo, try refreshing.
@@ -17,13 +17,15 @@ const EmptyState = () => (
 	</div>
 )
 
-export default function ProjectsList({
+export function ProjectsList({
 	teamId,
 	slug,
+	username,
 	projects
 }: {
 	teamId: string
 	slug: string
+	username: string
 	projects: ProjectWithInstructions[]
 }) {
 	return (
@@ -44,6 +46,12 @@ export default function ProjectsList({
 									</p>
 								</div>
 								<p className='text-lg'>{project.name}</p>
+								<div className='grow' />
+								<Link
+									href={`https://github.com/${username}/${project.slug}`}
+									className='bg-tertiary rounded-full p-1'>
+									<ExternalLink className='text-tertiary h-4 w-4' />
+								</Link>
 							</div>
 						</div>
 						<div className='flex flex-col gap-1'>
