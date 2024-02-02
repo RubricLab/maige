@@ -1,4 +1,5 @@
 import {InstallationCreatedEvent} from '@octokit/webhooks-types'
+import prisma from '~/prisma'
 import {Repository} from '~/types'
 import Weaviate from '../../embeddings/db'
 import {getMainBranch} from '../../github'

@@ -1,6 +1,7 @@
 import Stripe from 'stripe'
 import {STRIPE, TIERS} from '~/constants'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
 import {Tier} from '~/types'
 
 /**

@@ -40,7 +40,7 @@ export const POST = async (req: Request) => {
 			)
 		})
 
-	return new Response()
+	return new Response('Webhook received', {status: 203})
 }
 
 // Handle webhooks
