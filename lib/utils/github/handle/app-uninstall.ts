@@ -1,5 +1,7 @@
 import {InstallationDeletedEvent} from '@octokit/webhooks-types'
+import prisma from '~/prisma'
 import {Repository} from '~/types'
+
 /**
  * App un-installation
  */

@@ -3,6 +3,7 @@ import {
 	InstallationRepositoriesRemovedEvent
 } from '@octokit/webhooks-types'
 import {GITHUB} from '~/constants'
+import prisma from '~/prisma'
 import {Repository} from '~/types'
 import Weaviate from '../../embeddings/db'
 import {getMainBranch} from '../../github'
