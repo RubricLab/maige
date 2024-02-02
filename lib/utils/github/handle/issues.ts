@@ -5,6 +5,7 @@ import {
 } from '@octokit/webhooks-types'
 import {maige} from '~/agents/maige'
 import env from '~/env.mjs'
+import prisma from '~/prisma'
 import {Comment} from '~/types'
 import {getRepoMeta} from '../../github'
 import {incrementUsage} from '../../payment'
