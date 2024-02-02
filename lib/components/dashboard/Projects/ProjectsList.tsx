@@ -38,7 +38,7 @@ export function ProjectsList({
 						href={`${slug}/project/${project.id}/instructions`} // TODO: remove after populating Overview tab
 						key={project.id}>
 						<div className='flex w-full items-center justify-between'>
-							<div className='flex items-center gap-3'>
+							<div className='flex w-full items-center gap-3'>
 								<div className='relative'>
 									<div className='h-6 w-6 rounded-full bg-foreground' />
 									<p className='absolute left-0 right-0 top-1/2 m-auto -translate-y-1/2 text-center font-medium leading-none text-background'>
@@ -48,8 +48,8 @@ export function ProjectsList({
 								<p className='text-lg'>{project.name}</p>
 								<div className='grow' />
 								<Link
-									href={`https://github.com/${username}/${project.slug}`}
-									className='bg-tertiary rounded-full p-1'>
+									href={`https://github.com/${username}/${project.name}`}
+									className='bg-tertiary hover:bg-secondary text-secondary rounded-full p-1 transition-colors'>
 									<ExternalLink className='text-tertiary h-4 w-4' />
 								</Link>
 							</div>
