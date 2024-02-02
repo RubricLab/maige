@@ -64,11 +64,12 @@ export default async function handleIssues({
 
 	// Remove later: Handle user requests for existing users (Feb 1st, 2024)
 	if (!project) {
-		// Not ideal since a slug isn't always unique (only unique to organization)
+		// Not ideal since a name isn't always unique (only unique to organization)
 		// But the number of existing projects is small, so there would be low conflicts
+		// As an additional check, we also ensure the owner matches
 		project = await prisma.project.findFirst({
 			where: {
-				slug: repository.name,
+				name: repository.name,
 				user: {userName: repository.owner.login}
 			},
 			select: {
