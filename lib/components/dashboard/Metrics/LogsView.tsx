@@ -7,6 +7,7 @@ import {
 	TableRow
 } from '~/components/ui/table'
 import prisma from '~/prisma'
+import {cn} from '~/utils'
 import {RunLog} from './TableWrapper'
 
 type Props = {
@@ -48,7 +49,19 @@ export default async function LogsView({runId}: Props) {
 							<TableCell>{log.action}</TableCell>
 							<TableCell>{log.model}</TableCell>
 							<TableCell>{log.totalTokens}</TableCell>
-							<TableCell>{log.status}</TableCell>
+							<TableCell>
+								<span
+									className={cn(
+										{
+											'border-green-700 bg-green-700': log.status === 'completed',
+											'border-red-700 bg-red-700': log.status === 'failed',
+											'border-yellow-700 bg-yellow-700': log.status === 'in_progress'
+										},
+										'rounded-sm border border-opacity-80 bg-opacity-60 px-2 py-1 text-xs font-medium capitalize'
+									)}>
+									{log.status.replace('_', ' ')}
+								</span>
+							</TableCell>
 							<TableCell>
 								{log.createdAt.toLocaleString('en-US', {
 									year: '2-digit',
