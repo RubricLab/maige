@@ -20,7 +20,8 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 				include: {
 					Project: {
 						include: {
-							instructions: true
+							instructions: true,
+							organization: true
 						}
 					}
 				}
@@ -37,7 +38,7 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 				<ProjectsList
 					username={user.userName}
 					teamId={team.id}
-					slug={params.slug}
+					teamSlug={params.slug}
 					projects={projects}
 				/>
 			</Suspense>
