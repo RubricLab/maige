@@ -23,14 +23,13 @@ export default function TeamSelect({
 	teams: Team[]
 	teamSlug: string
 }) {
-	const [open, setOpen] = useState(false)
 	const router = useRouter()
+	const [open, setOpen] = useState(false)
+	const currentTeam = teams.find(team => team.slug === teamSlug)
 
 	return (
 		<div className='flex items-center gap-1'>
-			<Link href={`/${teamSlug}`}>
-				{teams.find(team => team.slug === teamSlug)?.name}
-			</Link>
+			<Link href={`/${teamSlug}`}>{currentTeam.name ?? currentTeam.slug}</Link>
 			<Popover
 				open={open}
 				onOpenChange={setOpen}>
@@ -52,10 +51,10 @@ export default function TeamSelect({
 							{teams.map(team => (
 								<CommandItem
 									key={team.id}
-									value={team.name}
+									value={team.name ?? team.slug}
 									onSelect={() => router.push(`/${team.slug}`)}
 									className='flex w-full items-center justify-between'>
-									<p className='truncate'>{team.name}</p>
+									<p className='truncate'>{team.name ?? team.slug}</p>
 								</CommandItem>
 							))}
 							<CreateTeam />
