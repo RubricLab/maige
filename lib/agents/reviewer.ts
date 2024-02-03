@@ -38,17 +38,6 @@ export async function reviewer({
 		modelName: 'gpt-4-1106-preview',
 		openAIApiKey: env.OPENAI_API_KEY,
 		temperature: 0.3,
-		callbacks: [
-			{
-				async handleLLMEnd(data) {
-					tokens = {
-						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0),
-						completion:
-							tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0)
-					}
-				}
-			}
-		]
 	})
 
 	const prefix = `
@@ -100,23 +89,6 @@ export async function reviewer({
 		agentArgs: {
 			prefix
 		},
-		callbacks: [
-			{
-				async handleChainEnd() {
-					await prisma.usage.create({
-						data: {
-							projectId: projectId,
-							totalTokens: tokens.prompt + tokens.completion,
-							promptTokens: tokens.prompt,
-							completionTokens: tokens.completion,
-							action: 'Review a PR with reviewer',
-							agent: 'reviewer',
-							model: 'gpt-4-1106-preview'
-						}
-					})
-				}
-			}
-		]
 	})
 
 	const {output} = await executor.call({input: diffString})
