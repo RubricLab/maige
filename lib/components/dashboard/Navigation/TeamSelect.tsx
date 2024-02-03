@@ -52,7 +52,10 @@ export default function TeamSelect({
 								<CommandItem
 									key={team.id}
 									value={team.name ?? team.slug}
-									onSelect={() => router.push(`/${team.slug}`)}
+									onSelect={() => {
+										router.push(`/${team.slug}`)
+										setOpen(false)
+									}}
 									className='flex w-full items-center justify-between'>
 									<p className='truncate'>{team.name ?? team.slug}</p>
 								</CommandItem>
