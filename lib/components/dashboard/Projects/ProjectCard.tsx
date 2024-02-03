@@ -28,7 +28,6 @@ export default function ProjectCard({
 					<p className='text-lg'>{project.name}</p>
 					<div className='grow' />
 					<Link
-						target='_blank'
 						href={`https://github.com/${project.organization ? project.organization?.slug : username}/${project.name}`}
 						className='bg-tertiary hover:bg-secondary text-secondary rounded-full p-1 transition-colors'>
 						<ExternalLinkIcon className='text-tertiary h-4 w-4' />
