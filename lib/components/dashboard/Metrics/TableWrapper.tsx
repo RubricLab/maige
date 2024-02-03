@@ -60,6 +60,15 @@ export async function UsageTable({
 	if (!usageQuery.success) return <p>Bad request</p>
 	if (!user) redirect('/')
 
+	const team = await prisma.team.findUnique({
+		where: {slug: teamSlug},
+		select: {
+			id: true
+		}
+	})
+
+	if (!team) return <p>Team not found</p>
+
 	const pageSize = 5
 	const pageNum = usageQuery.data.p
 
@@ -74,6 +83,9 @@ export async function UsageTable({
 
 	const start = performance.now()
 	const runs: RunRow[] = await prisma.run.findMany({
+		where: {
+			teamId: team.id
+		},
 		take: pageSize,
 		skip: pageSize * (pageNum - 1),
 		// where: usageFilter,

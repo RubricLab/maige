@@ -140,7 +140,10 @@ model Run {
   status     Status    @default(in_progress)
   project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   logs       Log[]
+  teamId     String
+  team       Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
+  @@index([teamId])
   @@index([projectId])
   @@index([issueNum])
 }
@@ -226,6 +229,7 @@ model Team {
   invites     Invite[]
   Project     Project[]
   addProject  AddProject[]
+  runs        Run[]
 
   @@index([createdBy])
 }
