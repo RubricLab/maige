@@ -23,3 +23,8 @@ export function slugify(str: string): string {
 		.replace(/[^a-z0-9 -]/g, '')
 		.replace(/\s+/g, '-')
 }
+
+// Get project URL from team slug and project id
+export function getProjectUrl(teamSlug: string, projectId: string): string {
+	return `/${teamSlug}/project/${projectId}/instructions`
+}
