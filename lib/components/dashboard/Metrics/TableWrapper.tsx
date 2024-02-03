@@ -5,7 +5,8 @@ import {Button} from '~/components/ui/button'
 import prisma from '~/prisma'
 import {cn} from '~/utils'
 import {getCurrentUser} from '~/utils/session'
-import {CustomTable, TableSearch} from '.'
+import {CustomTable} from '.'
+import ProjectFilterWrapper from './projectFilterWrapper'
 
 type RunProject = {
 	name: string
@@ -42,7 +43,8 @@ const UsageParamsSchema = z.object({
 	q: z.coerce.string().optional(),
 	p: z.coerce.number().min(1).optional().default(1),
 	col: z.enum(['createdAt', 'finishedAt', 'project', 'issueNum']).optional(),
-	dir: z.enum(['asc', 'desc']).optional()
+	dir: z.enum(['asc', 'desc']).optional(),
+	proj: z.string().optional()
 })
 
 export async function UsageTable({
@@ -84,7 +86,8 @@ export async function UsageTable({
 	const start = performance.now()
 	const runs: RunRow[] = await prisma.run.findMany({
 		where: {
-			teamId: team.id
+			teamId: team.id,
+			projectId: usageQuery.data.proj
 		},
 		take: pageSize,
 		skip: pageSize * (pageNum - 1),
@@ -107,7 +110,8 @@ export async function UsageTable({
 	const params = new URLSearchParams({
 		...(usageQuery.data.q ? {q: usageQuery.data.q} : {}),
 		...(usageQuery.data.col ? {col: usageQuery.data.col} : {}),
-		...(usageQuery.data.dir ? {dir: usageQuery.data.dir} : {})
+		...(usageQuery.data.dir ? {dir: usageQuery.data.dir} : {}),
+		...(usageQuery.data.proj ? {proj: usageQuery.data.proj} : {})
 	}).toString()
 
 	return (
@@ -118,10 +122,15 @@ export async function UsageTable({
 					results in
 					<span className='text-green-400'>{timeTaken}</span> ms
 				</div>
-				<TableSearch
+				{/* <TableSearch
 					teamSlug={teamSlug}
 					route={route}
 					searchValue={usageQuery.data.q ? usageQuery.data.q : ''}
+				/> */}
+				<ProjectFilterWrapper
+					proj={usageQuery.data.proj}
+					teamSlug={teamSlug}
+					teamId={team.id}
 				/>
 			</div>
 			<div className='flex max-w-full overflow-hidden'>
