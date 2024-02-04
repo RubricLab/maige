@@ -257,10 +257,10 @@ model Membership {
 model Invite {
   id           String    @id @default(cuid())
   invitedBy    String
-  invitedEmail String
-  invitedRole  Role      @default(USER)
+  email        String
+  role         Role      @default(USER)
   teamId       String
-  inviteSent   DateTime?
+  inviteSentAt DateTime?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
