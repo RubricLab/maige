@@ -81,7 +81,7 @@
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "dev": "next dev",
     "dx:env": "f(){ infisical --env=$1 export > .env.local; }; f",
-    "dx:tunnel": "f(){ ngrok http --domain=$1 3000; }; f",
+    "dx:tunnel": "f(){ ngrok http --domain=$1 ${2:-3000}; }; f",
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.json,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.cjs,.mjs,.json,.ts,.tsx --fix",
