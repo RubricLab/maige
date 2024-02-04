@@ -25,10 +25,10 @@ export default async function RootLayout({
 
 	return (
 		<div className='space-y-2'>
-			<ChartsLinks
+			{/* <ChartsLinks
 				teamSlug={params.slug}
 				route={route}
-			/>
+			/> */}
 			<div className='space-y-5'>
 				{/* <UsageCharts route={route} /> */}
 				{children}

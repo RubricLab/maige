@@ -59,7 +59,8 @@ export default async function handleIssues({
 		where: {githubProjectId: repository.id.toString()},
 		select: {
 			id: true,
-			instructions: true
+			instructions: true,
+			teamId: true
 		}
 	})
 
@@ -75,7 +76,8 @@ export default async function handleIssues({
 			},
 			select: {
 				id: true,
-				instructions: true
+				instructions: true,
+				teamId: true
 			}
 		})
 		if (!project)
@@ -153,6 +155,7 @@ export default async function handleIssues({
 
 	const result = await prisma.run.create({
 		data: {
+			teamId: project.teamId,
 			projectId: project.id,
 			issueNum: issue?.number,
 			issueUrl: issue?.html_url
