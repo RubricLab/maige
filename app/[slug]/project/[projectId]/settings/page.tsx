@@ -8,7 +8,8 @@ export default function Settings() {
 			<Button
 				variant='destructive'
 				className='w-fit'>
-				Delete project <TrashIcon className='h-4 w-4' />
+				<TrashIcon className='h-4 w-4' />
+				Delete project
 			</Button>
 		</div>
 	)
