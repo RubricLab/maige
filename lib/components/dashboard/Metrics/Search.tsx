@@ -23,7 +23,7 @@ export function TableSearch({searchValue, route, teamSlug}: Props) {
 			router.replace(
 				`/${teamSlug}/usage/${route}?q=${encodeURIComponent(debouncedSearchTerm)}`
 			)
-	}, [router, debouncedSearchTerm, route])
+	}, [router, debouncedSearchTerm, route, teamSlug])
 
 	return (
 		<Input

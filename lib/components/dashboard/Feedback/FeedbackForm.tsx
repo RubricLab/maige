@@ -41,7 +41,7 @@ export default function FeedbackForm({
 			toast.error(state?.message)
 			console.error(state?.message)
 		}
-	}, [state])
+	}, [setDialogOpen, state])
 
 	return (
 		<form
