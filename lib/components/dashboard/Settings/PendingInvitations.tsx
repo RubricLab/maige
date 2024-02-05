@@ -2,6 +2,7 @@
 
 import {Role} from '@prisma/client'
 import {MoreVerticalIcon} from 'lucide-react'
+import {useRouter} from 'next/navigation'
 import {toast} from 'sonner'
 import deleteInvitation from '~/actions/delete-invitation'
 import {buttonVariants} from '~/components/ui/button'
@@ -22,15 +23,20 @@ type Invite = {
 }
 
 export default function PendingInvitations({invites}: {invites: Invite[]}) {
+	const router = useRouter()
+
 	// Handle cancellation
 	async function cancelInvitation(id: string, email: string) {
 		const state = await deleteInvitation(id, email)
-		if (state?.type === 'success') toast.success(state?.message)
-		else if (state?.type === 'error') {
+		if (state?.type === 'success') {
+			toast.success(state?.message)
+			router.refresh()
+		} else if (state?.type === 'error') {
 			toast.error(state?.message)
 			console.error(state?.message)
 		}
 	}
+
 	return (
 		<div className='flex flex-col gap-2'>
 			<p className='text-xl'>Pending invites</p>
