@@ -13,7 +13,7 @@ import {
 	DropdownMenuPortal,
 	DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
-import {convertToTitleCase, parseDate} from '~/utils'
+import {convertToTitleCase, copyToClipboard, parseDate} from '~/utils'
 
 type Invite = {
 	id: string
@@ -25,7 +25,6 @@ type Invite = {
 export default function PendingInvitations({invites}: {invites: Invite[]}) {
 	const router = useRouter()
 
-	// Handle cancellation
 	async function cancelInvitation(id: string, email: string) {
 		const state = await deleteInvitation(id, email)
 		if (state?.type === 'success') {
@@ -35,6 +34,12 @@ export default function PendingInvitations({invites}: {invites: Invite[]}) {
 			toast.error(state?.message)
 			console.error(state?.message)
 		}
+	}
+
+	function copyInviteLink(id: string) {
+		const url = window.location.origin + '/invite/' + id
+		copyToClipboard(url)
+		toast.success('Copied link to clipboard')
 	}
 
 	return (
@@ -62,6 +67,9 @@ export default function PendingInvitations({invites}: {invites: Invite[]}) {
 								</DropdownMenuTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuContent className='w-fit -translate-x-[40%]'>
+										<DropdownMenuItem onClick={() => copyInviteLink(invite.id)}>
+											Copy invite link
+										</DropdownMenuItem>
 										<DropdownMenuItem
 											onClick={() => cancelInvitation(invite.id, invite.email)}>
 											Cancel invite
