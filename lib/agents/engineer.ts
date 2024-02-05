@@ -17,21 +17,31 @@ export async function engineer({
 	repoFullName,
 	issueNumber,
 	customerId,
-	projectId
+	projectId,
+	updateEngineerTracking,
+	completeEngineerTracking
 }: {
 	task: string
 	repoFullName: string
 	issueNumber: number
 	customerId: string
 	projectId: string
+	updateEngineerTracking: (status: string) => Promise<void>
+	completeEngineerTracking: (status: string) => Promise<void>
 }) {
+	const installationToken = await getInstallationToken(
+		await getInstallationId(repoFullName)
+	)
+
+	const octokit = new Octokit({auth: installationToken})
+
 	let tokens = {
 		prompt: 0,
 		completion: 0
 	}
 
 	const model = new ChatOpenAI({
-		modelName: 'gpt-4-1106-preview',
+		modelName: 'gpt-4-0125-preview',
 		openAIApiKey: env.OPENAI_API_KEY,
 		temperature: 0.3,
 		callbacks: [
@@ -47,7 +57,7 @@ export async function engineer({
 		]
 	})
 
-	const {content: title} = await model.call([
+	const {content: PRTitle} = await model.call([
 		'Could you output a very concise PR title for this request?',
 		`Task: ${task}`
 	])
@@ -58,10 +68,6 @@ export async function engineer({
 		onStdout: data => console.log(data.line),
 		cwd: '/code'
 	})
-
-	const installationToken = await getInstallationToken(
-		await getInstallationId(repoFullName)
-	)
 
 	const branch = `maige/${issueNumber}-${Date.now()}`
 	const [owner, repo] = repoFullName.split('/')
@@ -112,7 +118,7 @@ Your final output message should be the message that will be included in the pul
 							completionTokens: tokens.completion,
 							action: 'Create some stuff with engineer',
 							agent: 'engineer',
-							model: 'gpt-4-1106-preview'
+							model: 'gpt-4-0125-preview'
 						}
 					})
 				}
@@ -133,18 +139,22 @@ Your final output message should be the message that will be included in the pul
 		cmd: `cd ${repo} && git push -u origin ${branch}`
 	})
 
-	const octokit = new Octokit({auth: installationToken})
-
-	await octokit.request(`POST /repos/${repoFullName}/pulls`, {
-		owner,
-		repo,
-		title,
-		body,
-		head: branch,
-		base: 'main'
-	})
+	try {
+		await octokit.request(`POST /repos/${repoFullName}/pulls`, {
+			owner,
+			repo,
+			title: PRTitle,
+			body,
+			head: branch,
+			base: 'main'
+		})
+	} catch (e) {
+		await updateEngineerTracking('failed')
+	}
 
 	await shell.close()
+
+	await completeEngineerTracking('completed')
 
 	return
 }
