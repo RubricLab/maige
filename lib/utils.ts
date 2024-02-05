@@ -42,3 +42,8 @@ export function parseDate(input: Date): string {
 		year: 'numeric'
 	})
 }
+
+// Copy text to clipboard
+export function copyToClipboard(input: string) {
+	navigator.clipboard.writeText(input)
+}

@@ -244,15 +244,19 @@ model Membership {
   id        String   @id @default(cuid())
   userId    String
   teamId    String
+  inviteId  String?  @unique
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team   Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  invite Invite? @relation(fields: [inviteId], references: [id], onDelete: SetNull)
 
+  @@unique([userId, teamId]) // Composite uniqueness constraint to avoid duplicates
   @@index([userId])
   @@index([teamId])
+  @@index([inviteId])
 }
 
 model Invite {
@@ -267,9 +271,10 @@ model Invite {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  inviter User  @relation("User_inviter", fields: [invitedBy], references: [id], onDelete: Cascade)
-  invitee User? @relation("User_invitee", fields: [acceptedBy], references: [id])
-  team    Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  inviter    User        @relation("User_inviter", fields: [invitedBy], references: [id], onDelete: Cascade)
+  invitee    User?       @relation("User_invitee", fields: [acceptedBy], references: [id])
+  team       Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  membership Membership?
 
   @@index([invitedBy])
   @@index([acceptedBy])
