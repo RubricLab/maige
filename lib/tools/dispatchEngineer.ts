@@ -21,6 +21,7 @@ export default function dispatchEngineer({
 	customerId: string
 	projectId: string
 }) {
+	console.log('!!! dispatchEngineer !!!')
 	return new DynamicStructuredTool({
 		description:
 			'Dispatch an engineer to work on an issue. Default to this when asked to solve an issue.',

@@ -72,9 +72,9 @@ export async function maige({
 			instructionCommentLink: comment?.html_url
 		}),
 		githubTool({octokit}),
-		...(customerId ? [codebaseSearch({customerId, repoFullName})] : []),
-		...(beta && customerId
+		...(customerId
 			? [
+					codebaseSearch({customerId, repoFullName}),
 					dispatchEngineer({
 						octokit,
 						issueId,
