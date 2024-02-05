@@ -2,6 +2,8 @@
 
 import {Role} from '@prisma/client'
 import {MoreVerticalIcon} from 'lucide-react'
+import {toast} from 'sonner'
+import deleteInvitation from '~/actions/delete-invitation'
 import {buttonVariants} from '~/components/ui/button'
 import {
 	DropdownMenu,
@@ -13,12 +15,22 @@ import {
 import {convertToTitleCase, parseDate} from '~/utils'
 
 type Invite = {
+	id: string
 	createdAt: Date
 	role: Role
 	email: string
 }
 
 export default function PendingInvitations({invites}: {invites: Invite[]}) {
+	// Handle cancellation
+	async function cancelInvitation(id: string, email: string) {
+		const state = await deleteInvitation(id, email)
+		if (state?.type === 'success') toast.success(state?.message)
+		else if (state?.type === 'error') {
+			toast.error(state?.message)
+			console.error(state?.message)
+		}
+	}
 	return (
 		<div className='flex flex-col gap-2'>
 			<p className='text-xl'>Pending invites</p>
@@ -29,13 +41,13 @@ export default function PendingInvitations({invites}: {invites: Invite[]}) {
 					<p>Invited at</p>
 					<p></p>
 				</div>
-				{invites.map(i => (
+				{invites.map((invite, index) => (
 					<div
-						key={i.email}
-						className='border-border grid grid-cols-6 items-center rounded-sm border-b p-4'>
-						<p className='col-span-3'>{i.email}</p>
-						<p>{convertToTitleCase(i.role)}</p>
-						<p>{parseDate(i.createdAt)}</p>
+						key={invite.email}
+						className={`border-border grid grid-cols-6 items-center rounded-sm ${index !== invites.length - 1 && 'border-b'}  p-4`}>
+						<p className='col-span-3'>{invite.email}</p>
+						<p>{convertToTitleCase(invite.role)}</p>
+						<p>{parseDate(invite.createdAt)}</p>
 						<div className='flex justify-center'>
 							<DropdownMenu>
 								<DropdownMenuTrigger
@@ -44,7 +56,10 @@ export default function PendingInvitations({invites}: {invites: Invite[]}) {
 								</DropdownMenuTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuContent className='w-fit -translate-x-[40%]'>
-										<DropdownMenuItem onClick={() => {}}>Cancel invite</DropdownMenuItem>
+										<DropdownMenuItem
+											onClick={() => cancelInvitation(invite.id, invite.email)}>
+											Cancel invite
+										</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenuPortal>
 							</DropdownMenu>
