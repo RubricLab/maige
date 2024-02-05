@@ -20,7 +20,7 @@ export default async function Members({params}: {params: {slug: string}}) {
 		}
 	})
 	return (
-		<div className='flex flex-col gap-4 py-0.5'>
+		<div className='flex flex-col gap-6 py-0.5'>
 			<div className='flex items-center justify-between gap-2'>
 				<h3>Members</h3>
 				<InviteDialog teamId={team.id} />
