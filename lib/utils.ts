@@ -28,3 +28,17 @@ export function slugify(str: string): string {
 export function getProjectUrl(teamSlug: string, projectId: string): string {
 	return `/${teamSlug}/project/${projectId}/instructions`
 }
+
+// Convert any input to title case format e.g: Admin
+export function convertToTitleCase(input: string): string {
+	return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()
+}
+
+// Parse date object into appropriate string format
+export function parseDate(input: Date): string {
+	return input.toLocaleDateString('en-US', {
+		day: '2-digit',
+		month: 'short',
+		year: 'numeric'
+	})
+}

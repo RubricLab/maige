@@ -1,5 +1,8 @@
-import {ExistingMembers, InviteDialog} from '~/components/dashboard/Settings'
-import PendingInvitations from '~/components/dashboard/Settings/PendingInvitations'
+import {
+	ExistingMembers,
+	InviteDialog,
+	PendingInvitations
+} from '~/components/dashboard/Settings'
 import prisma from '~/prisma'
 
 export default async function Members({params}: {params: {slug: string}}) {
