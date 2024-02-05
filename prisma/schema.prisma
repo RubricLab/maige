@@ -32,13 +32,14 @@ model User {
   usageUpdatedAt DateTime @default(now())
   usageWarned    Boolean  @default(false)
 
-  projects     Project[]
-  feedback     Feedback[]
-  teams        Team[]
-  memberships  Membership[]
-  invites      Invite[]
-  instructions Instruction[]
-  addProject   AddProject[]
+  projects        Project[]
+  feedback        Feedback[]
+  teams           Team[]
+  memberships     Membership[]
+  invitesSent     Invite[]      @relation("User_inviter")
+  invitesAccepted Invite[]      @relation("User_invitee")
+  instructions    Instruction[]
+  addProject      AddProject[]
 }
 
 model Project {
@@ -220,18 +221,22 @@ model Membership {
 }
 
 model Invite {
-  id           String    @id @default(cuid())
-  invitedBy    String
-  email        String
-  role         Role      @default(USER)
-  teamId       String
-  inviteSentAt DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  invitedBy   String
+  email       String
+  role        Role      @default(USER)
+  teamId      String
+  emailSentAt DateTime?
+  acceptedBy  String?
+  acceptedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  inviter User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
-  team    Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  inviter User  @relation("User_inviter", fields: [invitedBy], references: [id], onDelete: Cascade)
+  invitee User? @relation("User_invitee", fields: [acceptedBy], references: [id])
+  team    Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@index([invitedBy])
+  @@index([acceptedBy])
   @@index([teamId])
 }
