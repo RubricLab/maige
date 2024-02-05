@@ -39,7 +39,7 @@ export default function PendingInvitations({invites}: {invites: Invite[]}) {
 	function copyInviteLink(id: string) {
 		const url = window.location.origin + '/invite/' + id
 		copyToClipboard(url)
-		toast.success('Copied link to clipboard')
+		toast.success('Invite link copied to clipboard')
 	}
 
 	return (
