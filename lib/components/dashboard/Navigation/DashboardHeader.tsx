@@ -4,7 +4,7 @@ import {Project, Team, User} from '@prisma/client'
 import {signOut} from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import {usePathname, useRouter} from 'next/navigation'
+import {useParams, useRouter} from 'next/navigation'
 import {CommandMenu} from '~/components/CommandBar'
 import {Maige} from '~/components/logos'
 import {
@@ -15,7 +15,8 @@ import {
 	DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import FeedbackDialog from '../Feedback/FeedbackDialog'
-import TeamNav from './TeamNav'
+import ProjectSelect from './ProjectSelect'
+import TeamSelect from './TeamSelect'
 
 export default function DashboardHeader({
 	user,
@@ -26,23 +27,29 @@ export default function DashboardHeader({
 	teams: Team[]
 	projects: Project[]
 }) {
-	const pathname = usePathname()
+	const params = useParams<{slug: string; projectId: string}>()
 	const router = useRouter()
-
 	return (
 		<div className='sticky top-0 z-50 flex w-full select-none flex-row items-center justify-between pb-5 pt-4 backdrop-blur-sm'>
 			<div className='flex items-center gap-4'>
 				<Link
-					href='/'
+					href='/home'
 					className='group'>
 					<Maige className='group-hover:text-secondary text-tertiary h-8 transition-colors' />
 				</Link>
-				<span className='inline-flex items-center justify-center gap-1.5'>
-					<TeamNav
+				<div className='inline-flex items-center justify-center gap-1.5'>
+					<TeamSelect
 						teams={teams}
-						slug={pathname.split('/')[1]}
+						teamSlug={params.slug}
 					/>
-				</span>
+					{params.projectId && (
+						<ProjectSelect
+							projects={projects}
+							projectId={params.projectId}
+							teamSlug={params.slug}
+						/>
+					)}
+				</div>
 			</div>
 			<div className='flex items-center gap-4'>
 				<FeedbackDialog />

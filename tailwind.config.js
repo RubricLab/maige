@@ -67,7 +67,7 @@ const tailwindConfig = {
 					},
 					content: {
 						subtle: colors.red[800],
-						DEFAULT: colors.neutral[200],
+						DEFAULT: colors.neutral[400],
 						emphasis: colors.neutral[200],
 						strong: colors.neutral[800],
 						inverted: colors.neutral[850]

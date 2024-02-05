@@ -4,7 +4,11 @@ Repo maintenance made simpler.
 
 Quickly set up Maige and let AI handle your issue labels with ease. Get started at [Maige.app](https://maige.app).
 
-## Quick Setup
+## Self-Hosting
+
+> [!NOTE]
+>
+> Self-hosting is not yet supported, but if you're immune to papercuts, feel free to continue at your own risk.
 
 - Install dependencies: `bun i`
 - Set up the environment: `vercel env pull` or `cp .env.example .env`
@@ -29,6 +33,10 @@ Create a GitHub App for webhooks and repo access. Populate your **.env** with th
    ```
 
    then copy **private-key-pkcs8.key**'s text contents to your **.env**.
+
+## Environment Variables
+
+We use [Infisical](https://infisical.com) for a better development experience. To use it, make an account, upload your **.env** (then delete it), download and authenticate the CLI, then run `bun dx:env [your-environment-name] && bun run dev` to develop locally.
 
 ## Dive In
 
