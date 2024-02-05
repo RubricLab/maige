@@ -1,5 +1,6 @@
 'use client'
 
+import {useRouter} from 'next/navigation'
 import {Dispatch, SetStateAction, useEffect} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
 import {toast} from 'sonner'
@@ -40,6 +41,7 @@ export default function InviteForm({
 	teamId: string
 	setDialogOpen: Dispatch<SetStateAction<boolean>>
 }) {
+	const router = useRouter()
 	const [state, formAction] = useFormState(createInvitation, initialState)
 
 	// Trigger toast when state changes
@@ -47,11 +49,12 @@ export default function InviteForm({
 		if (state?.type === 'success') {
 			toast.success(state?.message)
 			setDialogOpen(false)
+			router.refresh()
 		} else if (state?.type === 'error') {
 			toast.error(state?.message)
 			console.error(state?.message)
 		}
-	}, [setDialogOpen, state])
+	}, [setDialogOpen, state, router])
 
 	return (
 		<form
