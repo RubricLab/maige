@@ -1,10 +1,8 @@
 import Link from 'next/link'
-import {getCurrentUser} from '~/utils/session'
 import {Sun} from './dashboard/Buttons/Sun'
 import {Maige} from './logos'
 
 export const Header = async () => {
-	const user = await getCurrentUser()
 	return (
 		<header className='bg-primary fixed top-0 z-20 flex w-screen items-center justify-start p-4'>
 			<Link
@@ -21,7 +19,7 @@ export const Header = async () => {
 				</div>
 			</Link>
 			<div className='grow'>{/* Divider */}</div>
-			<Sun user={user} />
+			<Sun />
 		</header>
 	)
 }
