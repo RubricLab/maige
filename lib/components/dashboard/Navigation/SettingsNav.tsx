@@ -9,6 +9,10 @@ const routes = [
 		path: '/members'
 	},
 	{
+		name: 'Billing',
+		path: '/billing'
+	},
+	{
 		name: 'Advanced',
 		path: '/advanced'
 	}
