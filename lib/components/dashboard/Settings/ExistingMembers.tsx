@@ -31,13 +31,13 @@ export default function ExistingMembers({members}: {members: Member[]}) {
 					<p>Member since</p>
 					<p></p>
 				</div>
-				{members.map(m => (
+				{members.map((member, index) => (
 					<div
-						key={m.user.email}
-						className='border-border grid grid-cols-6 items-center rounded-sm border-b p-4'>
-						<p className='col-span-3'>{m.user.email}</p>
-						<p>{convertToTitleCase(m.role)}</p>
-						<p>{parseDate(m.user.createdAt)}</p>
+						key={member.user.email}
+						className={`border-border grid grid-cols-6 items-center rounded-sm ${index !== members.length - 1 && 'border-b'} p-4`}>
+						<p className='col-span-3'>{member.user.email}</p>
+						<p>{convertToTitleCase(member.role)}</p>
+						<p>{parseDate(member.user.createdAt)}</p>
 						<div className='flex justify-center'>
 							<DropdownMenu>
 								<DropdownMenuTrigger
