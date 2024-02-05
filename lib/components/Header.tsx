@@ -2,7 +2,7 @@ import Link from 'next/link'
 import {Sun} from './dashboard/Buttons/Sun'
 import {Maige} from './logos'
 
-export const Header = async () => {
+export const Header = () => {
 	return (
 		<header className='bg-primary fixed top-0 z-20 flex w-screen items-center justify-start p-4'>
 			<Link
