@@ -2,6 +2,9 @@
 
 import {Role} from '@prisma/client'
 import {MoreVerticalIcon} from 'lucide-react'
+import {useRouter} from 'next/navigation'
+import {toast} from 'sonner'
+import deleteMember from '~/actions/delete-member'
 import {buttonVariants} from '~/components/ui/button'
 import {
 	DropdownMenu,
@@ -13,14 +16,40 @@ import {
 import {convertToTitleCase, parseDate} from '~/utils'
 
 type Member = {
-	user: {
-		email: string
-		createdAt: Date
-	}
+	id: string
 	role: Role
+	user: {id: string; email: string; createdAt: Date}
 }
 
-export default function ExistingMembers({members}: {members: Member[]}) {
+export default function ExistingMembers({
+	teamId,
+	members
+}: {
+	teamId: string
+	members: Member[]
+}) {
+	const router = useRouter()
+
+	async function removeMember(
+		teamId: string,
+		membershipId: string,
+		memberUserId: string,
+		memberEmail: string
+	) {
+		const state = await deleteMember(
+			teamId,
+			membershipId,
+			memberUserId,
+			memberEmail
+		)
+		if (state?.type === 'success') {
+			toast.success(state?.message)
+			router.refresh()
+		} else if (state?.type === 'error') {
+			toast.error(state?.message)
+			console.error(state?.message)
+		}
+	}
 	return (
 		<div className='flex flex-col gap-2'>
 			<p className='text-xl'>Existing members</p>
@@ -46,7 +75,12 @@ export default function ExistingMembers({members}: {members: Member[]}) {
 								</DropdownMenuTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuContent className='w-fit -translate-x-[40%]'>
-										<DropdownMenuItem onClick={() => {}}>Delete member</DropdownMenuItem>
+										<DropdownMenuItem
+											onClick={() =>
+												removeMember(teamId, member.id, member.user.id, member.user.email)
+											}>
+											Remove member
+										</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenuPortal>
 							</DropdownMenu>

@@ -11,11 +11,15 @@ export default async function Members({params}: {params: {slug: string}}) {
 		select: {
 			id: true,
 			memberships: {
-				select: {role: true, user: {select: {email: true, createdAt: true}}}
+				select: {
+					id: true,
+					role: true,
+					user: {select: {id: true, email: true, createdAt: true}}
+				}
 			},
 			invites: {
 				where: {acceptedBy: null},
-				select: {email: true, role: true, createdAt: true}
+				select: {id: true, email: true, role: true, createdAt: true}
 			}
 		}
 	})
@@ -25,8 +29,11 @@ export default async function Members({params}: {params: {slug: string}}) {
 				<h3>Members</h3>
 				<InviteDialog teamId={team.id} />
 			</div>
-			<ExistingMembers members={team.memberships} />
-			<PendingInvitations invites={team.invites} />
+			<ExistingMembers
+				teamId={team.id}
+				members={team.memberships}
+			/>
+			{team.invites.length > 0 && <PendingInvitations invites={team.invites} />}
 		</div>
 	)
 }
