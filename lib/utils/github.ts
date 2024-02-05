@@ -68,6 +68,60 @@ export async function editComment({
 	return commentResult.updateIssueComment.issueComment.id
 }
 
+export enum AGENT {
+	ENGINEER = 'Engineer'
+}
+
+export async function trackAgent({
+	octokit,
+	issueId,
+	agent,
+	title
+}: {
+	octokit: any
+	issueId: string
+	agent: AGENT
+	title: string
+}) {
+	const commentId = await addComment({
+		octokit,
+		issueId,
+		comment: `**${agent} Dispatched.** See details on the [maige dashboard](https://maige.app).
+| **Name** | **Status** | **Message** | **Updated (UTC)** |
+|:---------|:-----------|:------------|:------------------|
+| **${title}** | 🟡 Pending ([inspect](https://maige.app)) | | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |
+
+Terminal output:
+
+\`\`\` ls . \`\`\`
+`
+	})
+
+	async function updateTracking(status: string) {
+		await editComment({
+			octokit,
+			commentId,
+			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
+| **Name** | **Status** | **Message** | **Updated (UTC)** |
+|:---------|:-----------|:------------|:------------------|
+| **${title}** | ❌ Error ([inspect](https://maige.app)) | Errored | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+		})
+	}
+
+	async function completeTracking(status: string) {
+		await editComment({
+			octokit,
+			commentId,
+			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
+		| **Name** | **Status** | **Message** | **Updated (UTC)** |
+		|:---------|:-----------|:------------|:------------------|
+		| **${title}** | ✅ Complete ([inspect](https://maige.app)) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+		})
+	}
+
+	return {updateTracking, completeTracking}
+}
+
 export async function getRepoMeta({
 	name,
 	owner,

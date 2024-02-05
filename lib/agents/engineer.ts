@@ -9,11 +9,7 @@ import commitCode from '~/tools/commitCode'
 import listFiles from '~/tools/listFiles'
 import readFile from '~/tools/readFile'
 import writeFile from '~/tools/writeFile'
-import {
-	editComment,
-	getInstallationId,
-	getInstallationToken
-} from '~/utils/github'
+import {getInstallationId, getInstallationToken} from '~/utils/github'
 import {isDev} from '~/utils/index'
 
 export async function engineer({
@@ -22,16 +18,16 @@ export async function engineer({
 	issueNumber,
 	customerId,
 	projectId,
-	commentId,
-	title
+	updateEngineerTracking,
+	completeEngineerTracking
 }: {
 	task: string
 	repoFullName: string
 	issueNumber: number
 	customerId: string
 	projectId: string
-	commentId: string
-	title: string
+	updateEngineerTracking: (status: string) => Promise<void>
+	completeEngineerTracking: (status: string) => Promise<void>
 }) {
 	const installationToken = await getInstallationToken(
 		await getInstallationId(repoFullName)
@@ -153,26 +149,12 @@ Your final output message should be the message that will be included in the pul
 			base: 'main'
 		})
 	} catch (e) {
-		await editComment({
-			octokit,
-			commentId,
-			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
-| **Name** | **Status** | **Message** | **Updated (UTC)** |
-|:---------|:-----------|:------------|:------------------|
-| **${title}** | ❌ Error ([inspect](https://maige.app)) | Errored | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
-		})
+		await updateEngineerTracking('failed')
 	}
 
 	await shell.close()
 
-	const comment = await editComment({
-		octokit,
-		commentId,
-		comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
-| **Name** | **Status** | **Message** | **Updated (UTC)** |
-|:---------|:-----------|:------------|:------------------|
-| **${title}** | ✅ Complete ([inspect](https://maige.app)) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
-	})
+	await completeEngineerTracking('completed')
 
 	return
 }

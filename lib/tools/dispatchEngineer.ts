@@ -1,7 +1,7 @@
 import {DynamicStructuredTool} from '@langchain/core/tools'
 import {z} from 'zod'
 import {engineer} from '~/agents/engineer'
-import {addComment} from '~/utils/github'
+import {AGENT, trackAgent} from '~/utils/github'
 
 /**
  * Dispatch an engineer agent
@@ -25,19 +25,14 @@ export default function dispatchEngineer({
 		description:
 			'Dispatch an engineer to work on an issue. Default to this when asked to solve an issue.',
 		func: async ({task, title}) => {
-			console.log(issueId)
-			const commentId = await addComment({
+			const {
+				updateTracking: updateEngineerTracking,
+				completeTracking: completeEngineerTracking
+			} = await trackAgent({
 				octokit,
 				issueId,
-				comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
-| **Name** | **Status** | **Message** | **Updated (UTC)** |
-|:---------|:-----------|:------------|:------------------|
-| **${title}** | 🟡 Pending ([inspect](https://maige.app)) | | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |
-
-Terminal output:
-
-\`\`\` ls . \`\`\`
-`
+				agent: AGENT.ENGINEER,
+				title
 			})
 
 			engineer({
@@ -46,8 +41,8 @@ Terminal output:
 				issueNumber,
 				customerId,
 				projectId,
-				commentId,
-				title
+				updateEngineerTracking,
+				completeEngineerTracking
 			})
 
 			return 'dispatched'
