@@ -1,5 +1,6 @@
 'use client'
 
+import {Role} from '@prisma/client'
 import {useRouter} from 'next/navigation'
 import {Dispatch, SetStateAction, useEffect} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
@@ -14,6 +15,7 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '~/components/ui/select'
+import {convertToTitleCase} from '~/utils'
 
 const initialState = {
 	type: null,
@@ -76,8 +78,13 @@ export default function InviteForm({
 					<SelectValue placeholder='Role' />
 				</SelectTrigger>
 				<SelectContent>
-					<SelectItem value='ADMIN'>Admin</SelectItem>
-					<SelectItem value='USER'>User</SelectItem>
+					{(Object.keys(Role) as (keyof typeof Role)[]).map(role => (
+						<SelectItem
+							key={role}
+							value={role}>
+							{convertToTitleCase(role)}
+						</SelectItem>
+					))}
 				</SelectContent>
 			</Select>
 			<InviteButton />
