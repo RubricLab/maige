@@ -6,15 +6,15 @@ import {usePathname} from 'next/navigation'
 const routes = [
 	{
 		name: 'Members',
-		path: '/members'
+		path: 'members'
 	},
 	{
 		name: 'Billing',
-		path: '/billing'
+		path: 'billing'
 	},
 	{
 		name: 'Advanced',
-		path: '/advanced'
+		path: 'advanced'
 	}
 ]
 
@@ -31,7 +31,7 @@ export default function SettingsNav({
 			{routes.map(route => (
 				<Link
 					key={route.name}
-					href={`/${teamSlug}/settings${route.path}`}
+					href={`/${teamSlug}/settings/${route.path}`}
 					className={`hover:bg-tertiary rounded-sm px-4 py-2 transition-colors ${pathname === `/${teamSlug}/settings${route.path}` && 'bg-tertiary'}`}>
 					{route.name}
 				</Link>
