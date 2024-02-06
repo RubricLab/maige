@@ -13,7 +13,7 @@ const routes = [
 	},
 	{
 		name: 'Settings',
-		path: 'settings'
+		path: 'settings/members'
 	}
 ]
 
