@@ -21,27 +21,11 @@ type Member = {
 	user: {id: string; email: string; createdAt: Date}
 }
 
-export default function ExistingMembers({
-	teamId,
-	members
-}: {
-	teamId: string
-	members: Member[]
-}) {
+export default function ExistingMembers({members}: {members: Member[]}) {
 	const router = useRouter()
 
-	async function removeMember(
-		teamId: string,
-		membershipId: string,
-		memberUserId: string,
-		memberEmail: string
-	) {
-		const state = await deleteMember(
-			teamId,
-			membershipId,
-			memberUserId,
-			memberEmail
-		)
+	async function removeMember(membershipId: string) {
+		const state = await deleteMember(membershipId)
 		if (state?.type === 'success') {
 			toast.success(state?.message)
 			router.refresh()
@@ -75,10 +59,7 @@ export default function ExistingMembers({
 								</DropdownMenuTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuContent className='w-fit -translate-x-[40%]'>
-										<DropdownMenuItem
-											onClick={() =>
-												removeMember(teamId, member.id, member.user.id, member.user.email)
-											}>
+										<DropdownMenuItem onClick={() => removeMember(member.id)}>
 											Remove member
 										</DropdownMenuItem>
 									</DropdownMenuContent>
