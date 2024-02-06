@@ -29,6 +29,15 @@ export default async function createInvitation(
 		teamId: formData.get('teamId')
 	})
 
+	const membership = await prisma.membership.findFirst({
+		where: {teamId: parsed.teamId, userId: user.id}
+	})
+	if (!membership)
+		return {
+			message: 'Unauthorized, not a part of the team',
+			type: 'error'
+		}
+
 	try {
 		const response = await prisma.invite.create({
 			data: {
