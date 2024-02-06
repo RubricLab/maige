@@ -60,8 +60,6 @@ export async function maige({
 		]
 	})
 
-	console.log('HEERE', customerId)
-
 	const tools = [
 		labelTool({octokit, allLabels, issueId}),
 		updateInstructionsTool({

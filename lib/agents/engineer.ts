@@ -9,7 +9,12 @@ import commitCode from '~/tools/commitCode'
 import listFiles from '~/tools/listFiles'
 import readFile from '~/tools/readFile'
 import writeFile from '~/tools/writeFile'
-import {getInstallationId, getInstallationToken} from '~/utils/github'
+import {
+	AGENT,
+	getInstallationId,
+	getInstallationToken,
+	trackAgent
+} from '~/utils/github'
 import {isDev} from '~/utils/index'
 
 export async function engineer({
@@ -18,16 +23,16 @@ export async function engineer({
 	issueNumber,
 	customerId,
 	projectId,
-	updateEngineerTracking,
-	completeEngineerTracking
+	issueId,
+	title
 }: {
 	task: string
 	repoFullName: string
 	issueNumber: number
 	customerId: string
 	projectId: string
-	updateEngineerTracking: (status: string) => Promise<void>
-	completeEngineerTracking: (status: string) => Promise<void>
+	issueId: string
+	title: string
 }) {
 	const installationToken = await getInstallationToken(
 		await getInstallationId(repoFullName)
@@ -57,10 +62,15 @@ export async function engineer({
 		]
 	})
 
-	const {content: PRTitle} = await model.call([
-		'Could you output a very concise PR title for this request?',
-		`Task: ${task}`
-	])
+	const {
+		updateTracking: updateEngineerTracking,
+		completeTracking: completeEngineerTracking
+	} = await trackAgent({
+		octokit,
+		issueId,
+		agent: AGENT.ENGINEER,
+		title
+	})
 
 	const shell = await Sandbox.create({
 		apiKey: env.E2B_API_KEY,
@@ -143,7 +153,7 @@ Your final output message should be the message that will be included in the pul
 		await octokit.request(`POST /repos/${repoFullName}/pulls`, {
 			owner,
 			repo,
-			title: PRTitle,
+			title,
 			body,
 			head: branch,
 			base: 'main'

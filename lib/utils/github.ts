@@ -113,9 +113,9 @@ Terminal output:
 			octokit,
 			commentId,
 			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
-		| **Name** | **Status** | **Message** | **Updated (UTC)** |
-		|:---------|:-----------|:------------|:------------------|
-		| **${title}** | ✅ Complete ([inspect](https://maige.app)) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+| **Name** | **Status** | **Message** | **Updated (UTC)** |
+|:---------|:-----------|:------------|:------------------|
+| **${title}** | ✅ Complete ([inspect](https://maige.app)) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
 		})
 	}
 
