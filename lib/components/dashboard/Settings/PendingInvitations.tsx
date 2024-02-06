@@ -46,7 +46,7 @@ export default function PendingInvitations({invites}: {invites: Invite[]}) {
 		<div className='flex flex-col gap-2'>
 			<p className='text-xl'>Pending invites</p>
 			<div className='rounded-md border'>
-				<div className='border-border grid grid-cols-6 border-b px-4 py-1 text-sm'>
+				<div className='border-border text-secondary grid grid-cols-6 border-b px-4 py-1 text-sm'>
 					<p className='col-span-3'>Email</p>
 					<p>Role</p>
 					<p>Invited at</p>
@@ -55,7 +55,7 @@ export default function PendingInvitations({invites}: {invites: Invite[]}) {
 				{invites.map((invite, index) => (
 					<div
 						key={invite.email}
-						className={`border-border grid grid-cols-6 items-center rounded-sm ${index !== invites.length - 1 && 'border-b'}  p-4`}>
+						className={`border-border text-secondary grid grid-cols-6 items-center rounded-sm ${index !== invites.length - 1 && 'border-b'}  p-4`}>
 						<p className='col-span-3'>{invite.email}</p>
 						<p>{convertToTitleCase(invite.role)}</p>
 						<p>{parseDate(invite.createdAt)}</p>
