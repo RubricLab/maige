@@ -1,16 +1,10 @@
 'use server'
 
-import {Role} from '@prisma/client'
 import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
 
 // Create membership to join a team by accepting an invitation
-export default async function createMembership(
-	inviteId: string,
-	teamId: string,
-	userId: string,
-	role: Role
-) {
+export default async function createMembership(inviteId: string) {
 	const user = await getCurrentUser()
 	if (!user)
 		return {
@@ -18,13 +12,22 @@ export default async function createMembership(
 			type: 'error'
 		}
 
+	const invite = await prisma.invite.findUnique({where: {id: inviteId}})
+	if (!invite)
+		return {
+			message: 'Invite not found',
+			type: 'error'
+		}
+
 	try {
 		await prisma.invite.update({
 			where: {id: inviteId},
 			data: {
-				acceptedBy: userId,
+				acceptedBy: user.id,
 				acceptedAt: new Date(),
-				membership: {create: {teamId: teamId, userId: userId, role: role}}
+				membership: {
+					create: {teamId: invite.teamId, userId: user.id, role: invite.role}
+				}
 			}
 		})
 		return {
