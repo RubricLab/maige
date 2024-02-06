@@ -66,6 +66,7 @@ export default function InviteForm({
 			<Input
 				name='email'
 				type='email'
+				required
 				placeholder='Email'
 			/>
 			<Input
@@ -73,7 +74,9 @@ export default function InviteForm({
 				type='hidden'
 				value={teamId}
 			/>
-			<Select name='role'>
+			<Select
+				name='role'
+				required>
 				<SelectTrigger className='w-[180px]'>
 					<SelectValue placeholder='Role' />
 				</SelectTrigger>
