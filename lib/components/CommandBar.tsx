@@ -35,7 +35,7 @@ export function CommandMenu({projects}: Props) {
 				},
 				{
 					name: 'Settings',
-					path: `/${teamSlug}/settings`
+					path: `/${teamSlug}/settings/members`
 				},
 
 				{
