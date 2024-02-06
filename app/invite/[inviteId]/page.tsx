@@ -27,9 +27,7 @@ export default async function Invite({params}: {params: {inviteId: string}}) {
 						<span className='italic'>{invite.team.name ?? invite.team.slug}</span>
 					</h3>
 					<AcceptInvite
-						userId={user ? user.id : null}
-						role={invite.role}
-						teamId={invite.teamId}
+						user={user}
 						teamSlug={invite.team.slug}
 						inviteId={params.inviteId}
 					/>
