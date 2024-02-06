@@ -54,7 +54,7 @@ export default function ExistingMembers({
 		<div className='flex flex-col gap-2'>
 			<p className='text-xl'>Existing members</p>
 			<div className='rounded-md border'>
-				<div className='border-border grid grid-cols-6 border-b px-4 py-1 text-sm'>
+				<div className='border-border text-secondary grid grid-cols-6 border-b px-4 py-1 text-sm'>
 					<p className='col-span-3'>Email</p>
 					<p>Role</p>
 					<p>Member since</p>
@@ -63,7 +63,7 @@ export default function ExistingMembers({
 				{members.map((member, index) => (
 					<div
 						key={member.user.email}
-						className={`border-border grid grid-cols-6 items-center rounded-sm ${index !== members.length - 1 && 'border-b'} p-4`}>
+						className={`border-border text-secondary grid grid-cols-6 items-center rounded-sm ${index !== members.length - 1 && 'border-b'} p-4`}>
 						<p className='col-span-3'>{member.user.email}</p>
 						<p>{convertToTitleCase(member.role)}</p>
 						<p>{parseDate(member.user.createdAt)}</p>
