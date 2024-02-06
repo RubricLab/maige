@@ -32,7 +32,7 @@ export default function SettingsNav({
 				<Link
 					key={route.name}
 					href={`/${teamSlug}/settings/${route.path}`}
-					className={`hover:bg-tertiary rounded-sm px-4 py-2 transition-colors ${pathname === `/${teamSlug}/settings${route.path}` && 'bg-tertiary'}`}>
+					className={`hover:bg-tertiary rounded-sm px-4 py-2 transition-colors ${pathname === `/${teamSlug}/settings/${route.path}` && 'bg-tertiary'}`}>
 					{route.name}
 				</Link>
 			))}
