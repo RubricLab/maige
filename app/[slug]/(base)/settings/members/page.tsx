@@ -36,10 +36,7 @@ export default async function Members({params}: {params: {slug: string}}) {
 				<h3>Members</h3>
 				<InviteDialog teamId={team.id} />
 			</div>
-			<ExistingMembers
-				teamId={team.id}
-				members={team.memberships}
-			/>
+			<ExistingMembers members={team.memberships} />
 			{team.invites.length > 0 && <PendingInvitations invites={team.invites} />}
 		</div>
 	)
