@@ -241,6 +241,7 @@ model Invite {
   team       Team        @relation(fields: [teamId], references: [id], onDelete: Cascade)
   membership Membership?
 
+  @@unique([email, teamId]) // Composite uniqueness constraint to avoid duplicates
   @@index([invitedBy])
   @@index([acceptedBy])
   @@index([teamId])
