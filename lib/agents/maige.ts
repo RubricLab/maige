@@ -76,7 +76,6 @@ export async function maige({
 			? [
 					codebaseSearch({customerId, repoFullName}),
 					dispatchEngineer({
-						octokit,
 						issueId,
 						issueNumber,
 						repoFullName,
