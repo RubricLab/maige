@@ -5,6 +5,10 @@ import {usePathname} from 'next/navigation'
 
 const routes = [
 	{
+		name: 'General',
+		path: 'general'
+	},
+	{
 		name: 'Members',
 		path: 'members'
 	},

@@ -1,6 +1,7 @@
 'use client'
 
-import {Project, Team, User} from '@prisma/client'
+import {Project, Team} from '@prisma/client'
+import {User} from 'next-auth'
 import {signOut} from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -18,7 +19,7 @@ import FeedbackDialog from '../Feedback/FeedbackDialog'
 import ProjectSelect from './ProjectSelect'
 import TeamSelect from './TeamSelect'
 
-export default function DashboardHeader({
+export default function DashboardNavClient({
 	user,
 	teams,
 	projects
