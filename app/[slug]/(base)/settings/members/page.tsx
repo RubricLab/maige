@@ -9,8 +9,6 @@ import {getCurrentUser} from '~/utils/session'
 
 export default async function Members({params}: {params: {slug: string}}) {
 	const user = await getCurrentUser()
-	if (!user) redirect('/')
-
 	const team = await prisma.team.findFirst({
 		where: {slug: params.slug, memberships: {some: {userId: user.id}}},
 		select: {
