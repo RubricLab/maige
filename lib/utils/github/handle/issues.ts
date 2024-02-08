@@ -169,6 +169,7 @@ export default async function handleIssues({
 			octokit,
 			customerId: membership ? user.id : null,
 			projectId: project.id,
+			defaultBranch: repository.default_branch,
 			repoFullName: repository.full_name,
 			issueNumber: issue?.number,
 			issueId: issue?.node_id,

@@ -22,6 +22,7 @@ export async function engineer({
 	runId,
 	repoFullName,
 	issueNumber,
+	defaultBranch,
 	customerId,
 	projectId,
 	issueId,
@@ -31,6 +32,7 @@ export async function engineer({
 	runId: string
 	repoFullName: string
 	issueNumber: number
+	defaultBranch: string
 	customerId: string
 	projectId: string
 	issueId: string
@@ -161,6 +163,8 @@ Your final output message should be the message that will be included in the pul
 		cmd: `cd ${repo} && git push -u origin ${branch}`
 	})
 
+	console.log('Creating PR')
+
 	try {
 		await octokit.request(`POST /repos/${repoFullName}/pulls`, {
 			owner,
@@ -168,15 +172,15 @@ Your final output message should be the message that will be included in the pul
 			title,
 			body,
 			head: branch,
-			base: 'main'
+			base: defaultBranch
 		})
+		await completeEngineerTracking('completed')
 	} catch (e) {
+		console.error('!!!!!!\n\n\n\n\n\n\n\n', e, '\n\n\n\n\n\n\n\n!!!!!!')
 		await updateEngineerTracking('failed')
 	}
 
 	await shell.close()
-
-	await completeEngineerTracking('completed')
 
 	return
 }

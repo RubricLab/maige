@@ -18,6 +18,7 @@ export async function maige({
 	runId,
 	customerId,
 	projectId,
+	defaultBranch,
 	repoFullName,
 	issueNumber,
 	issueId,
@@ -31,6 +32,7 @@ export async function maige({
 	runId: string
 	customerId: string
 	projectId: string
+	defaultBranch: string
 	repoFullName: string
 	issueNumber?: number
 	issueId?: string
@@ -109,6 +111,7 @@ export async function maige({
 						issueId,
 						issueNumber,
 						repoFullName,
+						defaultBranch,
 						customerId,
 						projectId
 					})

@@ -10,6 +10,7 @@ export default function dispatchEngineer({
 	repoFullName,
 	runId,
 	issueNumber,
+	defaultBranch,
 	customerId,
 	projectId
 }: {
@@ -17,6 +18,7 @@ export default function dispatchEngineer({
 	repoFullName: string
 	runId: string
 	issueNumber: number
+	defaultBranch: string
 	customerId: string
 	projectId: string
 }) {
@@ -31,6 +33,7 @@ export default function dispatchEngineer({
 					runId,
 					repoFullName,
 					issueNumber,
+					defaultBranch,
 					customerId,
 					projectId,
 					issueId,
