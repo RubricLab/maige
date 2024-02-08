@@ -11,7 +11,7 @@ export default async function desyncedAgentCall({
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${env.NEXTAUTH_SECRET}`
+			Authorization: `Bearer ${env.MAIGE_SERVER_SECRET}`
 		},
 		body: JSON.stringify(body)
 	})

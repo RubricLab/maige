@@ -4,7 +4,7 @@ import env from '~/env.mjs'
 export const maxDuration = 300
 
 const validateAgentCall = (headers: Headers) => {
-	if (!(headers.get('Authorization') === `Bearer ${env.NEXTAUTH_SECRET}`))
+	if (!(headers.get('Authorization') === `Bearer ${env.MAIGE_SERVER_SECRET}`))
 		throw new Error('Webhook signature could not be verified')
 }
 
