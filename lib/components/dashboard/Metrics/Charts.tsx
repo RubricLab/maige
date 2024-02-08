@@ -27,8 +27,8 @@ export async function UsageCharts({route}: {route: string}) {
 			INNER JOIN User C ON P.createdBy = C.id
 		WHERE
 			L.createdAt >= CURDATE() - INTERVAL 14 DAY
-			AND L.createdAt < CURDATE() + INTERVAL 1 DAY -- Adjusted to '<' for end of day
-			AND C.id = 'cls6ba5iy0000ohopf58h03ot'
+			AND L.createdAt < CURDATE() + INTERVAL 1 DAY
+			AND C.id = ${session.user.id}
 		GROUP BY
 			usageDay
 		ORDER BY
