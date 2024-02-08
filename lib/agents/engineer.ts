@@ -180,7 +180,6 @@ Your final output message should be the message that will be included in the pul
 		})
 		await completeEngineerTracking('completed')
 	} catch (e) {
-		console.error('!!!!!!\n\n\n\n\n\n\n\n', e, '\n\n\n\n\n\n\n\n!!!!!!')
 		await updateEngineerTracking('failed')
 	}
 
