@@ -19,6 +19,7 @@ export default async function handleIssues({
 }: {
 	payload: IssueCommentCreatedEvent | IssuesOpenedEvent
 }) {
+	console.log('11111111111')
 	const {
 		sender: {login: senderGithubUserName},
 		installation: {id: instanceId},
@@ -64,6 +65,8 @@ export default async function handleIssues({
 		}
 	})
 
+	console.log('2222222222')
+
 	// Remove later: Handle user requests for existing users (Feb 1st, 2024)
 	if (!project) {
 		// Not ideal since a name isn't always unique (only unique to organization)
@@ -98,6 +101,8 @@ export default async function handleIssues({
 		octokit
 	})
 
+	console.log('333333333')
+
 	// Construct prompt
 	const prompt = getPrompt({
 		repo: {
@@ -130,6 +135,8 @@ export default async function handleIssues({
 		select: {id: true}
 	})
 
+	console.log('4444444444')
+
 	// If user exists, check if user has access to project
 	const membership = user
 		? await prisma.project.findFirst({
@@ -153,6 +160,8 @@ export default async function handleIssues({
 			})
 		: null
 
+	console.log('5555555555')
+
 	const result = await prisma.run.create({
 		data: {
 			teamId: project.teamId,
@@ -161,6 +170,8 @@ export default async function handleIssues({
 			issueUrl: issue?.html_url
 		}
 	})
+
+	console.log('666666666')
 
 	try {
 		await maige({
