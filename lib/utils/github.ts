@@ -91,7 +91,7 @@ export async function trackAgent({
 	const commentId = await addComment({
 		octokit,
 		issueId,
-		comment: `**${agent} Dispatched.** See details on the [maige dashboard](https://maige.app).
+		comment: `**${agent} Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
 | **${title}** | 🟡 Pending ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |
@@ -106,7 +106,7 @@ Terminal output:
 		await editComment({
 			octokit,
 			commentId,
-			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
+			comment: `**Engineer Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
 | **${title}** | ❌ Error ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | Errored | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
@@ -117,7 +117,7 @@ Terminal output:
 		await editComment({
 			octokit,
 			commentId,
-			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
+			comment: `**Engineer Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
 | **${title}** | ✅ Complete ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
