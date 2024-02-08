@@ -44,7 +44,7 @@ const TableColNames = [
 	{
 		key: 'timeTaken',
 		value: 'Time Taken',
-		align: 'right'
+		align: 'left'
 	},
 	{
 		key: 'logs',
