@@ -9,7 +9,7 @@ type Props = {
 
 const routes = [
 	{
-		name: 'Overview',
+		name: 'Logs',
 		path: ''
 	},
 	{
