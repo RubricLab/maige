@@ -12,13 +12,18 @@ const routes = [
 		path: 'instructions'
 	},
 	{
+		name: 'Usage',
+		path: 'usage'
+	},
+	{
 		name: 'Settings',
 		path: 'settings'
-	}
+	},
 ]
 
 function evaluatePath(path: string, repoSlug: string, projectId: string) {
 	if (path === '') return `/${repoSlug}/project/${projectId}`
+	if (path === 'usage') return `/${repoSlug}/usage?proj=${projectId}`
 	return `/${repoSlug}/project/${projectId}/${path}`
 }
 

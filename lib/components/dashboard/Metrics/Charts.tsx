@@ -5,40 +5,42 @@ import {Chart} from '.'
 
 type UsageDay = {
 	usageDay: Date
-	usageCount: number
+	logCount: number
 	totalTokens: number
+	runCount: number
 }
 
 export async function UsageCharts({route}: {route: string}) {
 	const session = await getServerSession(authOptions)
 	if (!session) return <div>Not authenticated</div>
 
-	const dateStringByOffset = (offset: number): string => {
-		const date = new Date()
-		date.setDate(date.getDate() + offset)
-		return date.toISOString().split('T')[0]
-	}
-
 	const groupUsage: UsageDay[] = await prisma.$queryRaw`
-		SELECT DATE(U.createdAt) AS usageDay, 
-			COUNT(U.id) AS usageCount,
-			SUM(U.totalTokens) AS totalTokens
-    FROM Usage U
-    INNER JOIN Project P ON U.projectId = P.id
-    INNER JOIN User C ON P.createdBy = C.id
-    WHERE U.createdAt >= ${dateStringByOffset(-14)} 
-    AND U.createdAt <= ${dateStringByOffset(1)}
-    AND C.id = ${session.user.id}
-    GROUP BY usageDay
-    ORDER BY usageDay;
+		SELECT
+			DATE(L.createdAt) AS usageDay,
+			COUNT(DISTINCT L.id) AS logCount,
+			SUM(L.totalTokens) AS totalTokens,
+			COUNT(DISTINCT R.id) AS runCount
+		FROM
+			Log L
+			INNER JOIN Run R ON L.runId = R.id
+			INNER JOIN Project P ON R.projectId = P.id
+			INNER JOIN User C ON P.createdBy = C.id
+		WHERE
+			L.createdAt >= CURDATE() - INTERVAL 14 DAY
+			AND L.createdAt < CURDATE() + INTERVAL 1 DAY
+			AND C.id = ${session.user.id}
+		GROUP BY
+			usageDay
+		ORDER BY
+			usageDay;
 	`
 
-	const convertedUsage = groupUsage.map(row => ({
+	const logUsage = groupUsage.map(row => ({
 		date: new Date(row.usageDay).toLocaleDateString('en-US', {
 			month: 'short',
 			day: 'numeric'
 		}),
-		runs: Number(row.usageCount)
+		logs: Number(row.logCount)
 	}))
 
 	const tokensUsage = groupUsage.map(row => ({
@@ -49,10 +51,18 @@ export async function UsageCharts({route}: {route: string}) {
 		tokens: Number(row.totalTokens)
 	}))
 
+	const runUsage = groupUsage.map(row => ({
+		date: new Date(row.usageDay).toLocaleDateString('en-US', {
+			month: 'short',
+			day: 'numeric'
+		}),
+		runs: Number(row.runCount)
+	}))
+
 	if (route === 'runs')
 		return (
 			<Chart
-				data={convertedUsage}
+				data={runUsage}
 				category='runs'
 				color='green'
 			/>
@@ -70,8 +80,8 @@ export async function UsageCharts({route}: {route: string}) {
 	if (route === '')
 		return (
 			<Chart
-				data={tokensUsage}
-				category='tokens'
+				data={logUsage}
+				category='logs'
 				color='purple'
 			/>
 		)

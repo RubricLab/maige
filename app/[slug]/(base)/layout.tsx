@@ -1,4 +1,4 @@
-import MainNav from '~/components/dashboard/Navigation/MainNav'
+import TeamNav from '~/components/dashboard/Navigation/TeamNav'
 
 export default async function RootLayout({
 	children
@@ -7,7 +7,7 @@ export default async function RootLayout({
 }) {
 	return (
 		<div className='space-y-4'>
-			<MainNav />
+			<TeamNav />
 			<div className='z-10 h-full w-full'>{children}</div>
 		</div>
 	)

@@ -13,7 +13,7 @@ const routes = [
 	},
 	{
 		name: 'Settings',
-		path: 'settings'
+		path: 'settings/general'
 	}
 ]
 
@@ -28,7 +28,7 @@ function evaluateHref({activePath, path}) {
 	return `/${slug}/${path}`
 }
 
-export default function MainNav() {
+export default function TeamNav() {
 	return (
 		<TabList
 			routes={routes}

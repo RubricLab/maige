@@ -2,7 +2,6 @@
 
 import {PlusIcon} from 'lucide-react'
 import {useState} from 'react'
-import {Button} from '~/components/ui/button'
 import {Dialog, DialogContent, DialogTrigger} from '~/components/ui/dialog'
 import CreateInstructionForm from './CreateInstructionForm'
 
@@ -17,13 +16,9 @@ export default function CreateInstruction({projectId}: Props) {
 		<Dialog
 			open={open}
 			onOpenChange={() => setOpen(prev => !prev)}>
-			<DialogTrigger>
-				<Button
-					type='submit'
-					className='border-tertiary hover:border-secondary h-full min-h-36 w-full rounded-sm border !border-dashed bg-transparent text-base transition-opacity duration-300'>
-					<PlusIcon />
-					Add instruction
-				</Button>
+			<DialogTrigger className='border-tertiary hover:border-secondary flex h-full min-h-36 w-full items-center justify-center gap-2 rounded-sm border !border-dashed bg-transparent text-base transition-opacity duration-300'>
+				<PlusIcon />
+				Add instruction
 			</DialogTrigger>
 			<DialogContent>
 				<CreateInstructionForm

@@ -15,6 +15,7 @@ export const POST = async (req: Request) => {
 
 	const {
 		task,
+		runId,
 		repoFullName,
 		issueNumber,
 		customerId,
@@ -25,6 +26,7 @@ export const POST = async (req: Request) => {
 
 	await engineer({
 		task,
+		runId,
 		repoFullName,
 		issueNumber,
 		customerId,

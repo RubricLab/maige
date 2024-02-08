@@ -15,6 +15,7 @@ import {isDev} from '~/utils/index'
 export async function maige({
 	input,
 	octokit,
+	runId,
 	customerId,
 	projectId,
 	repoFullName,
@@ -27,6 +28,7 @@ export async function maige({
 }: {
 	input: string
 	octokit: any
+	runId: string
 	customerId: string
 	projectId: string
 	repoFullName: string
@@ -37,24 +39,51 @@ export async function maige({
 	comment: Comment
 	beta?: boolean
 }) {
-	let tokens = {
-		prompt: 0,
-		completion: 0
-	}
-
+	let logId: string
 	const model = new ChatOpenAI({
-		modelName: 'gpt-4-1106-preview',
+		modelName: 'gpt-4-turbo-preview',
 		openAIApiKey: env.OPENAI_API_KEY,
 		temperature: 0,
 		streaming: false,
 		callbacks: [
 			{
+				async handleLLMStart() {
+					const result = await prisma.log.create({
+						data: {
+							runId: runId,
+							action: 'Coming Soon',
+							agent: 'labeler',
+							model: 'gpt_4_turbo_preview'
+						}
+					})
+					logId = result.id
+				},
+				async handleLLMError() {
+					await prisma.log.update({
+						where: {
+							id: logId
+						},
+						data: {
+							status: 'failed',
+							finishedAt: new Date()
+						}
+					})
+				},
 				async handleLLMEnd(data) {
-					tokens = {
-						prompt: tokens.prompt + (data?.llmOutput?.tokenUsage?.promptTokens || 0),
-						completion:
-							tokens.completion + (data?.llmOutput?.tokenUsage?.completionTokens || 0)
-					}
+					await prisma.log.update({
+						where: {
+							id: logId
+						},
+						data: {
+							status: 'completed',
+							promptTokens: data?.llmOutput?.tokenUsage?.promptTokens || 0,
+							completionTokens: data?.llmOutput?.tokenUsage?.completionTokens || 0,
+							totalTokens:
+								data?.llmOutput?.tokenUsage?.promptTokens +
+								data?.llmOutput?.tokenUsage?.completionTokens,
+							finishedAt: new Date()
+						}
+					})
 				}
 			}
 		]
@@ -76,6 +105,7 @@ export async function maige({
 			? [
 					codebaseSearch({customerId, repoFullName}),
 					dispatchEngineer({
+						runId,
 						issueId,
 						issueNumber,
 						repoFullName,
@@ -86,7 +116,16 @@ export async function maige({
 			: []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
 		...(pullUrl && beta && customerId
-			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId, projectId})]
+			? [
+					dispatchReviewer({
+						runId,
+						octokit,
+						pullUrl,
+						repoFullName,
+						customerId,
+						projectId
+					})
+				]
 			: [])
 	]
 
@@ -113,24 +152,7 @@ All repo labels: ${allLabels
 		// verbose: true,
 		agentArgs: {
 			prefix
-		},
-		callbacks: [
-			{
-				async handleChainEnd() {
-					await prisma.usage.create({
-						data: {
-							projectId: projectId,
-							totalTokens: tokens.prompt + tokens.completion,
-							promptTokens: tokens.prompt,
-							completionTokens: tokens.completion,
-							action: 'Review an issue with maige',
-							agent: 'maige',
-							model: 'gpt-4-1106-preview'
-						}
-					})
-				}
-			}
-		]
+		}
 	})
 
 	const {output} = await executor.call({input})

@@ -4,7 +4,9 @@ import {Instruction} from '@prisma/client'
 import {Dialog, DialogTrigger} from '@radix-ui/react-dialog'
 import {DropdownMenuPortal} from '@radix-ui/react-dropdown-menu'
 import {MoreVerticalIcon} from 'lucide-react'
+import {useRouter} from 'next/navigation'
 import {useState} from 'react'
+import {toast} from 'sonner'
 import deleteInstruction from '~/actions/delete-instruction'
 import {buttonVariants} from '~/components/ui/button'
 import {
@@ -16,13 +18,23 @@ import {
 import UpdateInstruction from './UpdateInstruction'
 
 export default function InstructionCard({
-	instruction,
-	teamSlug
+	instruction
 }: {
 	instruction: Instruction
-	teamSlug: string
 }) {
+	const router = useRouter()
 	const [dialogOpen, setDialogOpen] = useState(false)
+
+	async function handleDelete(instructionId: string) {
+		const state = await deleteInstruction(instructionId)
+		if (state?.type === 'success') {
+			toast.success(state?.message)
+			router.refresh()
+		} else if (state?.type === 'error') {
+			toast.error(state?.message)
+			console.error(state?.message)
+		}
+	}
 	return (
 		<div className='border-border flex min-h-36 flex-col justify-between gap-3 rounded-sm border p-3'>
 			<div>
@@ -45,8 +57,7 @@ export default function InstructionCard({
 								<DialogTrigger className='w-full'>
 									<DropdownMenuItem>Edit</DropdownMenuItem>
 								</DialogTrigger>
-								<DropdownMenuItem
-									onClick={() => deleteInstruction(teamSlug, instruction)}>
+								<DropdownMenuItem onClick={() => handleDelete(instruction.id)}>
 									Delete
 								</DropdownMenuItem>
 							</DropdownMenuContent>

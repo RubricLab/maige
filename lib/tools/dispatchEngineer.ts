@@ -8,12 +8,14 @@ import desyncedAgentCall from '~/utils/desyncedAgentCall'
 export default function dispatchEngineer({
 	issueId,
 	repoFullName,
+	runId,
 	issueNumber,
 	customerId,
 	projectId
 }: {
 	issueId: string
 	repoFullName: string
+	runId: string
 	issueNumber: number
 	customerId: string
 	projectId: string
@@ -26,6 +28,7 @@ export default function dispatchEngineer({
 				route: 'api/agent/engineer',
 				body: {
 					task,
+					runId,
 					repoFullName,
 					issueNumber,
 					customerId,
