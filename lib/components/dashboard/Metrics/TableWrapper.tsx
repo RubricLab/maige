@@ -84,6 +84,13 @@ export async function UsageTable({
 	}
 
 	const start = performance.now()
+	const runCount: number = await prisma.run.count({
+		where: {
+			teamId: team.id,
+			projectId: usageQuery.data.proj
+		}
+	})
+
 	const runs: RunRow[] = await prisma.run.findMany({
 		where: {
 			teamId: team.id,
@@ -105,7 +112,7 @@ export async function UsageTable({
 
 	const end = performance.now()
 	const timeTaken = Math.floor(end - start)
-	const usageNum = runs?.length || 0
+	const usageNum = runCount || 0
 
 	const params = new URLSearchParams({
 		...(usageQuery.data.q ? {q: usageQuery.data.q} : {}),
