@@ -10,13 +10,15 @@ export default function dispatchReviewer({
 	pullUrl,
 	customerId,
 	projectId,
-	octokit
+	octokit,
+	runId
 }: {
 	repoFullName: string
 	pullUrl: string
 	customerId: string
 	projectId: string
 	octokit: any
+	runId: string
 }) {
 	return new DynamicStructuredTool({
 		description: 'Dispatch a developer to review code.',
@@ -47,7 +49,8 @@ export default function dispatchReviewer({
 				repoFullName,
 				customerId,
 				projectId,
-				octokit
+				octokit,
+				runId
 			})
 		},
 		name: 'dispatchReviewer',
