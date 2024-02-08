@@ -26,7 +26,8 @@ export async function engineer({
 	customerId,
 	projectId,
 	issueId,
-	title
+	title,
+	teamSlug
 }: {
 	task: string
 	runId: string
@@ -37,6 +38,7 @@ export async function engineer({
 	projectId: string
 	issueId: string
 	title: string
+	teamSlug: string
 }) {
 	const installationToken = await getInstallationToken(
 		await getInstallationId(repoFullName)
@@ -100,7 +102,9 @@ export async function engineer({
 		octokit,
 		issueId,
 		agent: AGENT.ENGINEER,
-		title
+		title,
+		teamSlug,
+		projectId
 	})
 
 	const shell = await Sandbox.create({

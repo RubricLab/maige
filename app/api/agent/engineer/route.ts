@@ -22,7 +22,8 @@ export const POST = async (req: Request) => {
 		customerId,
 		projectId,
 		issueId,
-		title
+		title,
+		teamSlug
 	} = await req.json()
 
 	await engineer({
@@ -34,7 +35,8 @@ export const POST = async (req: Request) => {
 		customerId,
 		projectId,
 		issueId,
-		title
+		title,
+		teamSlug
 	})
 
 	return new Response('Engineer Agent Complete', {status: 200})

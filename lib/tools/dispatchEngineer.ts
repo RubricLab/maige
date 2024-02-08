@@ -12,7 +12,8 @@ export default function dispatchEngineer({
 	issueNumber,
 	defaultBranch,
 	customerId,
-	projectId
+	projectId,
+	teamSlug
 }: {
 	issueId: string
 	repoFullName: string
@@ -21,6 +22,7 @@ export default function dispatchEngineer({
 	defaultBranch: string
 	customerId: string
 	projectId: string
+	teamSlug: string
 }) {
 	return new DynamicStructuredTool({
 		description:
@@ -37,7 +39,8 @@ export default function dispatchEngineer({
 					customerId,
 					projectId,
 					issueId,
-					title
+					title,
+					teamSlug
 				}
 			})
 		},

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import Stripe from 'stripe'
 import {GITHUB} from '~/constants'
+import env from '~/env.mjs'
 import prisma from '~/prisma'
 import {Label, Repository} from '~/types'
 import {createPaymentLink} from '~/utils/payment'
@@ -76,12 +77,16 @@ export async function trackAgent({
 	octokit,
 	issueId,
 	agent,
-	title
+	title,
+	teamSlug,
+	projectId
 }: {
 	octokit: any
 	issueId: string
 	agent: AGENT
 	title: string
+	teamSlug: string
+	projectId: string
 }) {
 	const commentId = await addComment({
 		octokit,
@@ -89,7 +94,7 @@ export async function trackAgent({
 		comment: `**${agent} Dispatched.** See details on the [maige dashboard](https://maige.app).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
-| **${title}** | 🟡 Pending ([inspect](https://maige.app)) | | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |
+| **${title}** | 🟡 Pending ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |
 
 Terminal output:
 
@@ -104,7 +109,7 @@ Terminal output:
 			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
-| **${title}** | ❌ Error ([inspect](https://maige.app)) | Errored | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+| **${title}** | ❌ Error ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | Errored | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
 		})
 	}
 
@@ -115,7 +120,7 @@ Terminal output:
 			comment: `**Engineer Dispatched.** See details on the [maige dashboard](https://maige.app).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
-| **${title}** | ✅ Complete ([inspect](https://maige.app)) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+| **${title}** | ✅ Complete ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
 		})
 	}
 

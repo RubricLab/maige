@@ -176,7 +176,8 @@ export default async function handleIssues({
 			pullUrl: issue?.pull_request?.url || null,
 			allLabels,
 			comment: comment,
-			beta: true
+			beta: true,
+			teamSlug: membership.team.slug
 		})
 	} catch (error) {
 		console.error(error)

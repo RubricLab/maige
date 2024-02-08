@@ -25,7 +25,8 @@ export async function maige({
 	pullUrl,
 	allLabels,
 	comment,
-	beta
+	beta,
+	teamSlug
 }: {
 	input: string
 	octokit: any
@@ -40,6 +41,7 @@ export async function maige({
 	allLabels: any[]
 	comment: Comment
 	beta?: boolean
+	teamSlug?: string
 }) {
 	let logId: string
 	const model = new ChatOpenAI({
@@ -113,7 +115,8 @@ export async function maige({
 						repoFullName,
 						defaultBranch,
 						customerId,
-						projectId
+						projectId,
+						teamSlug
 					})
 				]
 			: []),
