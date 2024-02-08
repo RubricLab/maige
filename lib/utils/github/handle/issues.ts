@@ -19,7 +19,6 @@ export default async function handleIssues({
 }: {
 	payload: IssueCommentCreatedEvent | IssuesOpenedEvent
 }) {
-	console.log('11111111111')
 	const {
 		sender: {login: senderGithubUserName},
 		installation: {id: instanceId},
@@ -65,157 +64,142 @@ export default async function handleIssues({
 		}
 	})
 
-	console.log('2222222222')
-
-	try {
-		// Remove later: Handle user requests for existing users (Feb 1st, 2024)
-		if (!project) {
-			// Not ideal since a name isn't always unique (only unique to organization)
-			// But the number of existing projects is small, so there would be low conflicts
-			// As an additional check, we also ensure the owner matches
-			project = await prisma.project.findFirst({
-				where: {
-					name: repository.name,
-					user: {userName: repository.owner.login}
-				},
-				select: {
-					id: true,
-					instructions: true,
-					teamId: true
-				}
-			})
-			if (!project)
-				return new Response('Project not found in database', {status: 400})
-		}
-
-		// Get GitHub app instance access token
-		const app = new App({
-			appId: env.GITHUB_APP_ID || '',
-			privateKey: env.GITHUB_PRIVATE_KEY || ''
-		})
-		const octokit = await app.getInstallationOctokit(instanceId)
-
-		// Get repo metadata
-		const {labels: allLabels, description: repoDescription} = await getRepoMeta({
-			name: repository.name,
-			owner: repository.owner.login,
-			octokit
-		})
-
-		console.log('333333333')
-
-		// Construct prompt
-		const prompt = getPrompt({
-			repo: {
-				id: repository.id,
-				description: repoDescription,
-				owner: repository.owner.login,
-				full_name: repository.full_name,
+	// Remove later: Handle user requests for existing users (Feb 1st, 2024)
+	if (!project) {
+		// Not ideal since a name isn't always unique (only unique to organization)
+		// But the number of existing projects is small, so there would be low conflicts
+		// As an additional check, we also ensure the owner matches
+		project = await prisma.project.findFirst({
+			where: {
 				name: repository.name,
-				node_id: repository.node_id,
-				private: repository.private
+				user: {userName: repository.owner.login}
 			},
-			instructions: project.instructions,
-			labels: allLabels,
-			issue: {
-				id: issue.id,
-				title: issue.title,
-				body: issue.body,
-				number: issue.number
-			},
-			comment: comment
+			select: {
+				id: true,
+				instructions: true,
+				teamId: true
+			}
 		})
+		if (!project)
+			return new Response('Project not found in database', {status: 400})
+	}
 
-		// Increase usage per project
-		await incrementUsage(project.id)
+	// Get GitHub app instance access token
+	const app = new App({
+		appId: env.GITHUB_APP_ID || '',
+		privateKey: env.GITHUB_PRIVATE_KEY || ''
+	})
+	const octokit = await app.getInstallationOctokit(instanceId)
 
-		// Check if user exists
-		// TODO: ideally we want to use senderGithubId since userName can change but id stays the same
-		const user = await prisma.user.findUnique({
-			where: {userName: senderGithubUserName},
-			select: {id: true}
-		})
+	// Get repo metadata
+	const {labels: allLabels, description: repoDescription} = await getRepoMeta({
+		name: repository.name,
+		owner: repository.owner.login,
+		octokit
+	})
 
-		console.log('4444444444')
+	// Construct prompt
+	const prompt = getPrompt({
+		repo: {
+			id: repository.id,
+			description: repoDescription,
+			owner: repository.owner.login,
+			full_name: repository.full_name,
+			name: repository.name,
+			node_id: repository.node_id,
+			private: repository.private
+		},
+		instructions: project.instructions,
+		labels: allLabels,
+		issue: {
+			id: issue.id,
+			title: issue.title,
+			body: issue.body,
+			number: issue.number
+		},
+		comment: comment
+	})
 
-		// If user exists, check if user has access to project
-		const membership = user
-			? await prisma.project.findFirst({
-					where: {
-						githubProjectId: repository.id.toString(),
-						team: {
-							memberships: {
-								some: {
-									userId: user.id
-								}
-							}
-						}
-					},
-					include: {
-						team: {
-							include: {
-								memberships: true
+	// Increase usage per project
+	await incrementUsage(project.id)
+
+	// Check if user exists
+	// TODO: ideally we want to use senderGithubId since userName can change but id stays the same
+	const user = await prisma.user.findUnique({
+		where: {userName: senderGithubUserName},
+		select: {id: true}
+	})
+
+	// If user exists, check if user has access to project
+	const membership = user
+		? await prisma.project.findFirst({
+				where: {
+					githubProjectId: repository.id.toString(),
+					team: {
+						memberships: {
+							some: {
+								userId: user.id
 							}
 						}
 					}
-				})
-			: null
-
-		console.log('5555555555')
-
-		const result = await prisma.run.create({
-			data: {
-				teamId: project.teamId,
-				projectId: project.id,
-				issueNum: issue?.number,
-				issueUrl: issue?.html_url
-			}
-		})
-
-		console.log('666666666')
-
-		try {
-			await maige({
-				input: prompt,
-				runId: result.id,
-				octokit,
-				customerId: membership ? user.id : null,
-				projectId: project.id,
-				defaultBranch: repository.default_branch,
-				repoFullName: repository.full_name,
-				issueNumber: issue?.number,
-				issueId: issue?.node_id,
-				pullUrl: issue?.pull_request?.url || null,
-				allLabels,
-				comment: comment,
-				beta: true,
-				teamSlug: membership.team.slug
-			})
-		} catch (error) {
-			console.error(error)
-			await prisma.run.update({
-				where: {
-					id: result.id
 				},
-				data: {
-					status: 'failed',
-					finishedAt: new Date()
+				include: {
+					team: {
+						include: {
+							memberships: true
+						}
+					}
 				}
 			})
-			return new Response(`Something went wrong: ${error}`, {status: 500})
-		}
+		: null
 
+	const result = await prisma.run.create({
+		data: {
+			teamId: project.teamId,
+			projectId: project.id,
+			issueNum: issue?.number,
+			issueUrl: issue?.html_url
+		}
+	})
+
+	try {
+		await maige({
+			input: prompt,
+			runId: result.id,
+			octokit,
+			customerId: membership ? user.id : null,
+			projectId: project.id,
+			defaultBranch: repository.default_branch,
+			repoFullName: repository.full_name,
+			issueNumber: issue?.number,
+			issueId: issue?.node_id,
+			pullUrl: issue?.pull_request?.url || null,
+			allLabels,
+			comment: comment,
+			beta: true,
+			teamSlug: membership.team.slug
+		})
+	} catch (error) {
+		console.error(error)
 		await prisma.run.update({
 			where: {
 				id: result.id
 			},
 			data: {
-				status: 'completed',
+				status: 'failed',
 				finishedAt: new Date()
 			}
 		})
-	} catch (error) {
-		console.error(error)
 		return new Response(`Something went wrong: ${error}`, {status: 500})
 	}
+
+	await prisma.run.update({
+		where: {
+			id: result.id
+		},
+		data: {
+			status: 'completed',
+			finishedAt: new Date()
+		}
+	})
 }

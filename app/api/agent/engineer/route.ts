@@ -9,7 +9,6 @@ const validateAgentCall = (headers: Headers) => {
 }
 
 export const POST = async (req: Request) => {
-	console.log('POST /api/agent/engineer')
 
 	validateAgentCall(req.headers)
 

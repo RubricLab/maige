@@ -45,8 +45,6 @@ export async function maige({
 }) {
 	let logId: string
 
-	console.log('7777777')
-
 	const model = new ChatOpenAI({
 		modelName: 'gpt-4-turbo-preview',
 		openAIApiKey: env.OPENAI_API_KEY,
