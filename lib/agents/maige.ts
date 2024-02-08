@@ -52,7 +52,7 @@ export async function maige({
 					const result = await prisma.log.create({
 						data: {
 							runId: runId,
-							action: 'Labeling an issue',
+							action: 'Coming Soon',
 							agent: 'labeler',
 							model: 'gpt_4_turbo_preview'
 						}
@@ -108,7 +108,7 @@ export async function maige({
 			: []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
 		...(pullUrl && beta && customerId
-			? [dispatchReviewer({octokit, pullUrl, repoFullName, customerId, projectId})]
+			? [dispatchReviewer({runId, octokit, pullUrl, repoFullName, customerId, projectId})]
 			: [])
 	]
 

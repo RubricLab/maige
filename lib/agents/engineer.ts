@@ -38,7 +38,7 @@ export async function engineer({
 					const result = await prisma.log.create({
 						data: {
 							runId: runId,
-							action: 'Building some stuff with engineer',
+							action: 'Coming Soon',
 							agent: 'engineer',
 							model: 'gpt_4_turbo_preview'
 						}

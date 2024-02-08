@@ -107,6 +107,13 @@ export function CustomTable({
 				</TableRow>
 			</TableHeader>
 			<TableBody>
+				{data?.length === 0 && (
+					<TableRow>
+						<TableCell colSpan={6} className='text-center py-6'>
+							No runs found
+						</TableCell>
+					</TableRow>
+				)}
 				{data.map(usage => (
 					<TableRow key={usage.id}>
 						<TableCell className='group font-medium'>
