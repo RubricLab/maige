@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import Stripe from 'stripe'
 import {GITHUB} from '~/constants'
+import env from '~/env.mjs'
 import prisma from '~/prisma'
 import {Label, Repository} from '~/types'
 import {createPaymentLink} from '~/utils/payment'
@@ -22,16 +23,108 @@ export async function addComment({
 		`
 			mutation($issueId: ID!, $comment: String!) {
 				addComment(input: { subjectId: $issueId, body: $comment }) {
-					clientMutationId
+					commentEdge {
+						node {
+							id
+						}
+					}
 				}
 			}
-    `,
+	`,
 		{issueId, comment}
 	)
 
 	if (!commentResult) throw new Error('Could not add comment')
 
-	return commentResult
+	return commentResult.addComment.commentEdge.node.id
+}
+
+/**
+ * Edit comment
+ */
+export async function editComment({
+	octokit,
+	commentId,
+	comment
+}: {
+	octokit: any
+	commentId: string
+	comment: string
+}): Promise<string> {
+	const commentResult = await octokit.graphql(
+		`
+			mutation($commentId: ID!, $comment: String!) {
+				updateIssueComment(input: { id: $commentId, body: $comment }) {
+					issueComment {
+						id
+					}
+				}
+			}
+	`,
+		{commentId, comment}
+	)
+
+	if (!commentResult) throw new Error('Could not edit comment')
+
+	return commentResult.updateIssueComment.issueComment.id
+}
+
+export enum AGENT {
+	ENGINEER = 'Engineer'
+}
+
+export async function trackAgent({
+	octokit,
+	issueId,
+	agent,
+	title,
+	teamSlug,
+	projectId
+}: {
+	octokit: any
+	issueId: string
+	agent: AGENT
+	title: string
+	teamSlug: string
+	projectId: string
+}) {
+	const commentId = await addComment({
+		octokit,
+		issueId,
+		comment: `**${agent} Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
+| **Name** | **Status** | **Message** | **Updated (UTC)** |
+|:---------|:-----------|:------------|:------------------|
+| **${title}** | 🟡 Pending ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |
+
+Terminal output:
+
+\`\`\` ls . \`\`\`
+`
+	})
+
+	async function updateTracking(status: string) {
+		await editComment({
+			octokit,
+			commentId,
+			comment: `**Engineer Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
+| **Name** | **Status** | **Message** | **Updated (UTC)** |
+|:---------|:-----------|:------------|:------------------|
+| **${title}** | ❌ Error ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | Errored | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+		})
+	}
+
+	async function completeTracking(status: string) {
+		await editComment({
+			octokit,
+			commentId,
+			comment: `**Engineer Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
+| **Name** | **Status** | **Message** | **Updated (UTC)** |
+|:---------|:-----------|:------------|:------------------|
+| **${title}** | ✅ Complete ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+		})
+	}
+
+	return {updateTracking, completeTracking}
 }
 
 export async function getRepoMeta({

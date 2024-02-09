@@ -169,13 +169,15 @@ export default async function handleIssues({
 			octokit,
 			customerId: membership ? user.id : null,
 			projectId: project.id,
+			defaultBranch: repository.default_branch,
 			repoFullName: repository.full_name,
 			issueNumber: issue?.number,
 			issueId: issue?.node_id,
 			pullUrl: issue?.pull_request?.url || null,
 			allLabels,
 			comment: comment,
-			beta: true
+			beta: true,
+			teamSlug: membership.team.slug
 		})
 	} catch (error) {
 		console.error(error)

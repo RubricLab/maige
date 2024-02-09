@@ -18,19 +18,22 @@ export async function maige({
 	runId,
 	customerId,
 	projectId,
+	defaultBranch,
 	repoFullName,
 	issueNumber,
 	issueId,
 	pullUrl,
 	allLabels,
 	comment,
-	beta
+	beta,
+	teamSlug
 }: {
 	input: string
 	octokit: any
 	runId: string
 	customerId: string
 	projectId: string
+	defaultBranch: string
 	repoFullName: string
 	issueNumber?: number
 	issueId?: string
@@ -38,9 +41,10 @@ export async function maige({
 	allLabels: any[]
 	comment: Comment
 	beta?: boolean
+	teamSlug?: string
 }) {
-
 	let logId: string
+
 	const model = new ChatOpenAI({
 		modelName: 'gpt-4-turbo-preview',
 		openAIApiKey: env.OPENAI_API_KEY,
@@ -59,7 +63,7 @@ export async function maige({
 					})
 					logId = result.id
 				},
-				async handleLLMError(){
+				async handleLLMError() {
 					await prisma.log.update({
 						where: {
 							id: logId
@@ -102,13 +106,33 @@ export async function maige({
 			instructionCommentLink: comment?.html_url
 		}),
 		githubTool({octokit}),
-		...(customerId ? [codebaseSearch({customerId, repoFullName})] : []),
-		...(beta && customerId
-			? [dispatchEngineer({runId, issueNumber, repoFullName, customerId, projectId})]
+		...(customerId
+			? [
+					codebaseSearch({customerId, repoFullName}),
+					dispatchEngineer({
+						runId,
+						issueId,
+						issueNumber,
+						repoFullName,
+						defaultBranch,
+						customerId,
+						projectId,
+						teamSlug
+					})
+				]
 			: []),
 		...(issueId ? [commentTool({octokit, issueId})] : []),
 		...(pullUrl && beta && customerId
-			? [dispatchReviewer({runId, octokit, pullUrl, repoFullName, customerId, projectId})]
+			? [
+					dispatchReviewer({
+						runId,
+						octokit,
+						pullUrl,
+						repoFullName,
+						customerId,
+						projectId
+					})
+				]
 			: [])
 	]
 
@@ -135,7 +159,7 @@ All repo labels: ${allLabels
 		// verbose: true,
 		agentArgs: {
 			prefix
-		},
+		}
 	})
 
 	const {output} = await executor.call({input})
