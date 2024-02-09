@@ -9,7 +9,7 @@ const schema = z.object({
 })
 
 export default async function createInstruction(
-	prevState: any,
+	_prevState: any,
 	formData: FormData
 ) {
 	const user = await getCurrentUser()
@@ -29,7 +29,7 @@ export default async function createInstruction(
 			data: {
 				projectId: parsed.projectId,
 				content: parsed.content,
-				creatorUsername: 'dashboard',
+				creatorUsername: user.userName,
 				createdBy: user.id
 			}
 		})
