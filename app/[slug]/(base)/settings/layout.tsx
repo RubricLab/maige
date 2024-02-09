@@ -9,10 +9,7 @@ export default async function Layout({
 }) {
 	return (
 		<div className='flex h-full w-full gap-4'>
-			<SettingsNav
-				teamSlug={params.slug}
-				projectId={params.projectId}
-			/>
+			<SettingsNav teamSlug={params.slug} />
 			<div className='h-full w-full max-w-2xl'>{children}</div>
 		</div>
 	)

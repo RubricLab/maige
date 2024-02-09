@@ -1,5 +1,6 @@
 export const STRIPE = {
-	PAYMENT_LINK: 'https://buy.stripe.com/aEU8yd0OIfd62ha6op'
+	PAYMENT_LINK: 'https://buy.stripe.com/aEU8yd0OIfd62ha6op',
+	MANAGE_LINK: 'https://billing.stripe.com/p/login/8wM02dgYN9ZM8rC4gg'
 }
 
 export const GITHUB = {

@@ -41,19 +41,11 @@ export const createPaymentLink = async (
 	try {
 		const stripeSession = await stripe.checkout.sessions.create({
 			client_reference_id: customerId,
-			...(email && {
-				customer_email: email
-			}),
+			...(email && {customer_email: email}),
 			mode: 'subscription',
 			payment_method_types: ['card'],
-			success_url:
-				env.VERCEL === '1'
-					? 'https://maige.app/dashboard'
-					: 'http://localhost:3000',
-			cancel_url:
-				env.VERCEL === '1'
-					? 'https://maige.app/dashboard'
-					: 'http://localhost:3000',
+			success_url: env.NEXTAUTH_URL,
+			cancel_url: env.NEXTAUTH_URL,
 			line_items: [
 				{
 					price: TIERS[tier].priceId,

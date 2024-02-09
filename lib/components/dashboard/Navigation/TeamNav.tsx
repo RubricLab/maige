@@ -13,14 +13,14 @@ const routes = [
 	},
 	{
 		name: 'Settings',
-		path: 'settings/general'
+		path: 'settings'
 	}
 ]
 
 function evaluateActive({activePath, path}) {
-	const slug = activePath.split('/')[1]
-	if (path === '') return activePath === `/${slug}`
-	return activePath.startsWith(`/${slug}/${path}`)
+	const teamSlug = activePath.split('/')[1]
+	if (path === '') return activePath === `/${teamSlug}`
+	return activePath.startsWith(`/${teamSlug}/${path}`)
 }
 
 function evaluateHref({activePath, path}) {

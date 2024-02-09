@@ -29,7 +29,7 @@ export const POST = async (req: Request) => {
 		console.error('Bad Stripe webhook secret')
 		return Response.json(
 			{
-				message: 'Stripe webhook error'
+				message: 'Stripe webhook secret error'
 			},
 			{status: 400}
 		)
@@ -43,7 +43,7 @@ export const POST = async (req: Request) => {
 	const {customer} = object as any
 
 	if (eventType === 'checkout.session.completed') {
-		const {client_reference_id: customerId} = object as any
+		const {client_reference_id: customerId, subscription} = object as any
 
 		if (!customerId)
 			return Response.json(
@@ -57,6 +57,7 @@ export const POST = async (req: Request) => {
 			},
 			data: {
 				stripeCustomerId: customer,
+				stripeSubscriptionId: subscription || null,
 				usageLimit: 1000
 			}
 		})
@@ -76,14 +77,20 @@ export const POST = async (req: Request) => {
 				{status: 400}
 			)
 
-		await prisma.user.update({
-			where: {
-				stripeCustomerId: customer
-			},
-			data: {
-				stripeSubscriptionId: subscriptionItem.id
-			}
-		})
+		try {
+			await prisma.user.update({
+				where: {
+					stripeCustomerId: customer
+				},
+				data: {
+					stripeSubscriptionId: subscriptionItem.id
+				}
+			})
+		} catch (error) {
+			return Response.json({
+				message: 'No customer to connect in DB'
+			})
+		}
 	} else if (eventType === 'customer.subscription.deleted')
 		/**
 		 * Customer deleted
@@ -125,8 +132,6 @@ export const POST = async (req: Request) => {
 				}
 			})
 		} catch (error) {
-			console.log('Customer update error:', error)
-
 			return Response.json({
 				message: 'No customer to update in DB'
 			})
