@@ -39,8 +39,8 @@ export default function TeamSelect({
 						size='icon'
 						role='combobox'
 						aria-expanded={open}
-						className='border-none hover:border'>
-						<ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50' />
+						className='group w-5 border-none hover:border'>
+						<ChevronsUpDown className='h-4 w-4 shrink-0 opacity-50 transition-opacity duration-100 group-hover:opacity-100' />
 					</Button>
 				</PopoverTrigger>
 				<PopoverContent className='w-[200px] translate-x-[82px] p-0'>

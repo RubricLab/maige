@@ -44,6 +44,9 @@ export default function DashboardNavClient({
 						teamSlug={params.slug}
 					/>
 					{params.projectId && (
+						<span className='mb-0.5 select-none px-1 pr-2 text-xl opacity-30 font-light'>/</span>
+					)}
+					{params.projectId && (
 						<ProjectSelect
 							projects={projects}
 							projectId={params.projectId}
