@@ -1,4 +1,5 @@
 'use client'
+
 import {Dispatch, SetStateAction, useEffect} from 'react'
 import {useFormState, useFormStatus} from 'react-dom'
 import {toast} from 'sonner'
@@ -41,7 +42,7 @@ export default function FeedbackForm({
 			toast.error(state?.message)
 			console.error(state?.message)
 		}
-	}, [state])
+	}, [setDialogOpen, state])
 
 	return (
 		<form

@@ -1,17 +1,29 @@
 'use server'
-import {Instruction} from '@prisma/client'
-import {revalidatePath} from 'next/cache'
-import {redirect} from 'next/navigation'
+
+import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
 
-export default async function deleteInstruction(
-	teamSlug: string,
-	instruction: Instruction
-) {
+// Delete an instruction
+export default async function deleteInstruction(instructionId: string) {
 	const user = await getCurrentUser()
 	if (!user)
 		return {
 			message: 'Unauthorized, no session',
+			type: 'error'
+		}
+
+	// Check for the following scenarios
+	// 1. instruction exists
+	// 2. user triggering delete has some relationship to the team containing the instruction
+	const instruction = await prisma.instruction.findFirst({
+		where: {
+			id: instructionId,
+			project: {team: {memberships: {some: {userId: user.id}}}}
+		}
+	})
+	if (!instruction)
+		return {
+			message: 'Instruction not found',
 			type: 'error'
 		}
 
@@ -21,8 +33,10 @@ export default async function deleteInstruction(
 				id: instruction.id
 			}
 		})
-		revalidatePath(`/${teamSlug}/project/${instruction.projectId}/instructions`)
-		redirect(`/${teamSlug}/project/${instruction.projectId}/instructions`)
+		return {
+			message: 'Instruction deleted',
+			type: 'success'
+		}
 	} catch (err) {
 		if (err instanceof Error)
 			return {

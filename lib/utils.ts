@@ -23,3 +23,27 @@ export function slugify(str: string): string {
 		.replace(/[^a-z0-9 -]/g, '')
 		.replace(/\s+/g, '-')
 }
+
+// Get project URL from team slug and project id
+export function getProjectUrl(teamSlug: string, projectId: string): string {
+	return `/${teamSlug}/project/${projectId}/instructions`
+}
+
+// Convert any input to title case format e.g: Admin
+export function convertToTitleCase(input: string): string {
+	return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase()
+}
+
+// Parse date object into appropriate string format
+export function parseDate(input: Date): string {
+	return input.toLocaleDateString('en-US', {
+		day: '2-digit',
+		month: 'short',
+		year: 'numeric'
+	})
+}
+
+// Copy text to clipboard
+export function copyToClipboard(input: string) {
+	navigator.clipboard.writeText(input)
+}

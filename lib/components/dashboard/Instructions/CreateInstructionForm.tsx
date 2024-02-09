@@ -49,7 +49,7 @@ export default function CreateInstructionForm({
 			toast.error(state?.message)
 			console.error(state?.message)
 		}
-	}, [state])
+	}, [router, setDialogOpen, state])
 
 	return (
 		<>

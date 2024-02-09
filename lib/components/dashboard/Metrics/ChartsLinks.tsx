@@ -9,7 +9,7 @@ type Props = {
 
 const routes = [
 	{
-		name: 'Overview',
+		name: 'Logs',
 		path: ''
 	},
 	{
@@ -28,11 +28,11 @@ export function ChartsLinks({teamSlug, route}: Props) {
 			{routes.map((page, index) => (
 				<div
 					key={index}
-					className='group relative flex flex-col items-center pb-2 text-sm font-medium'>
+					className='group relative flex flex-col items-center pb-2 font-medium'>
 					<Link
 						prefetch={false}
 						className={cn(
-							buttonVariants({variant: 'outline', size: 'sm'}),
+							buttonVariants({variant: 'outline'}),
 							route === page.path ? 'bg-tertiary' : ''
 						)}
 						href={`/${teamSlug}/usage/${page.path}`}>
