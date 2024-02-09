@@ -1,8 +1,16 @@
 import Stripe from 'stripe'
-import {STRIPE, TIERS} from '~/constants'
+import {STRIPE} from '~/constants'
 import env from '~/env.mjs'
 import prisma from '~/prisma'
-import {Tier} from '~/types'
+
+const TIERS = {
+	base: {
+		usageLimit: 30,
+		priceId: env.STRIPE_BASE_PRICE_ID
+	}
+}
+
+type Tier = keyof typeof TIERS
 
 /**
  * Increment usage count for a project
