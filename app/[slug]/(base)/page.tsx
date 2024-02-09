@@ -35,7 +35,6 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 			<Suspense fallback={<p>Loading...</p>}>
 				<ProjectsList
 					username={user.userName}
-					teamId={team.id}
 					teamSlug={params.slug}
 					projects={projects}
 				/>

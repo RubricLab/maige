@@ -1,14 +1,15 @@
 'use server'
+
 import {z} from 'zod'
 import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
 
 const schema = z.object({
-	teamId: z.string()
+	teamSlug: z.string()
 })
 
 export default async function createProjectIntent(
-	prevState: any,
+	_prevState: any,
 	formData: FormData
 ) {
 	const user = await getCurrentUser()
@@ -19,14 +20,22 @@ export default async function createProjectIntent(
 		}
 
 	const parsed = schema.parse({
-		teamId: formData.get('teamId')
+		teamSlug: formData.get('teamSlug')
 	})
 
 	try {
-		const response = await prisma.addProject.create({
+		await prisma.addProject.create({
 			data: {
-				createdBy: user.id,
-				teamId: parsed.teamId
+				user: {
+					connect: {
+						id: user.id
+					}
+				},
+				team: {
+					connect: {
+						slug: parsed.teamSlug
+					}
+				}
 			}
 		})
 		return {

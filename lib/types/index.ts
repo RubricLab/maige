@@ -1,5 +1,3 @@
-import {TIERS} from '~/constants'
-
 export type Label = {
 	id: string
 	name: string
@@ -28,5 +26,3 @@ export type Comment = {
 	body: string
 	html_url: string
 }
-
-export type Tier = keyof typeof TIERS

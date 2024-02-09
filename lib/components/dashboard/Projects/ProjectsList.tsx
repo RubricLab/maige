@@ -17,19 +17,17 @@ const EmptyState = () => (
 )
 
 export function ProjectsList({
-	teamId,
 	teamSlug,
 	username,
 	projects
 }: {
-	teamId: string
 	teamSlug: string
 	username: string
 	projects: ProjectWithInstructions[]
 }) {
 	return (
 		<div className='grid w-full gap-4 sm:grid-cols-4'>
-			<CreateProjectIntent teamId={teamId} />
+			<CreateProjectIntent teamSlug={teamSlug} />
 			{projects.length > 0 ? (
 				projects.map(p => (
 					<ProjectCard

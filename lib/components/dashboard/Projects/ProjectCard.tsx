@@ -17,7 +17,7 @@ export default function ProjectCard({
 			<Link
 				target='_blank'
 				href={`https://github.com/${project.organization ? project.organization?.slug : username}/${project.name}`}
-				className='bg-tertiary hover:bg-secondary text-secondary absolute right-4 top-4 w-fit rounded-full p-1 transition-colors'>
+				className='bg-tertiary hover:bg-secondary text-secondary center absolute right-4 top-4 h-6 w-6 rounded-full transition-colors'>
 				<ExternalLinkIcon className='text-tertiary h-4 w-4' />
 			</Link>
 			<Link

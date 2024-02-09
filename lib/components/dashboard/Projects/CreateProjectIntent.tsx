@@ -7,6 +7,7 @@ import {toast} from 'sonner'
 import createProjectIntent from '~/actions/create-project-intent'
 import {Button} from '~/components/ui/button'
 import {Input} from '~/components/ui/input'
+import {GITHUB} from '~/constants'
 import env from '~/env.mjs'
 
 const initialState = {
@@ -28,14 +29,14 @@ function AddButton() {
 	)
 }
 
-export default function CreateProjectIntent({teamId}: {teamId: string}) {
+export default function CreateProjectIntent({teamSlug}: {teamSlug: string}) {
 	const [state, formAction] = useFormState(createProjectIntent, initialState)
 
 	// Handle response
 	useEffect(() => {
 		if (state?.type === 'success')
 			window.open(
-				`https://github.com/apps/${env.NEXT_PUBLIC_GITHUB_APP_NAME}/installations/new`
+				`${GITHUB.BASE_URL}/apps/${env.NEXT_PUBLIC_GITHUB_APP_NAME}/installations/new`
 			)
 		else if (state?.type === 'error') {
 			toast.error(state?.message)
@@ -49,8 +50,8 @@ export default function CreateProjectIntent({teamId}: {teamId: string}) {
 			action={formAction}>
 			<Input
 				type='hidden'
-				name='teamId'
-				value={teamId}
+				name='teamSlug'
+				value={teamSlug}
 			/>
 			<AddButton />
 		</form>
