@@ -13,7 +13,7 @@ test('SERP API', async () => {
 
 	const weather = JSON.parse(res)
 
-	expect(weather.location).toBe('San Francisco, CA, USA')
+	expect(weather.location).toBe('San Francisco, CA')
 })
 
 test('Zod parser', () => {
