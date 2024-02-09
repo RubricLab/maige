@@ -22,13 +22,7 @@ const routes = [
 	}
 ]
 
-export default function SettingsNav({
-	teamSlug,
-	projectId
-}: {
-	teamSlug: string
-	projectId: string
-}) {
+export default function SettingsNav({teamSlug}: {teamSlug: string}) {
 	const pathname = usePathname()
 	return (
 		<div className='flex w-[200px] flex-col gap-2'>
