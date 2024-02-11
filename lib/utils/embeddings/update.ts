@@ -85,8 +85,6 @@ export default async function updateRepo(
 			}))
 		)
 
-		console.log("Documents: ", docs)
-
 		const embeddings = new OpenAIEmbeddings({
 			openAIApiKey: process.env.OPENAI_API_KEY
 		})

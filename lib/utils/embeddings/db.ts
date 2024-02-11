@@ -1,11 +1,11 @@
 import weaviate from 'weaviate-ts-client'
 import env from '~/env.mjs'
 import deleteRepo from './delete'
+import deleteFiles from './deleteFiles'
 import addRepo from './embed'
 import {checkIndexExists} from './exists'
-import search from './query'
-import deleteFiles from './deleteFiles'
 import getFiles from './get'
+import search from './query'
 import updateRepo from './update'
 
 export type WeaviateClient = ReturnType<typeof weaviate.client>
@@ -64,15 +64,33 @@ export default class Weaviate {
 		return await deleteRepo(this.config, repoUrl)
 	}
 
-	async updateRepo(repoFullName: string, repoUrl: string, commitId: string, branch: string, octokit: any) {
-		await updateRepo(this.config, repoFullName, repoUrl, commitId, branch, octokit)
+	async updateRepo(
+		repoFullName: string,
+		repoUrl: string,
+		commitId: string,
+		branch: string,
+		octokit: any
+	) {
+		await updateRepo(
+			this.config,
+			repoFullName,
+			repoUrl,
+			commitId,
+			branch,
+			octokit
+		)
 	}
 
 	async deleteFiles(repoUrl: string, fileNames: string[], branch: string) {
 		await deleteFiles(this.config, repoUrl, fileNames, branch)
 	}
 
-	async getFiles(files: any, repoUrl: string, branch: string, accessToken?: string) {
+	async getFiles(
+		files: any,
+		repoUrl: string,
+		branch: string,
+		accessToken?: string
+	) {
 		await getFiles(files, repoUrl, branch, accessToken)
 	}
 }
