@@ -1,9 +1,32 @@
 import {createPrivateKey} from 'crypto'
+import {headers} from 'next/headers'
 import Link from 'next/link'
 import {Button} from '~/components/ui/button'
 import {CopyTextButton} from '~/components/ui/copy-text-button'
 import {Input} from '~/components/ui/input'
-import env from '~/env.mjs'
+
+type GithubApp = {
+	pem: string
+	name: string
+	id: string
+	client_id: string
+	client_secret: string
+	webhook_secret: string
+}
+
+const defaults = {
+	config: {
+		public: true,
+		default_permissions: {
+			contents: 'write',
+			issues: 'write',
+			metadata: 'read',
+			pull_requests: 'write'
+		},
+		default_events: ['issues', 'issue_comment', 'pull_request']
+	},
+	publicUrl: 'https://replace-me.ngrok.app'
+}
 
 /**
  * To generate a GitHub App for self-hosting or development
@@ -13,22 +36,18 @@ export default async function Page({
 }: {
 	searchParams: {code?: string; 'public-url'?: string}
 }) {
+	const headersList = headers()
+
 	const code = searchParams.code
-	const publicUrl = searchParams['public-url'] || 'https://replace-me.ngrok.app'
-	
-	let data: any
-	let dataString = ''
+	const publicUrl = searchParams['public-url']
+
+	let data: GithubApp
+	let envString = ''
 
 	if (code) {
 		const res = await fetch(
 			`https://api.github.com/app-manifests/${code}/conversions`,
-			{
-				method: 'POST',
-				headers: {
-					Accept: 'application/vnd.github.v3+json',
-					'X-GitHub-Api-Version': '2022-11-28'
-				}
-			}
+			{method: 'POST'}
 		)
 
 		if (res.status > 201)
@@ -41,15 +60,15 @@ export default async function Page({
 				</div>
 			)
 
-		data = await res.json()
+		data = {...(await res.json())}
 
 		// Translate the private key to PKCS8 format
 		const keyObject = createPrivateKey({key: data.pem, format: 'pem'})
 		const privateKeyPKCS = keyObject.export({type: 'pkcs8', format: 'pem'})
-		data.pem = privateKeyPKCS
+		data.pem = privateKeyPKCS.toString()
 
 		// Combine env vars into a copy-friendly string
-		dataString = `
+		envString = `
 			NEXT_PUBLIC_GITHUB_APP_NAME='${data.name}'
 			GITHUB_APP_ID='${data.id}'
 			GITHUB_CLIENT_ID='${data.client_id}'
@@ -59,24 +78,17 @@ export default async function Page({
 		`.replaceAll('\t', '')
 	}
 
-	const devUrl = env.NEXTAUTH_URL || 'http://localhost:3000'
 	const uuid = crypto.randomUUID().slice(0, 7)
+	const appUrl = publicUrl || defaults.publicUrl
 	const config = {
+		...defaults.config,
 		name: `maige-dev-${uuid}`,
-		url: 'https://maige.app',
+		url: appUrl,
 		hook_attributes: {
-			url: `${publicUrl}/api/webhook/github`
+			url: `${appUrl}/api/webhook/github`
 		},
-		redirect_url: `${devUrl}/dev/setup`,
-		callback_urls: [`${publicUrl}/api/auth/callback/github`],
-		public: true,
-		default_permissions: {
-			contents: 'write',
-			issues: 'write',
-			metadata: 'read',
-			pull_requests: 'write'
-		},
-		default_events: ['issues', 'issue_comment', 'pull_request']
+		redirect_url: headersList.get('referer'),
+		callback_urls: [`${appUrl}/api/auth/callback/github`]
 	}
 
 	return (
@@ -93,17 +105,17 @@ export default async function Page({
 						<span>GITHUB_CLIENT_ID={data.client_id}</span>
 						<span>GITHUB_CLIENT_SECRET={data.client_secret}</span>
 						<span>GITHUB_WEBHOOK_SECRET={data.webhook_secret}</span>
-						<span>GITHUB_PRIVATE_KEY={data.pem}</span>
+						<span className='whitespace-pre-wrap'>GITHUB_PRIVATE_KEY={data.pem}</span>
 					</code>
 					<CopyTextButton
 						className='ml-auto w-fit'
-						text={dataString}
+						text={envString}
 					/>
 				</>
 			) : publicUrl ? (
 				<>
 					<h3>Great! Now let&apos;s generate your GitHub app.</h3>
-					<p>You&apos;ll get redirect back here.</p>
+					<p>You&apos;ll get redirected back here.</p>
 					<form
 						action='https://github.com/settings/apps/new'
 						method='post'>
@@ -121,8 +133,20 @@ export default async function Page({
 				<>
 					<h3>First, enter your public URL.</h3>
 					<p>
-						Run <code className='rounded-sm p-1 text-sm'>ngrok http 3000</code> to get
-						a public URL (see README).
+						Run{' '}
+						<code className='bg-tertiary rounded-sm p-1 text-sm'>
+							ngrok http 3000
+						</code>{' '}
+						to get a public URL.
+					</p>
+					<p className='text-secondary'>
+						See{' '}
+						<Link
+							target='_blank'
+							href='https://github.com/RubricLab/maige/blob/main/README.md'>
+							README
+						</Link>{' '}
+						for more.
 					</p>
 					<form
 						className='space-y-4'
