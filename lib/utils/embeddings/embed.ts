@@ -17,6 +17,7 @@ export default async function addRepo(
 	replace: boolean
 ) {
 	const repoUrl = `${GITHUB.BASE_URL}/${repoFullName}`
+
 	const textSplitter = new RecursiveCharacterTextSplitter({
 		chunkSize: 4000,
 		chunkOverlap: 250
@@ -43,6 +44,8 @@ export default async function addRepo(
 
 		const installationId = await getInstallationId(repoFullName)
 		const installationToken = await getInstallationToken(installationId)
+
+		console.log(repoUrl, branch, installationId, installationToken)
 
 		const repo = await cloneRepo(
 			repoUrl,
