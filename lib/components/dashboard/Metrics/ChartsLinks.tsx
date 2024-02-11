@@ -24,22 +24,27 @@ const routes = [
 
 export function ChartsLinks({teamSlug, route}: Props) {
 	return (
-		<div className='flex justify-start gap-2 pb-2'>
-			{routes.map((page, index) => (
-				<div
-					key={index}
-					className='group relative flex flex-col items-center pb-2 font-medium'>
-					<Link
-						prefetch={false}
-						className={cn(
-							buttonVariants({variant: 'outline'}),
-							route === page.path ? 'bg-tertiary' : ''
-						)}
-						href={`/${teamSlug}/usage/${page.path}`}>
-						{page.name}
-					</Link>
-				</div>
-			))}
+		<div className='flex items-center justify-between gap-2 pb-2'>
+			<div className='inline-flex gap-2'>
+				{routes.map((page, index) => (
+					<div
+						key={index}
+						className='group relative flex flex-col items-center pb-2 font-medium'>
+						<Link
+							prefetch={false}
+							className={cn(
+								buttonVariants({variant: 'outline'}),
+								route === page.path ? 'bg-tertiary' : ''
+							)}
+							href={`/${teamSlug}/usage/${page.path}`}>
+							{page.name}
+						</Link>
+					</div>
+				))}
+			</div>
+			<div className='font-mono text-xs capitalize'>
+				Aggregated {route == '' ? 'logs' : route} Data of All Projects
+			</div>
 		</div>
 	)
 }

@@ -10,59 +10,69 @@ type UsageDay = {
 	runCount: number
 }
 
-export async function UsageCharts({route}: {route: string}) {
+export async function UsageCharts({
+	route,
+	teamSlug
+}: {
+	route: string
+	teamSlug: string
+}) {
 	const session = await getServerSession(authOptions)
 	if (!session) return <div>Not authenticated</div>
 
+	const team = await prisma.team.findUnique({
+		where: {slug: teamSlug},
+		select: {
+			id: true
+		}
+	})
+
 	const groupUsage: UsageDay[] = await prisma.$queryRaw`
 		SELECT
-			DATE(L.createdAt) AS usageDay,
-			COUNT(DISTINCT L.id) AS logCount,
-			SUM(L.totalTokens) AS totalTokens,
-			COUNT(DISTINCT R.id) AS runCount
+			L.createdAt AS usageDay,
+			COUNT(DISTINCT L.id) AS logs,
+			SUM(L.totalTokens) AS tokens,
+			COUNT(DISTINCT R.id) AS runs
 		FROM
 			Log L
 			INNER JOIN Run R ON L.runId = R.id
 			INNER JOIN Project P ON R.projectId = P.id
-			INNER JOIN User C ON P.createdBy = C.id
 		WHERE
 			L.createdAt >= CURDATE() - INTERVAL 14 DAY
 			AND L.createdAt < CURDATE() + INTERVAL 1 DAY
-			AND C.id = ${session.user.id}
+			AND P.teamId = ${team.id}
 		GROUP BY
 			usageDay
 		ORDER BY
 			usageDay;
 	`
+	function mapAndAggregateUsage(usageArray: any, key: string) {
+		const mappedUsage = usageArray.map(row => ({
+			date: new Date(row.usageDay).toLocaleDateString('en-US', {
+				month: 'short',
+				day: 'numeric'
+			}),
+			[key]: Number(row[key])
+		}))
 
-	const logUsage = groupUsage.map(row => ({
-		date: new Date(row.usageDay).toLocaleDateString('en-US', {
-			month: 'short',
-			day: 'numeric'
-		}),
-		logs: Number(row.logCount)
-	}))
+		return Object.values(
+			mappedUsage.reduce((acc, cur) => {
+				const date = cur.date
+				if (!acc[date]) acc[date] = {date, [key]: 0}
+				acc[date][key] += cur[key]
+				return acc
+			}, {})
+		)
+	}
 
-	const tokensUsage = groupUsage.map(row => ({
-		date: new Date(row.usageDay).toLocaleDateString('en-US', {
-			month: 'short',
-			day: 'numeric'
-		}),
-		tokens: Number(row.totalTokens)
-	}))
-
-	const runUsage = groupUsage.map(row => ({
-		date: new Date(row.usageDay).toLocaleDateString('en-US', {
-			month: 'short',
-			day: 'numeric'
-		}),
-		runs: Number(row.runCount)
-	}))
+	const aggregatedLogUsage = mapAndAggregateUsage(groupUsage, 'logs')
+	const aggregatedTokensUsage = mapAndAggregateUsage(groupUsage, 'tokens')
+	const aggregatedRunUsage = mapAndAggregateUsage(groupUsage, 'runs')
 
 	if (route === 'runs')
 		return (
 			<Chart
-				data={runUsage}
+				data={aggregatedRunUsage}
 				category='runs'
 				color='green'
 			/>
@@ -71,7 +81,7 @@ export async function UsageCharts({route}: {route: string}) {
 	if (route === 'tokens')
 		return (
 			<Chart
-				data={tokensUsage}
+				data={aggregatedTokensUsage}
 				category='tokens'
 				color='orange'
 			/>
@@ -80,7 +90,7 @@ export async function UsageCharts({route}: {route: string}) {
 	if (route === '')
 		return (
 			<Chart
-				data={logUsage}
+				data={aggregatedLogUsage}
 				category='logs'
 				color='purple'
 			/>
