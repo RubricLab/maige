@@ -2,6 +2,7 @@ import {createPrivateKey} from 'crypto'
 import Link from 'next/link'
 import {Button} from '~/components/ui/button'
 import {CopyTextButton} from '~/components/ui/copy-text-button'
+import {Input} from '~/components/ui/input'
 import env from '~/env.mjs'
 
 /**
@@ -10,9 +11,11 @@ import env from '~/env.mjs'
 export default async function Page({
 	searchParams
 }: {
-	searchParams: {code?: string}
+	searchParams: {code?: string; 'public-url'?: string}
 }) {
 	const code = searchParams.code
+	const publicUrl = searchParams['public-url'] || 'https://replace-me.ngrok.app'
+	
 	let data: any
 	let dataString = ''
 
@@ -58,7 +61,6 @@ export default async function Page({
 
 	const devUrl = env.NEXTAUTH_URL || 'http://localhost:3000'
 	const uuid = crypto.randomUUID().slice(0, 7)
-	const publicUrl = `http://${uuid}.dev.maige.app`
 	const config = {
 		name: `maige-dev-${uuid}`,
 		url: 'https://maige.app',
@@ -81,7 +83,10 @@ export default async function Page({
 		<div className='flex flex-col gap-4 text-center'>
 			{data ? (
 				<>
-					<h3>Success! Copy this to your .env.local:</h3>
+					<h3>Success!</h3>
+					<p>
+						Copy this to your <span className='font-semibold'>.env.local</span>:
+					</p>
 					<code className='bg-tertiary flex flex-col space-y-1 rounded-sm p-3 text-left text-xs'>
 						<span>NEXT_PUBLIC_GITHUB_APP_NAME={data.name}</span>
 						<span>GITHUB_APP_ID={data.id}</span>
@@ -95,10 +100,10 @@ export default async function Page({
 						text={dataString}
 					/>
 				</>
-			) : (
+			) : publicUrl ? (
 				<>
-					<h3>Generate a GitHub app.</h3>
-					<p>Click below to generate your own Maige-compatible GitHub App.</p>
+					<h3>Great! Now let&apos;s generate your GitHub app.</h3>
+					<p>You&apos;ll get redirect back here.</p>
 					<form
 						action='https://github.com/settings/apps/new'
 						method='post'>
@@ -110,6 +115,25 @@ export default async function Page({
 							value={JSON.stringify(config)}
 						/>
 						<Button>Generate App</Button>
+					</form>
+				</>
+			) : (
+				<>
+					<h3>First, enter your public URL.</h3>
+					<p>
+						Run <code className='rounded-sm p-1 text-sm'>ngrok http 3000</code> to get
+						a public URL (see README).
+					</p>
+					<form
+						className='space-y-4'
+						action='/dev/setup'
+						method='get'>
+						<Input
+							type='text'
+							name='public-url'
+							placeholder='https://abc123.ngrok.app'
+						/>
+						<Button>Register URL</Button>
 					</form>
 				</>
 			)}
