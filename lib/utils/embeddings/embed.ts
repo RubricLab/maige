@@ -45,8 +45,6 @@ export default async function addRepo(
 		const installationId = await getInstallationId(repoFullName)
 		const installationToken = await getInstallationToken(installationId)
 
-		console.log(repoUrl, branch, installationId, installationToken)
-
 		const repo = await cloneRepo(
 			repoUrl,
 			branch,

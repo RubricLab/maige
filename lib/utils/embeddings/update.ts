@@ -51,14 +51,12 @@ export default async function updateRepo(
 			modifiedFiles.map(file => file.filename),
 			branch
 		)
-		console.log('Deleted files:', del)
 		const files = await getFiles(
 			modifiedFiles,
 			repoUrl,
 			branch,
 			installationToken
 		)
-		console.log('Retrieved Files:', files)
 
 		const documents = await Promise.all(
 			//TODO: Add Type
