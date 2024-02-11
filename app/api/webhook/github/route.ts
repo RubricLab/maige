@@ -6,7 +6,8 @@ import {
 	handleAppUnInstall,
 	handleAppUpdates,
 	handleIssues,
-	handlePullRequests
+	handlePullRequests,
+	handlePush
 } from '~/utils/github/handle/'
 
 export const maxDuration = 300
@@ -44,6 +45,7 @@ export const POST = async (req: Request) => {
 }
 
 // Handle webhooks
+webhook.on("push", handlePush)
 webhook.on('installation.created', handleAppInstall)
 webhook.on(
 	['installation_repositories.added', 'installation_repositories.removed'],
