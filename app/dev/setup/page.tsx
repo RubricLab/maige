@@ -83,12 +83,12 @@ export default async function Page({
 				<>
 					<h3>Success! Copy this to your .env.local:</h3>
 					<code className='bg-tertiary flex flex-col space-y-1 rounded-sm p-3 text-left text-xs'>
-						<span>NEXT_PUBLIC_GITHUB_APP_NAME=data.name</span>
-						<span>GITHUB_APP_ID=data.id</span>
-						<span>GITHUB_CLIENT_ID=data.client_id</span>
-						<span>GITHUB_CLIENT_SECRET=data.client_secret</span>
-						<span>GITHUB_WEBHOOK_SECRET=data.webhook_secret</span>
-						<span>GITHUB_PRIVATE_KEY=data.pem</span>
+						<span>NEXT_PUBLIC_GITHUB_APP_NAME={data.name}</span>
+						<span>GITHUB_APP_ID={data.id}</span>
+						<span>GITHUB_CLIENT_ID={data.client_id}</span>
+						<span>GITHUB_CLIENT_SECRET={data.client_secret}</span>
+						<span>GITHUB_WEBHOOK_SECRET={data.webhook_secret}</span>
+						<span>GITHUB_PRIVATE_KEY={data.pem}</span>
 					</code>
 					<CopyTextButton
 						className='ml-auto w-fit'
