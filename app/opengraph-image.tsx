@@ -14,7 +14,7 @@ export const size = {
 
 const joshuaTreeNight =
 	'https://maige.app/_next/static/media/joshua-tree-night.72aac569.png'
-const labelFlow = 'https://maige.app/_next/static/media/label-flow.f5e2e691.png'
+const labelFlow = 'https://maige.app/_next/static/media/full-flow.ee033c0b.png'
 
 const orange = colors.orange[100]
 
