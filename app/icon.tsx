@@ -1,12 +1,12 @@
 import {ImageResponse} from 'next/og'
 import colors from 'tailwindcss/colors'
-import tailwindConfig from '../tailwind.config'
 
 export const runtime = 'edge'
 export const contentType = 'image/png'
 export const size = {height: 32, width: 32}
 
 const orange = colors.orange[100]
+const sunset = '#FF3D00' // not imported from Tailwind config to reduce bundle size
 
 export default async function Icon() {
 	return new ImageResponse(
@@ -99,7 +99,7 @@ export default async function Icon() {
 						left: `${~~(new Date().getHours() / 2.4)}0%`, // 😎
 						borderRadius: '100%',
 						position: 'absolute',
-						background: `linear-gradient(180deg, ${colors.orange[500]} 0%, ${tailwindConfig.theme.extend.colors.sunset} 100%)`
+						background: `linear-gradient(180deg, ${colors.orange[500]} 0%, ${sunset} 100%)`
 					}}
 				/>
 			</div>
