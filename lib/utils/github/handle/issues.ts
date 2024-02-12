@@ -177,7 +177,7 @@ export default async function handleIssues({
 			allLabels,
 			comment: comment,
 			beta: true,
-			teamSlug: membership.team.slug
+			teamSlug: membership?.team?.slug || ''
 		})
 	} catch (error) {
 		console.error(error)
