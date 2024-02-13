@@ -69,6 +69,17 @@ export async function editComment({
 	return commentResult.updateIssueComment.issueComment.id
 }
 
+export const getFormattedDate = () => {
+	return new Intl.DateTimeFormat('en-US', {
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+		hour: 'numeric',
+		minute: '2-digit',
+		hour12: true
+	}).format(new Date())
+}
+
 export enum AGENT {
 	ENGINEER = 'Engineer'
 }
@@ -91,25 +102,20 @@ export async function trackAgent({
 	const commentId = await addComment({
 		octokit,
 		issueId,
-		comment: `**${agent} Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
+		comment: `**${agent} dispatched.** See details on the [Maige dashboard](${env.NEXTAUTH_URL}).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
-| **${title}** | 🟡 Pending ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |
-
-Terminal output:
-
-\`\`\` ls . \`\`\`
-`
+| **${title}** | 🟡 Pending ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | | ${getFormattedDate()} |`
 	})
 
 	async function updateTracking(status: string) {
 		await editComment({
 			octokit,
 			commentId,
-			comment: `**Engineer Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
+			comment: `**Engineer dispatched.** See details on the [Maige dashboard](${env.NEXTAUTH_URL}).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
-| **${title}** | ❌ Error ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | Errored | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+| **${title}** | ❌ Error ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | Errored | ${getFormattedDate()} |`
 		})
 	}
 
@@ -117,10 +123,10 @@ Terminal output:
 		await editComment({
 			octokit,
 			commentId,
-			comment: `**Engineer Dispatched.** See details on the [maige dashboard](${env.NEXTAUTH_URL}).
+			comment: `**Engineer dispatched.** See details on the [Maige dashboard](${env.NEXTAUTH_URL}).
 | **Name** | **Status** | **Message** | **Updated (UTC)** |
 |:---------|:-----------|:------------|:------------------|
-| **${title}** | ✅ Complete ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | PR Created | ${new Intl.DateTimeFormat('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true}).format(new Date())} |`
+| **${title}** | ✅ Complete ([inspect](${env.NEXTAUTH_URL}/${teamSlug}/usage/runs?proj=${projectId})) | PR Created | ${getFormattedDate()} |`
 		})
 	}
 
