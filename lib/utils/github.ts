@@ -305,6 +305,27 @@ export const getInstallationId = async (repoFullName: string) => {
 }
 
 /**
+ * Get repo ID from repoName
+ */
+
+export const getRepoId = async (repoFullName: string) => {
+	const installationId = await getInstallationId(repoFullName)
+	const installationToken = await getInstallationToken(installationId)
+
+	const res = await fetch(`https://api.github.com/repos/${repoFullName}`, {
+		method: 'GET',
+		headers: {
+			Authorization: `token ${installationToken}`,
+			Accept: 'application/vnd.github.v3+json'
+		}
+	})
+
+	const json = await res.json()
+
+	return json.id
+}
+
+/**
  * Get installation token from repo
  */
 
