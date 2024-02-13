@@ -39,7 +39,7 @@ export function CommandMenu({projects}: Props) {
 				},
 
 				{
-					name: 'Landing Page',
+					name: 'Landing page',
 					path: '/home'
 				}
 			]
