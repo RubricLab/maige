@@ -34,7 +34,7 @@ export async function engineer({
 	repoFullName: string
 	issueNumber: number
 	defaultBranch: string
-	customerId: string
+	customerId?: string
 	projectId: string
 	issueId: string
 	title: string
@@ -130,7 +130,7 @@ export async function engineer({
 		listFiles({shell, dir: repo}),
 		writeFile({shell, dir: repo}),
 		commitCode({shell, dir: repo}),
-		codebaseSearch({repoFullName, customerId})
+		...(customerId ? [codebaseSearch({repoFullName, customerId})] : [])
 	]
 
 	const prefix = `You are a senior AI engineer.
