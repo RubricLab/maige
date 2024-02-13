@@ -1,17 +1,9 @@
 import {engineer} from '~/agents/engineer'
-import env from '~/env.mjs'
+import {EngineerInput} from '~/types/agent'
 
 export const maxDuration = 300
 
-const validateAgentCall = (headers: Headers) => {
-	if (!(headers.get('Authorization') === `Bearer ${env.MAIGE_SERVER_SECRET}`))
-		throw new Error('Webhook signature could not be verified')
-}
-
 export const POST = async (req: Request) => {
-
-	validateAgentCall(req.headers)
-
 	const {
 		task,
 		runId,
@@ -23,7 +15,7 @@ export const POST = async (req: Request) => {
 		issueId,
 		title,
 		teamSlug
-	} = await req.json()
+	}: EngineerInput = await req.json()
 
 	await engineer({
 		task,

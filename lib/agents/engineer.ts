@@ -9,6 +9,7 @@ import commitCode from '~/tools/commitCode'
 import listFiles from '~/tools/listFiles'
 import readFile from '~/tools/readFile'
 import writeFile from '~/tools/writeFile'
+import {EngineerInput} from '~/types/agent'
 import {
 	AGENT,
 	getInstallationId,
@@ -28,18 +29,7 @@ export async function engineer({
 	issueId,
 	title,
 	teamSlug
-}: {
-	task: string
-	runId: string
-	repoFullName: string
-	issueNumber: number
-	defaultBranch: string
-	customerId: string
-	projectId: string
-	issueId: string
-	title: string
-	teamSlug: string
-}) {
+}: EngineerInput) {
 	const installationToken = await getInstallationToken(
 		await getInstallationId(repoFullName)
 	)
