@@ -109,7 +109,9 @@ export function CustomTable({
 			<TableBody>
 				{data?.length === 0 && (
 					<TableRow>
-						<TableCell colSpan={6} className='text-center py-6'>
+						<TableCell
+							colSpan={6}
+							className='py-6 text-center'>
 							No runs found
 						</TableCell>
 					</TableRow>

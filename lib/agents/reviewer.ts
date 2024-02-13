@@ -31,7 +31,6 @@ export async function reviewer({
 	commitId: string
 	runId: string
 }) {
-
 	let logId: string
 	const model = new ChatOpenAI({
 		modelName: 'gpt-4-1106-preview',
@@ -50,7 +49,7 @@ export async function reviewer({
 					})
 					logId = result.id
 				},
-				async handleLLMError(){
+				async handleLLMError() {
 					await prisma.log.update({
 						where: {
 							id: logId
@@ -129,7 +128,7 @@ export async function reviewer({
 		// verbose: true,
 		agentArgs: {
 			prefix
-		},
+		}
 	})
 
 	const {output} = await executor.call({input: diffString})

@@ -44,7 +44,9 @@ export default async function LogsView({runId}: Props) {
 			<TableBody>
 				{logs?.length === 0 && (
 					<TableRow>
-						<TableCell colSpan={8} className='text-center py-6'>
+						<TableCell
+							colSpan={8}
+							className='py-6 text-center'>
 							No logs found
 						</TableCell>
 					</TableRow>
@@ -53,7 +55,11 @@ export default async function LogsView({runId}: Props) {
 					return (
 						<TableRow key={log.id}>
 							<TableCell>{log.agent}</TableCell>
-							<TableCell><span className={cn({"opacity-30":log.action == "Coming Soon"})}>{log.action}</span></TableCell>
+							<TableCell>
+								<span className={cn({'opacity-30': log.action == 'Coming Soon'})}>
+									{log.action}
+								</span>
+							</TableCell>
 							<TableCell>{log.model}</TableCell>
 							<TableCell>{log.totalTokens}</TableCell>
 							<TableCell>
