@@ -1,5 +1,5 @@
 import {
-	ArrowRightIcon,
+	ArrowTopRightIcon,
 	CaretSortIcon,
 	ChevronDownIcon,
 	ChevronUpIcon
@@ -44,7 +44,7 @@ const TableColNames = [
 	{
 		key: 'timeTaken',
 		value: 'Time Taken',
-		align: 'left'
+		align: 'right'
 	},
 	{
 		key: 'logs',
@@ -121,18 +121,18 @@ export function CustomTable({
 						<TableCell className='group font-medium'>
 							<Link
 								href={`project/${usage.project.id}`}
-								className='inline-flex items-center justify-between gap-2'>
+								className='inline-flex items-center justify-between gap-1.5'>
 								{usage.project.name}{' '}
-								<ArrowRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
+								<ArrowTopRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
 							</Link>
 						</TableCell>
 						<TableCell className='group text-left font-medium'>
 							<Link
 								target='_blank'
 								href={usage.issueUrl}
-								className='inline-flex items-center justify-between gap-2'>
+								className='inline-flex items-center justify-between gap-1.5'>
 								{usage.issueNum}{' '}
-								<ArrowRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
+								<ArrowTopRightIcon className='opacity-0 transition-opacity duration-300 ease-in-out group-hover:opacity-100' />
 							</Link>
 						</TableCell>
 						<TableCell className='text-right'>

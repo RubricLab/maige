@@ -34,9 +34,9 @@ export default function ProjectFilter({proj, projects, teamSlug}: Props) {
 			defaultValue={proj || 'all'}
 			onValueChange={value => handleProjectChange(value)}>
 			<SelectTrigger className='w-[180px]'>
-				<SelectValue placeholder='Select a fruit' />
+				<SelectValue placeholder='Select a project' />
 			</SelectTrigger>
-			<SelectContent>
+			<SelectContent className='bg-primary'>
 				<SelectGroup>
 					<SelectItem
 						className='hover:cursor-pointer'
