@@ -44,7 +44,9 @@ export default function DashboardNavClient({
 						teamSlug={params.slug}
 					/>
 					{params.projectId && (
-						<span className='mb-0.5 select-none px-1 pr-2 text-xl opacity-30 font-light'>/</span>
+						<span className='mb-0.5 select-none px-1 pr-2 text-xl font-light opacity-30'>
+							/
+						</span>
 					)}
 					{params.projectId && (
 						<ProjectSelect

@@ -36,15 +36,21 @@ export default async function LogsView({runId}: Props) {
 		<Table>
 			<TableHeader>
 				<TableRow>
-					{TableColNames.map(colName => {
-						return <TableHead key={colName}>{colName}</TableHead>
-					})}
+					{TableColNames.map((colName, i) => (
+						<TableHead
+							className={cn({'text-right': i === TableColNames.length - 1})}
+							key={colName}>
+							{colName}
+						</TableHead>
+					))}
 				</TableRow>
 			</TableHeader>
 			<TableBody>
 				{logs?.length === 0 && (
 					<TableRow>
-						<TableCell colSpan={8} className='text-center py-6'>
+						<TableCell
+							colSpan={8}
+							className='py-6 text-center'>
 							No logs found
 						</TableCell>
 					</TableRow>
@@ -52,39 +58,47 @@ export default async function LogsView({runId}: Props) {
 				{logs.map((log: RunLog) => {
 					return (
 						<TableRow key={log.id}>
-							<TableCell>{log.agent}</TableCell>
-							<TableCell><span className={cn({"opacity-30":log.action == "Coming Soon"})}>{log.action}</span></TableCell>
+							<TableCell>
+								<span className='rounded-sm border border-blue-600 bg-blue-400/60 px-2 py-1 text-xs font-medium capitalize dark:bg-blue-700/60'>
+									{log.agent}
+								</span>
+							</TableCell>
+							<TableCell>
+								<span className={cn({'opacity-30': log.action == 'Coming Soon'})}>
+									{log.action}
+								</span>
+							</TableCell>
 							<TableCell>{log.model}</TableCell>
 							<TableCell>{log.totalTokens}</TableCell>
 							<TableCell>
 								<span
 									className={cn(
 										{
-											'border-green-700 bg-green-700': log.status === 'completed',
-											'border-red-700 bg-red-700': log.status === 'failed',
-											'border-yellow-700 bg-yellow-700': log.status === 'in_progress'
+											'border-green-600/80 bg-green-400/60 dark:bg-green-700/60':
+												log.status === 'completed',
+											'border-red-600/80 bg-green-400/60 dark:bg-red-700/60':
+												log.status === 'failed',
+											'border-yellow-600/80 bg-green-400/60 dark:bg-yellow-700/60':
+												log.status === 'in_progress'
 										},
-										'rounded-sm border border-opacity-80 bg-opacity-60 px-2 py-1 text-xs font-medium capitalize'
+										'rounded-sm border px-2 py-1 text-xs font-medium capitalize'
 									)}>
 									{log.status.replace('_', ' ')}
 								</span>
 							</TableCell>
 							<TableCell>
 								{log.createdAt.toLocaleString('en-US', {
-									year: '2-digit',
+									year: 'numeric',
 									month: 'short',
 									day: 'numeric',
-									hour: '2-digit',
+									hour: 'numeric',
 									minute: '2-digit',
 									second: '2-digit'
 								})}
 							</TableCell>
 							<TableCell>
 								{log.finishedAt?.toLocaleString('en-US', {
-									year: '2-digit',
-									month: 'short',
-									day: 'numeric',
-									hour: '2-digit',
+									hour: 'numeric',
 									minute: '2-digit',
 									second: '2-digit'
 								}) ?? 'N/A'}

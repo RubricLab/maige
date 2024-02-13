@@ -157,7 +157,7 @@ export async function UsageTable({
 							href={`/${teamSlug}/usage/${route}?${params}&p=${i + 1}`}
 							key={i}>
 							<Button
-								className={cn({'bg-neutral-800': i + 1 === pageNum})}
+								className={cn({'bg-tertiary': i + 1 === pageNum})}
 								size='sm'
 								variant='outline'>
 								{i + 1}

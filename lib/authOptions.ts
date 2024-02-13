@@ -18,7 +18,7 @@ prismaAdapter.createUser = data => {
 }
 
 export const authOptions: AuthOptions = {
-	adapter: prismaAdapter,
+	adapter: prismaAdapter as any,
 	providers: [
 		GithubProvider({
 			clientId: env.GITHUB_CLIENT_ID as string,

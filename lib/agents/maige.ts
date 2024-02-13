@@ -106,9 +106,10 @@ export async function maige({
 			instructionCommentLink: comment?.html_url
 		}),
 		githubTool({octokit}),
-		...(customerId
+		...(customerId ? [codebaseSearch({customerId, repoFullName})] : []),
+		...(issueId
 			? [
-					codebaseSearch({customerId, repoFullName}),
+					commentTool({octokit, issueId}),
 					dispatchEngineer({
 						runId,
 						issueId,
@@ -121,7 +122,6 @@ export async function maige({
 					})
 				]
 			: []),
-		...(issueId ? [commentTool({octokit, issueId})] : []),
 		...(pullUrl && beta && customerId
 			? [
 					dispatchReviewer({

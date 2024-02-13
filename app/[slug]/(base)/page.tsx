@@ -27,6 +27,8 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 		}
 	})
 
+	if (!memberships) return <p>Could not find team {params.slug}</p>
+
 	const {team} = memberships
 	const {Project: projects} = team
 
