@@ -25,13 +25,14 @@ async function main() {
 	console.log('projects', projects)
 
 	for (const project of projects) {
-		console.log('project', project)
+		console.log('repo name: ', `${project.user.userName}/${project.name}`)
 		const repoId = await getRepoId(`${project.user.userName}/${project.name}`)
-		console.log('repoId', repoId)
+		console.log('repo id: ', repoId)
 
 		await prisma.project.update({
 			where: {
-				id: project.id
+				id: project.id,
+				githubProjectId: null
 			},
 			data: {
 				githubProjectId: repoId.toString()
