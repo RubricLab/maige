@@ -272,14 +272,39 @@ export const getAppJwt = async () => {
 	const payload = {
 		iat: now,
 		exp: now + 60,
-		iss: process.env.GITHUB_APP_ID
+		iss: env.GITHUB_APP_ID
 	}
 
-	const token = jwt.sign(payload, process.env.GITHUB_PRIVATE_KEY, {
+	const token = jwt.sign(payload, env.GITHUB_PRIVATE_KEY, {
 		algorithm: 'RS256'
 	})
 
 	return token
+}
+
+/**
+ * Get Repo Full Name
+ */
+
+export const getRepoFullName = async (name: string) => {
+	const token = await getAppJwt()
+
+	const res = await fetch(
+		`https://api.github.com/search/repositories?q=${name}+in:name`,
+		{
+			headers: {
+				Authorization: `token ${token}`,
+				Accept: 'application/vnd.github.v3+json'
+			}
+		}
+	)
+
+	const data = await res.json()
+
+	console.log('data', data)
+
+	const repo = data.items.find(item => item.name === name)
+	return repo ? repo.full_name : null
 }
 
 /**
@@ -310,7 +335,12 @@ export const getInstallationId = async (repoFullName: string) => {
 
 export const getRepoId = async (repoFullName: string) => {
 	const installationId = await getInstallationId(repoFullName)
+
+	console.log('installationId', installationId)
+
 	const installationToken = await getInstallationToken(installationId)
+
+	console.log('installationToken', installationToken)
 
 	const res = await fetch(`https://api.github.com/repos/${repoFullName}`, {
 		method: 'GET',

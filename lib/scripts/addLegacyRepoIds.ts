@@ -3,7 +3,7 @@
  */
 
 import prisma from '~/prisma'
-import {getRepoId} from '~/utils/github'
+import {getRepoFullName, getRepoId} from '~/utils/github'
 
 async function main() {
 	const projects = await prisma.project.findMany({
@@ -12,27 +12,22 @@ async function main() {
 		},
 		select: {
 			id: true,
-			githubProjectId: true,
-			name: true,
-			user: {
-				select: {
-					userName: true
-				}
-			}
+			name: true
 		}
 	})
 
 	console.log('projects', projects)
 
 	for (const project of projects) {
-		console.log('repo name: ', `${project.user.userName}/${project.name}`)
-		const repoId = await getRepoId(`${project.user.userName}/${project.name}`)
-		console.log('repo id: ', repoId)
+		const repoFullName = await getRepoFullName(project.name)
+
+		console.log('repo name:', repoFullName)
+		const repoId = await getRepoId(repoFullName)
+		console.log('repo id:', repoId)
 
 		await prisma.project.update({
 			where: {
-				id: project.id,
-				githubProjectId: null
+				id: project.id
 			},
 			data: {
 				githubProjectId: repoId.toString()
