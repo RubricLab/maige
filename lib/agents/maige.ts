@@ -139,7 +139,7 @@ export async function maige({
 	const prefix = `
 You are a project manager that is tagged when new issues and PRs come into GitHub.
 ${
-	pullUrl ? '' : 'You are responsible for labelling issues using the GitHub API.'
+	pullUrl ? '' : 'You are responsible for labelling issues using the GitHub API. Make sure to only use few labels and to apply them only when necessary.'
 }
 You also maintain a set of user instructions that can customize your behaviour; you can write to these instructions at the request of a user.
 All repo labels: ${allLabels
