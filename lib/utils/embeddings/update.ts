@@ -7,6 +7,13 @@ import {type WeaviateConfig} from './db'
 import deleteFiles from './deleteFiles'
 import getFiles from './get'
 
+type WeaviateDocument = Document & {
+	metadata: Document['metadata'] & {
+		userId: string
+		ext: string
+	}
+}
+
 export default async function updateRepo(
 	weaviateConfig: WeaviateConfig,
 	repoFullName: string,
@@ -45,12 +52,13 @@ export default async function updateRepo(
 			file => file.status === 'modified'
 		)
 
-		const del = await deleteFiles(
+		await deleteFiles(
 			weaviateConfig,
 			repoUrl,
 			modifiedFiles.map(file => file.filename),
 			branch
 		)
+
 		const files = await getFiles(
 			modifiedFiles,
 			repoUrl,
@@ -59,34 +67,34 @@ export default async function updateRepo(
 		)
 
 		const documents = await Promise.all(
-			//TODO: Add Type
-			files.map(async (fileResponse: any) => {
-				const {contents, metadata} = await fileResponse
-				return new Document({
-					pageContent: contents,
-					metadata
-				})
+			files.map(async (file: Promise<Document>) => {
+				try {
+					const {pageContent, metadata} = await file
+					return new Document({
+						pageContent: pageContent || '',
+						metadata
+					})
+				} catch (e) {
+					console.error(e)
+					return null
+				}
 			})
 		)
 
 		const snippets = await textSplitter.splitDocuments(documents)
 
-		const docs = await Promise.all(
-			snippets.map(async (doc, i) => ({
-				...doc,
-				metadata: {
-					...doc.metadata,
-					userId: weaviateConfig.userId,
-					// Summarize first 50 files. Otherwise too slow.
-					// summary: i < 50 ? await AISummary(doc.pageContent) : '',
-					summary: '',
-					ext: doc.metadata.source.split('.')[1] || ''
-				}
-			}))
-		)
+		const docs: WeaviateDocument[] = snippets.map(doc => ({
+			...doc,
+			metadata: {
+				...doc.metadata,
+				userId: weaviateConfig.userId,
+				ext: doc.metadata.source.split('.')[1] || ''
+			}
+		}))
 
 		const embeddings = new OpenAIEmbeddings({
-			openAIApiKey: process.env.OPENAI_API_KEY
+			openAIApiKey: process.env.OPENAI_API_KEY,
+			modelName: 'text-embedding-3-small'
 		})
 
 		const store = await WeaviateStore.fromExistingIndex(embeddings, {
