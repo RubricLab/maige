@@ -1,33 +1,37 @@
+import {Document} from 'langchain/document'
+
 export default async function getFiles(
 	files: any,
 	repoUrl: string,
 	branch: string,
 	accessToken?: string
 ) {
-
-	const promises: any[] = []
-	for (const file of files) {
-		const res = await fetch(file.contents_url, {
+	const filePromises: Promise<Document>[] = files.map((file: any) =>
+		fetch(file.contents_url, {
 			method: 'GET',
 			headers: {
-				Authorization: `token ${accessToken}`
-			}
-		}).then(res =>
-			res.json().then(data => {
-				return fetch(data.download_url)
-			})
-		)
-
-		const fileContent = await res.text()
-
-		promises.push({
-			contents: fileContent || '',
-			metadata: {
-				source: file.filename,
-				repository: repoUrl,
-				branch: branch
+				Authorization: accessToken ? `token ${accessToken}` : undefined
 			}
 		})
-	}
-	return promises
+			.then(res => res.json())
+			.then(data => fetch(data.download_url))
+			.then(res => res.text())
+			.then(
+				(fileContent: string) =>
+					new Document({
+						pageContent: fileContent || '',
+						metadata: {
+							source: file.filename,
+							repository: repoUrl,
+							branch: branch
+						}
+					})
+			)
+			.catch(error => {
+				console.error(`Failed to fetch file ${file.filename}:`, error)
+				return null
+			})
+	)
+
+	return filePromises
 }
