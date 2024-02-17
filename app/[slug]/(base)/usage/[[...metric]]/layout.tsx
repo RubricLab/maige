@@ -30,7 +30,10 @@ export default async function RootLayout({
 				route={route}
 			/>
 			<div className='space-y-5'>
-				<UsageCharts route={route} />
+				<UsageCharts
+					teamSlug={params.slug}
+					route={route}
+				/>
 				{children}
 			</div>
 		</div>
