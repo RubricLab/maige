@@ -1,8 +1,12 @@
 'use server'
 
 import {Role} from '@prisma/client'
+import {headers} from 'next/headers'
 import {z} from 'zod'
+import {EMAIL} from '~/constants'
+import {InviteMember} from '~/emails/invite-member'
 import prisma from '~/prisma'
+import {resend} from '~/resend'
 import {getCurrentUser} from '~/utils/session'
 
 const schema = z.object({
@@ -16,6 +20,9 @@ export default async function createInvitation(
 	prevState: any,
 	formData: FormData
 ) {
+	const headersList = headers()
+	const domain = headersList.get('host')
+
 	const user = await getCurrentUser()
 	if (!user)
 		return {
@@ -30,7 +37,8 @@ export default async function createInvitation(
 	})
 
 	const membership = await prisma.membership.findFirst({
-		where: {teamId: parsed.teamId, userId: user.id}
+		where: {teamId: parsed.teamId, userId: user.id},
+		include: {team: {select: {name: true}}}
 	})
 	if (!membership)
 		return {
@@ -47,6 +55,25 @@ export default async function createInvitation(
 				teamId: parsed.teamId
 			}
 		})
+
+		const {data, error} = await resend.emails.send({
+			from: EMAIL.FROM,
+			to: [parsed.email],
+			subject: `${user.name ?? user.userName} invited you to join ${membership.team.name} on Maige`,
+			react: InviteMember({
+				user: user,
+				inviteId: response.id,
+				teamName: membership.team.name,
+				domain: domain
+			})
+		})
+
+		if (error)
+			return {
+				message: error.message,
+				type: 'error'
+			}
+
 		return {
 			message: `Successfully invited ${parsed.email}`,
 			type: 'success'
