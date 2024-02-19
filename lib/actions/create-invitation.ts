@@ -1,6 +1,7 @@
 'use server'
 
 import {Role} from '@prisma/client'
+import {headers} from 'next/headers'
 import {z} from 'zod'
 import {EMAIL} from '~/constants'
 import {InviteMember} from '~/emails/invite-member'
@@ -19,6 +20,9 @@ export default async function createInvitation(
 	prevState: any,
 	formData: FormData
 ) {
+	const headersList = headers()
+	const domain = headersList.get('host')
+
 	const user = await getCurrentUser()
 	if (!user)
 		return {
@@ -59,7 +63,8 @@ export default async function createInvitation(
 			react: InviteMember({
 				user: user,
 				inviteId: response.id,
-				teamName: membership.team.name
+				teamName: membership.team.name,
+				domain: domain
 			})
 		})
 

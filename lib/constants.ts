@@ -13,10 +13,6 @@ export const COPY = {
 	FOOTER: `<sub>From [Maige](https://maige.app). How's my driving?</sub>`
 }
 
-export const DOMAIN = {
-	PROD: 'https://maige.app'
-}
-
 export const EMAIL = {
 	FROM: 'Maige <hey@mail.maige.app>'
 }
