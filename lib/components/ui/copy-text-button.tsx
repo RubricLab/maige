@@ -1,6 +1,5 @@
 'use client'
 
-import {toast} from 'sonner'
 import {copyToClipboard} from '~/utils'
 import {Button} from './button'
 
@@ -17,10 +16,7 @@ export const CopyTextButton = ({
 		<Button
 			variant={'outline'}
 			className={className}
-			onClick={() => {
-				copyToClipboard(text)
-				toast('Copied to clipboard')
-			}}>
+			onClick={() => copyToClipboard(text)}>
 			{label || 'Copy'}
 		</Button>
 	)
