@@ -96,7 +96,8 @@ export default async function handleAppUpdates({
 				}
 			})
 		// If repo(s) is for an individual user, just create the projects directly without an organization
-		else if (type === 'User')
+		else if (type === 'User') {
+			console.log('Adding user repos')
 			createProjectsAndOrg = prisma.project.createMany({
 				data: addedRepos.map((repo: Repository) => ({
 					githubProjectId: repo.id.toString(),
@@ -108,6 +109,7 @@ export default async function handleAppUpdates({
 				})),
 				skipDuplicates: true
 			})
+		}
 
 		// Delete existing repos
 		const deleteProjects = prisma.project.deleteMany({
