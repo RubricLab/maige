@@ -18,7 +18,7 @@ const routes = [
 	{
 		name: 'Settings',
 		path: 'settings'
-	},
+	}
 ]
 
 function evaluatePath(path: string, repoSlug: string, projectId: string) {

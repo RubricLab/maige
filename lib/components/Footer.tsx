@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export const Footer = () => {
 	return (
-		<footer className='font-monocraft flex w-screen items-end justify-center space-x-0.5 p-10 text-green-600 dark:text-green-100'>
+		<footer className='flex w-screen items-end justify-center space-x-0.5 p-10 font-monocraft text-green-600 dark:text-green-100'>
 			<span>an</span>
 			<Link
 				className='underline'

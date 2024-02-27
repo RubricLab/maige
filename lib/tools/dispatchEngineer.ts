@@ -20,7 +20,7 @@ export default function dispatchEngineer({
 	runId: string
 	issueNumber: number
 	defaultBranch: string
-	customerId: string
+	customerId?: string
 	projectId: string
 	teamSlug: string
 }) {
