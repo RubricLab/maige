@@ -50,7 +50,7 @@ export default async function handleAppUpdates({
 			status: 404
 		})
 
-	console.log(`User adding project: `, user)
+	console.log(`User adding project: `, userName, githubOrgSlug)
 
 	if (!user.addProject[0])
 		return new Response(`Could not find addProject for user ${userName}`, {

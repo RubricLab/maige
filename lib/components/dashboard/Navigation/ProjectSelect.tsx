@@ -33,7 +33,8 @@ function AddProject({
 		const res = await createProjectIntent(null, formData)
 		if (res?.type === 'success') {
 			window.open(
-				`${GITHUB.BASE_URL}/apps/${env.NEXT_PUBLIC_GITHUB_APP_NAME}/installations/new`
+				`${GITHUB.BASE_URL}/apps/${env.NEXT_PUBLIC_GITHUB_APP_NAME}/installations/new`,
+				'_self'
 			)
 			setOpen(false)
 			return

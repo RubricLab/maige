@@ -36,7 +36,8 @@ export default function CreateProjectIntent({teamSlug}: {teamSlug: string}) {
 	useEffect(() => {
 		if (state?.type === 'success')
 			window.open(
-				`${GITHUB.BASE_URL}/apps/${env.NEXT_PUBLIC_GITHUB_APP_NAME}/installations/new`
+				`${GITHUB.BASE_URL}/apps/${env.NEXT_PUBLIC_GITHUB_APP_NAME}/installations/new`,
+				'_self'
 			)
 		else if (state?.type === 'error') {
 			toast.error(state?.message)
