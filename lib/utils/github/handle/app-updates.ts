@@ -51,8 +51,6 @@ export default async function handleAppUpdates({
 		})
 
 	try {
-		console.log('Adding repos of type: ', type)
-
 		let createProjectsAndOrg = null
 
 		// If repo(s) is under an organization (not personal), create projects with corresponding organization
@@ -98,7 +96,7 @@ export default async function handleAppUpdates({
 				}
 			})
 		// If repo(s) is for an individual user, just create the projects directly without an organization
-		else
+		else if (type === 'User')
 			createProjectsAndOrg = prisma.project.createMany({
 				data: addedRepos.map((repo: Repository) => ({
 					githubProjectId: repo.id.toString(),
@@ -123,7 +121,8 @@ export default async function handleAppUpdates({
 		// Sync repos to database in a single transaction
 		await prisma.$transaction([createProjectsAndOrg, deleteProjects])
 	} catch (err) {
-		console.log('error', JSON.stringify(err))
+		console.warn('Something went wrong while adding projects:')
+		console.error(err)
 		return new Response(`Unexpected error: ${JSON.stringify(err)}`, {
 			status: 500
 		})
