@@ -47,14 +47,14 @@ export default async function handleAppUpdates({
 
 	if (!user?.id)
 		return new Response(`Could not find user ${userName}`, {
-			status: 500
+			status: 404
 		})
 
-	console.log('user.addProject: ', user.addProject)
+	console.log(`User adding project: `, user)
 
 	if (!user.addProject[0])
 		return new Response(`Could not find addProject for user ${userName}`, {
-			status: 500
+			status: 404
 		})
 
 	try {
