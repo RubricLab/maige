@@ -19,7 +19,7 @@ export const InviteMember: React.FC<Readonly<EmailTemplateProps>> = ({
 			{user.name ?? user.userName} has invited you to join {teamName} on Maige
 		</h1>
 		<p>
-			<a href={'https://' + domain}>Maige</a> is open-source infrastucture for
+			<a href={'https://' + domain}>Maige</a> is open-source infrastructure for
 			running natural language workflows on your GitHub codebase.
 		</p>
 		<a href={'https://' + domain + `/invite/${inviteId}`}>Accept invite</a>

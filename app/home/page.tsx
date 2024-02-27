@@ -48,7 +48,7 @@ export const Homepage = () => {
 						<span>intelligent codebase copilot</span>
 					</h1>
 					<h2 className='font-sans font-medium'>
-						Maige is open-source infrastucture for running natural language workflows
+						Maige is open-source infrastructure for running natural language workflows
 						on your codebase.
 					</h2>
 				</div>
