@@ -50,6 +50,13 @@ export default async function handleAppUpdates({
 			status: 500
 		})
 
+	console.log('user.addProject: ', user.addProject)
+
+	if (!user.addProject[0])
+		return new Response(`Could not find addProject for user ${userName}`, {
+			status: 500
+		})
+
 	try {
 		let createProjectsAndOrg = null
 
