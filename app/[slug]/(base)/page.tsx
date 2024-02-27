@@ -3,8 +3,6 @@ import {ProjectsList} from '~/components/dashboard/Projects/ProjectsList'
 import prisma from '~/prisma'
 import {getCurrentUser} from '~/utils/session'
 
-export const dynamic = 'force-dynamic'
-
 export default async function Dashboard({params}: {params: {slug: string}}) {
 	const user = await getCurrentUser()
 
