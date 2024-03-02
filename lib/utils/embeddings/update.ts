@@ -1,9 +1,9 @@
-import {Document} from 'langchain/document'
-import {OpenAIEmbeddings} from 'langchain/embeddings/openai'
-import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
-import {WeaviateStore} from 'langchain/vectorstores/weaviate'
-import {getInstallationId, getInstallationToken} from '~/utils/github'
-import {type WeaviateConfig} from './db'
+import { Document } from 'langchain/document'
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
+import { WeaviateStore } from 'langchain/vectorstores/weaviate'
+import { getInstallationId, getInstallationToken } from '~/utils/github'
+import { type WeaviateConfig } from './db'
 import deleteFiles from './deleteFiles'
 import getFiles from './get'
 
@@ -48,19 +48,33 @@ export default async function updateRepo(
 			}
 		)
 
+		// Filter to files that were modified or deleted
 		const modifiedFiles = data.data.files.filter(
-			file => file.status === 'modified'
+			file => file.status !== 'added'
 		)
 
-		await deleteFiles(
-			weaviateConfig,
-			repoUrl,
-			modifiedFiles.map(file => file.filename),
-			branch
+		// Filter to files that were modified or added
+		const remainingFiles = data.data.files.filter(
+			file => file.status !== 'removed'
 		)
+
+		// If any files were deleted, delete them from Weaviate
+		if (modifiedFiles.length > 0)
+			await deleteFiles(
+				weaviateConfig,
+				repoUrl,
+				modifiedFiles.map(file => file.filename),
+				branch
+			)
+
+
+		// If no files were added or modified, return early
+		if (remainingFiles.length === 0)
+			return []
+
 
 		const files = await getFiles(
-			modifiedFiles,
+			remainingFiles,
 			repoUrl,
 			branch,
 			installationToken
@@ -69,7 +83,7 @@ export default async function updateRepo(
 		const documents = await Promise.all(
 			files.map(async (file: Promise<Document>) => {
 				try {
-					const {pageContent, metadata} = await file
+					const { pageContent, metadata } = await file
 					return new Document({
 						pageContent: pageContent || '',
 						metadata
