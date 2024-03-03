@@ -2,9 +2,9 @@ import {
 	InstallationRepositoriesAddedEvent,
 	InstallationRepositoriesRemovedEvent
 } from '@octokit/webhooks-types'
-import {GITHUB} from '~/constants'
 import prisma from '~/prisma'
 import {Repository} from '~/types'
+import {getInstallationId, getInstallationToken} from '~/utils/github'
 import Weaviate from '../../embeddings/db'
 import {getMainBranch} from '../../github'
 
@@ -137,9 +137,10 @@ export default async function handleAppUpdates({
 	// TODO: Weviate should be per project, not per user
 	const vectorDB = new Weaviate(user.id)
 	for (const repo of addedRepos) {
-		const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
-		const branch = await getMainBranch(repo.full_name)
-		await vectorDB.embedRepo(repoUrl, branch)
+		const installationId = await getInstallationId(repo.full_name)
+		const installationToken = await getInstallationToken(installationId)
+		const branch = await getMainBranch(repo.full_name, installationToken)
+		await vectorDB.embedRepo(repo.full_name, branch)
 	}
 
 	return new Response(`Successfully updated repos for ${userName}`)

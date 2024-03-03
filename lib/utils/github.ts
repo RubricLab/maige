@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
 import Stripe from 'stripe'
-import {GITHUB} from '~/constants'
 import env from '~/env.mjs'
 import prisma from '~/prisma'
 import {Label, Repository} from '~/types'
@@ -260,10 +259,16 @@ export async function openUsageIssue(
 /**
  * Get main branch of a repo
  */
-export const getMainBranch = async (repoFullName: string) => {
-	const repoRes = (await fetch(
-		`https://api.github.com/repos/${repoFullName}`
-	)) as Response
+export const getMainBranch = async (
+	repoFullName: string,
+	accessToken?: string
+) => {
+	const repoRes = (await fetch(`https://api.github.com/repos/${repoFullName}`, {
+		method: 'GET',
+		headers: {
+			Authorization: accessToken && `token ${accessToken}`
+		}
+	})) as Response
 	const repo = (await repoRes.json()) as any
 	const branchName = repo.default_branch
 
@@ -382,7 +387,9 @@ export async function handleInstall({
 		// Clone, vectorize, and save public code to database
 		const vectorDB = new Weaviate(user.id)
 		for (const repo of repositories) {
-			const branch = await getMainBranch(repo.full_name)
+			const installationId = await getInstallationId(repo.full_name)
+			const installationToken = await getInstallationToken(installationId)
+			const branch = await getMainBranch(repo.full_name, installationToken)
 			await vectorDB.embedRepo(repo.full_name, branch)
 		}
 
@@ -495,9 +502,10 @@ export async function handleAddOrDeleteProjects({
 		// Sync repos to database in a single transaction
 		await prisma.$transaction([createProjects, deleteProjects])
 		for (const repo of addedRepos) {
-			const repoUrl = `${GITHUB.BASE_URL}/${repo.full_name}`
-			const branch = await getMainBranch(repo.full_name)
-			await vectorDB.embedRepo(repoUrl, branch)
+			const installationId = await getInstallationId(repo.full_name)
+			const installationToken = await getInstallationToken(installationId)
+			const branch = await getMainBranch(repo.full_name, installationToken)
+			await vectorDB.embedRepo(repo.full_name, branch)
 		}
 
 		return new Response(`Successfully updated repos for ${userName}`)

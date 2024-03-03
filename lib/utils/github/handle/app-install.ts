@@ -1,6 +1,7 @@
 import {InstallationCreatedEvent} from '@octokit/webhooks-types'
 import prisma from '~/prisma'
 import {Repository} from '~/types'
+import {getInstallationId, getInstallationToken} from '~/utils/github'
 import Weaviate from '../../embeddings/db'
 import {getMainBranch} from '../../github'
 
@@ -106,7 +107,9 @@ export default async function handleAppInstall({
 	// Clone, vectorize, and save public code to database
 	const vectorDB = new Weaviate(user.id)
 	for (const repo of repositories) {
-		const branch = await getMainBranch(repo.full_name)
+		const installationId = await getInstallationId(repo.full_name)
+		const installationToken = await getInstallationToken(installationId)
+		const branch = await getMainBranch(repo.full_name, installationToken)
 		await vectorDB.embedRepo(repo.full_name, branch)
 	}
 

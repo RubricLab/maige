@@ -17,6 +17,7 @@ export default async function addRepo(
 	replace: boolean
 ) {
 	const repoUrl = `${GITHUB.BASE_URL}/${repoFullName}`
+
 	const textSplitter = new RecursiveCharacterTextSplitter({
 		chunkSize: 4000,
 		chunkOverlap: 250
@@ -63,7 +64,7 @@ export default async function addRepo(
 					...doc.metadata,
 					userId: weaviateConfig.userId,
 					// Summarize first 50 files. Otherwise too slow.
-					summary: i < 50 ? await AISummary(doc.pageContent) : '',
+					// summary: i < 50 ? await AISummary(doc.pageContent) : '',
 					ext: doc.metadata.source.split('.')[1] || ''
 				}
 			}))
