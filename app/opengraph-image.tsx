@@ -8,8 +8,8 @@ export const runtime = 'edge'
 export const alt = 'Maige: AI-powered codebase copilot'
 export const contentType = 'image/png'
 export const size = {
-	height: 630,
-	width: 1200
+	height: 2160,
+	width: 3840
 }
 
 const joshuaTreeNight =
@@ -47,10 +47,10 @@ export default async function Preview() {
 				<div
 					style={{
 						position: 'absolute',
-						right: '20px',
-						top: '20px',
+						right: '60px',
+						top: '60px',
 						height: '100%',
-						width: '30px',
+						width: '90px',
 						backgroundColor: tailwindConfig.theme.extend.colors.sunset
 					}}
 				/>
@@ -69,8 +69,8 @@ export default async function Preview() {
 				<div
 					style={{
 						position: 'absolute',
-						left: '28px',
-						top: '4px',
+						left: '84px',
+						top: '12px',
 						display: 'flex',
 						flexDirection: 'column'
 					}}>
@@ -80,7 +80,7 @@ export default async function Preview() {
 							lineHeight: '100%',
 							display: 'flex',
 							flexDirection: 'column',
-							fontSize: 72
+							fontSize: 72 * 3
 						}}>
 						<div>natural-language</div>
 						<div>codebase</div>
@@ -92,13 +92,13 @@ export default async function Preview() {
 						position: 'absolute',
 						display: 'flex',
 						alignItems: 'flex-end',
-						bottom: '28px',
-						left: '28px'
+						bottom: '84px',
+						left: '84px'
 					}}>
 					<Maige
 						style={{
-							height: 76,
-							width: 76,
+							height: 76 * 3,
+							width: 76 * 3,
 							color: orange
 						}}
 					/>
@@ -107,11 +107,11 @@ export default async function Preview() {
 							display: 'flex',
 							color: orange,
 							flexDirection: 'column',
-							marginLeft: '30px'
+							marginLeft: '90px'
 						}}>
 						<div
 							style={{
-								fontSize: 72,
+								fontSize: 72 * 3,
 								letterSpacing: '-4px',
 								lineHeight: '100%'
 							}}>
@@ -119,7 +119,7 @@ export default async function Preview() {
 						</div>
 						<div
 							style={{
-								fontSize: 24
+								fontSize: 24 * 3
 							}}>
 							by Rubric Labs
 						</div>
