@@ -1,9 +1,9 @@
-import { Document } from 'langchain/document'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
-import { WeaviateStore } from 'langchain/vectorstores/weaviate'
-import { getInstallationId, getInstallationToken } from '~/utils/github'
-import { type WeaviateConfig } from './db'
+import {OpenAIEmbeddings} from '@langchain/openai'
+import {WeaviateStore} from '@langchain/weaviate'
+import {Document} from 'langchain/document'
+import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
+import {getInstallationId, getInstallationToken} from '~/utils/github'
+import {type WeaviateConfig} from './db'
 import deleteFiles from './deleteFiles'
 import getFiles from './get'
 
@@ -49,9 +49,7 @@ export default async function updateRepo(
 		)
 
 		// Filter to files that were modified or deleted
-		const modifiedFiles = data.data.files.filter(
-			file => file.status !== 'added'
-		)
+		const modifiedFiles = data.data.files.filter(file => file.status !== 'added')
 
 		// Filter to files that were modified or added
 		const remainingFiles = data.data.files.filter(
@@ -67,11 +65,8 @@ export default async function updateRepo(
 				branch
 			)
 
-
 		// If no files were added or modified, return early
-		if (remainingFiles.length === 0)
-			return []
-
+		if (remainingFiles.length === 0) return []
 
 		const files = await getFiles(
 			remainingFiles,
@@ -83,7 +78,7 @@ export default async function updateRepo(
 		const documents = await Promise.all(
 			files.map(async (file: Promise<Document>) => {
 				try {
-					const { pageContent, metadata } = await file
+					const {pageContent, metadata} = await file
 					return new Document({
 						pageContent: pageContent || '',
 						metadata

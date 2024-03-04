@@ -1,5 +1,5 @@
-import {WeaviateStore} from '@langchain/community/vectorstores/weaviate'
 import {OpenAIEmbeddings} from '@langchain/openai'
+import {WeaviateStore} from '@langchain/weaviate'
 import {RecursiveCharacterTextSplitter} from 'langchain/text_splitter'
 import {GITHUB} from '~/constants'
 import env from '~/env.mjs'
@@ -8,7 +8,6 @@ import {cloneRepo} from './cloneRepo'
 import {type WeaviateConfig} from './db'
 import deleteRepo from './delete'
 import {checkRepoExists} from './exists'
-import {AISummary} from './summary'
 
 export default async function addRepo(
 	weaviateConfig: WeaviateConfig,

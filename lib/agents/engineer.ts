@@ -1,7 +1,8 @@
 import {Sandbox} from '@e2b/sdk'
-import {ChatOpenAI} from '@langchain/openai'
+import {ChatAnthropic} from '@langchain/anthropic'
+import {ChatPromptTemplate} from '@langchain/core/prompts'
 import {Octokit} from '@octokit/core'
-import {initializeAgentExecutorWithOptions} from 'langchain/agents'
+import {AgentExecutor, createReactAgent} from 'langchain/agents'
 import env from '~/env.mjs'
 import prisma from '~/prisma'
 import {codebaseSearch} from '~/tools/codeSearch'
@@ -15,7 +16,6 @@ import {
 	getInstallationToken,
 	trackAgent
 } from '~/utils/github'
-import {isDev} from '~/utils/index'
 
 export async function engineer({
 	task,
@@ -47,9 +47,9 @@ export async function engineer({
 	const octokit = new Octokit({auth: installationToken})
 
 	let logId: string
-	const model = new ChatOpenAI({
-		modelName: 'gpt-4-turbo-preview',
-		openAIApiKey: env.OPENAI_API_KEY,
+	const model = new ChatAnthropic({
+		modelName: 'claude-3-opus-20240229',
+		anthropicApiKey: env.ANTHROPIC_API_KEY,
 		temperature: 0.3,
 		callbacks: [
 			{
@@ -145,22 +145,38 @@ Make sure to commit as you go.
 When you are finished, the code will automatically be pushed to a new branch and a pull request will be opened.
 Any uncommitted changes will be discarded.
 Your final output message should be the message that will be included in the pull request.
+You have access to the following tools:
+
+{tools}
+
+Actions: [{tool_names}]
+
+Question: {input}
+
+Thought:{agent_scratchpad}
 `.replaceAll('\n', ' ')
 
-	const executor = await initializeAgentExecutorWithOptions(tools, model, {
-		agentType: 'openai-functions',
-		returnIntermediateSteps: isDev,
-		handleParsingErrors: true,
-		// verbose: true,
-		agentArgs: {
-			prefix
-		}
+	const prompt = ChatPromptTemplate.fromMessages([
+		['system', prefix],
+		['user', '{input}']
+	])
+	const agent = await createReactAgent({llm: model, tools, prompt})
+	// 	agentType: 'openai-functions',
+	// 	returnIntermediateSteps: isDev,
+	// 	handleParsingErrors: true,
+	// 	// verbose: true,
+	// 	agentArgs: {
+	// 		prefix
+	// 	}
+	// })
+	const executor = new AgentExecutor({
+		agent,
+		tools
 	})
 
-	const input = `${task}`
-	const result = await executor.call({input})
-	const {output} = result
-	const body = `${output}\n\nCloses #${issueNumber}`
+	// const input = `${task}`
+	const result = await executor.invoke({input: task})
+	const body = `${result}\n\nCloses #${issueNumber}`
 
 	// Must cd again because each process starts from ~/
 	await shell.process.startAndWait({
