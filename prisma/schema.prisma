@@ -4,8 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "postgres"
   url          = env("DATABASE_URL")
+  directUrl    = env("DB_URL_NON_POOL")
   relationMode = "prisma"
 }
 
@@ -88,7 +89,7 @@ model AddProject {
   teamId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  completedAt DateTime? @db.DateTime()
+  completedAt DateTime?
 
   user User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
@@ -133,7 +134,7 @@ enum Agent {
 
 model Run {
   id         String    @id @default(cuid())
-  issueNum   Int       @db.Int
+  issueNum   Int
   issueUrl   String    @db.Text
   projectId  String
   createdAt  DateTime  @default(now())
