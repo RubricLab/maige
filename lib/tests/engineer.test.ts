@@ -4,7 +4,7 @@ import {z} from 'zod'
 
 test('Bun test runner', () => {
 	// This is arbitrary. Could just return true.
-	expect(Bun.version).toInclude('1.0')
+	expect(Bun.version).toInclude('1.')
 })
 
 test('SERP API', async () => {
