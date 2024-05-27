@@ -46,7 +46,7 @@ export async function maige({
 	let logId: string
 
 	const model = new ChatOpenAI({
-		modelName: 'gpt-4-turbo-preview',
+		modelName: 'gpt-4o',
 		openAIApiKey: env.OPENAI_API_KEY,
 		temperature: 0,
 		streaming: false,
