@@ -49,4 +49,4 @@ Try these commands:
 - "maige add the 'self-hosting' label anytime someone mentions 'docker'"
 - "maige what packages does this repo use?"
 
-Enjoy streamlined issue management with Maige! 🚀
+Enjoy streamlined issue management with Maige.
