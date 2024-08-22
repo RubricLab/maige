@@ -45,3 +45,6 @@ yarn-error.log*
 
 certificates
 .env*.local
+
+# turbo
+.turbo
