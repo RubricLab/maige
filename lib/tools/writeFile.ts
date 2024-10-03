@@ -1,6 +1,6 @@
+import path from 'node:path'
 import type Sandbox from '@e2b/sdk'
 import { DynamicStructuredTool } from '@langchain/core/tools'
-import path from 'node:path'
 import { z } from 'zod'
 
 export default function writeFile({ shell, dir }: { shell: Sandbox; dir: string }) {
