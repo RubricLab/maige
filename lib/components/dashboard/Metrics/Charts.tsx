@@ -1,7 +1,7 @@
-import {getServerSession} from 'next-auth'
-import {authOptions} from '~/authOptions'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '~/authOptions'
 import prisma from '~/prisma'
-import {Chart} from '.'
+import { Chart } from '.'
 
 type UsageDay = {
 	usageDay: Date
@@ -21,7 +21,7 @@ export async function UsageCharts({
 	if (!session) return <div>Not authenticated</div>
 
 	const team = await prisma.team.findUnique({
-		where: {slug: teamSlug},
+		where: { slug: teamSlug },
 		select: {
 			id: true
 		}
@@ -40,14 +40,16 @@ export async function UsageCharts({
 		WHERE
 			L.createdAt >= CURDATE() - INTERVAL 14 DAY
 			AND L.createdAt < CURDATE() + INTERVAL 1 DAY
-			AND P.teamId = ${team.id}
+			AND P.teamId = ${team?.id}
 		GROUP BY
 			usageDay
 		ORDER BY
 			usageDay;
 	`
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	function mapAndAggregateUsage(usageArray: any, key: string) {
-		const mappedUsage = usageArray.map(row => ({
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		const mappedUsage = usageArray.map((row: any) => ({
 			date: new Date(row.usageDay).toLocaleDateString('en-US', {
 				month: 'short',
 				day: 'numeric'
@@ -56,9 +58,10 @@ export async function UsageCharts({
 		}))
 
 		return Object.values(
-			mappedUsage.reduce((acc, cur) => {
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			mappedUsage.reduce((acc: any, cur: any) => {
 				const date = cur.date
-				if (!acc[date]) acc[date] = {date, [key]: 0}
+				if (!acc[date]) acc[date] = { date, [key]: 0 }
 				acc[date][key] += cur[key]
 				return acc
 			}, {})
@@ -69,30 +72,11 @@ export async function UsageCharts({
 	const aggregatedTokensUsage = mapAndAggregateUsage(groupUsage, 'tokens')
 	const aggregatedRunUsage = mapAndAggregateUsage(groupUsage, 'runs')
 
-	if (route === 'runs')
-		return (
-			<Chart
-				data={aggregatedRunUsage}
-				category='runs'
-				color='green'
-			/>
-		)
+	if (route === 'runs') return <Chart data={aggregatedRunUsage} category="runs" color="green" />
 
 	if (route === 'tokens')
-		return (
-			<Chart
-				data={aggregatedTokensUsage}
-				category='tokens'
-				color='orange'
-			/>
-		)
+		return <Chart data={aggregatedTokensUsage} category="tokens" color="orange" />
 
-	if (route === '')
-		return (
-			<Chart
-				data={aggregatedLogUsage}
-				category='logs'
-				color='purple'
-			/>
-		)
+	if (route === '') return <Chart data={aggregatedLogUsage} category="logs" color="purple" />
+	return
 }

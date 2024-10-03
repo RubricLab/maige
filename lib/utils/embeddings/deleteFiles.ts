@@ -1,10 +1,10 @@
-import {type WeaviateConfig} from './db'
+import type { WeaviateConfig } from './db'
 
 export default async function deleteFiles(
 	weaviateConfig: WeaviateConfig,
 	repository: string,
-    filePaths: string[],
-    branch: string
+	filePaths: string[],
+	branch: string
 ) {
 	const res = await weaviateConfig.client.batch
 		.objectsBatchDeleter()
@@ -22,16 +22,16 @@ export default async function deleteFiles(
 					operator: 'Equal',
 					valueString: repository
 				},
-                {
-                    path: ['branch'],
-                    operator: "Equal",
-                    valueText: branch
-                },
-                {
-                    path: ['source'],
-                    operator: "ContainsAny",
-                    valueTextArray: filePaths
-                }
+				{
+					path: ['branch'],
+					operator: 'Equal',
+					valueText: branch
+				},
+				{
+					path: ['source'],
+					operator: 'ContainsAny',
+					valueTextArray: filePaths
+				}
 			]
 		})
 		.do()

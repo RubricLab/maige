@@ -1,6 +1,6 @@
 'use client'
 
-import {TabList} from './TabList'
+import { TabList } from './TabList'
 
 const routes = [
 	{

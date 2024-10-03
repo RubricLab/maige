@@ -1,14 +1,15 @@
 'use server'
-import {z} from 'zod'
+import { z } from 'zod'
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 const schema = z.object({
 	name: z.string(),
 	slug: z.string()
 })
 
-export default async function deleteTeam(prevState: any, formData: FormData) {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export default async function deleteTeam(_prevState: any, formData: FormData) {
 	const user = await getCurrentUser()
 	if (!user)
 		return {
@@ -22,7 +23,7 @@ export default async function deleteTeam(prevState: any, formData: FormData) {
 	})
 
 	try {
-		await prisma.team.delete({where: {slug: parsed.slug}})
+		await prisma.team.delete({ where: { slug: parsed.slug } })
 		return {
 			message: `Successfully deleted ${parsed.name}`,
 			type: 'success'

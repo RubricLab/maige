@@ -1,12 +1,12 @@
-import Sandbox from '@e2b/sdk'
-import {DynamicStructuredTool} from '@langchain/core/tools'
-import path from 'path'
-import {z} from 'zod'
+import type Sandbox from '@e2b/sdk'
+import { DynamicStructuredTool } from '@langchain/core/tools'
+import path from 'node:path'
+import { z } from 'zod'
 
-export default function writeFile({shell, dir}: {shell: Sandbox; dir: string}) {
+export default function writeFile({ shell, dir }: { shell: Sandbox; dir: string }) {
 	return new DynamicStructuredTool({
 		description: '',
-		func: async ({code, fileName}) => {
+		func: async ({ code, fileName }) => {
 			const directory = path.dirname(`${dir}/${fileName}`)
 
 			await shell.filesystem.makeDir(directory)

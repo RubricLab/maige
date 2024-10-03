@@ -1,14 +1,15 @@
 'use server'
-import {z} from 'zod'
+import { z } from 'zod'
 import prisma from '~/prisma'
-import {slugify} from '~/utils'
-import {getCurrentUser} from '~/utils/session'
+import { slugify } from '~/utils'
+import { getCurrentUser } from '~/utils/session'
 
 const schema = z.object({
 	name: z.string()
 })
 
-export default async function createTeam(prevState: any, formData: FormData) {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export default async function createTeam(_prevState: any, formData: FormData) {
 	const user = await getCurrentUser()
 	if (!user)
 		return {
@@ -27,14 +28,14 @@ export default async function createTeam(prevState: any, formData: FormData) {
 				slug: slugify(parsed.name),
 				createdBy: user.id,
 				memberships: {
-					create: {userId: user.id, role: 'ADMIN'}
+					create: { userId: user.id, role: 'ADMIN' }
 				}
 			}
 		})
 		return {
 			message: `Successfully created ${parsed.name}`,
 			type: 'success',
-			data: {slug: response.slug}
+			data: { slug: response.slug }
 		}
 	} catch (err) {
 		if (err instanceof Error)

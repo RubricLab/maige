@@ -1,7 +1,7 @@
-import {Metadata, Viewport} from 'next'
+import type { Metadata, Viewport } from 'next'
 import Providers from '~/components/dashboard/Providers'
 import '~/styles/globals.css'
-import {jakarta, monocraft, roboto} from '~/utils/fonts'
+import { jakarta, monocraft, roboto } from '~/utils/fonts'
 
 const title = 'Maige'
 const description = 'AI-powered codebase actions.'
@@ -35,11 +35,9 @@ export const metadata: Metadata = {
 	}
 }
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<html
-			lang='en'
-			className={`${jakarta.variable} ${monocraft.variable} ${roboto.variable}`}>
+		<html lang="en" className={`${jakarta.variable}${monocraft.variable}${roboto.variable}`}>
 			<body>
 				<Providers>
 					<main>{children}</main>

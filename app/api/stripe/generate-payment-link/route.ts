@@ -1,18 +1,19 @@
-import {stripe} from '~/stripe'
-import {createPaymentLink} from '~/utils/payment'
+import { stripe } from '~/stripe'
+import { createPaymentLink } from '~/utils/payment'
 
 /**
  * Generate a Stripe payment URL for a customer.
  */
 export const POST = async (req: Request) => {
-	const {tier, email, customerId} = (await req.json()) as any
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const { tier, email, customerId } = (await req.json()) as any
 
 	if (!customerId)
 		return Response.json(
 			{
 				message: 'Missing customer ID'
 			},
-			{status: 400}
+			{ status: 400 }
 		)
 
 	try {
@@ -26,7 +27,7 @@ export const POST = async (req: Request) => {
 			{
 				message: 'Failed to create Stripe session'
 			},
-			{status: 500}
+			{ status: 500 }
 		)
 	}
 }

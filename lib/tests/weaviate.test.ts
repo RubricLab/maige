@@ -1,4 +1,4 @@
-import {expect, test} from 'bun:test'
+import { expect, test } from 'bun:test'
 import Weaviate from '~/utils/embeddings/db'
 
 test.skip(
@@ -14,13 +14,7 @@ test.skip(
 
 		expect(docs?.length).toBeGreaterThan(0)
 
-		const search = await vectorDB.searchCode(
-			query,
-			repoFullName,
-			1,
-			undefined,
-			branch
-		)
+		const search = await vectorDB.searchCode(query, repoFullName, 1, undefined, branch)
 
 		console.log(search)
 

@@ -1,12 +1,12 @@
-import env from '~/env.mjs'
+import env from "~/env";
 
-export const isDev = env.NODE_ENV === 'development'
+export const isDev = env.NODE_ENV === "development";
 
 // Trim text to a max length
 export const truncate = (text: string, length: number): string => {
-	if (!text) return ''
+	if (!text) return "";
 
-	text.length > length ? text.slice(0, length) + '...' : text
+	text.length > length ? `${text.slice(0, length)}...` : text;
 
-	return text
-}
+	return text;
+};

@@ -1,10 +1,6 @@
-import {Instruction} from '@prisma/client'
-import {Dispatch, SetStateAction} from 'react'
-import {
-	DialogContent,
-	DialogOverlay,
-	DialogPortal
-} from '~/components/ui/dialog'
+import type { Instruction } from '@prisma/client'
+import type { Dispatch, SetStateAction } from 'react'
+import { DialogContent, DialogOverlay, DialogPortal } from '~/components/ui/dialog'
 import UpdateInstructionForm from './UpdateInstructionForm'
 
 export default function UpdateInstruction({
@@ -18,10 +14,7 @@ export default function UpdateInstruction({
 		<DialogPortal>
 			<DialogOverlay />
 			<DialogContent>
-				<UpdateInstructionForm
-					instruction={instruction}
-					setDialogOpen={setDialogOpen}
-				/>
+				<UpdateInstructionForm instruction={instruction} setDialogOpen={setDialogOpen} />
 			</DialogContent>
 		</DialogPortal>
 	)

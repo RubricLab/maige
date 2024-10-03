@@ -1,10 +1,10 @@
-import Stripe from 'stripe'
-import env from './env.mjs'
+import Stripe from "stripe";
+import env from "./env";
 
-export const stripe = new Stripe(env.STRIPE_SECRET_KEY || '', {
-	apiVersion: '2023-10-16',
+export const stripe = new Stripe(env.STRIPE_SECRET_KEY || "", {
+	apiVersion: "2024-09-30.acacia",
 	appInfo: {
-		name: 'Maige',
-		version: '0.1.0'
-	}
-})
+		name: "Maige",
+		version: "0.1.0",
+	},
+});

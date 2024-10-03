@@ -1,6 +1,6 @@
-import {clsx, type ClassValue} from 'clsx'
-import {toast} from 'sonner'
-import {twMerge} from 'tailwind-merge'
+import { clsx, type ClassValue } from 'clsx'
+import { toast } from 'sonner'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
@@ -9,12 +9,8 @@ export function cn(...inputs: ClassValue[]) {
 // Calculate time ago
 export function timeAgo(timestamp: Date) {
 	const date = new Date(timestamp)
-	const daysAgo = Math.floor(
-		(new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
-	)
-	return daysAgo === 0
-		? 'today'
-		: `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`
+	const daysAgo = Math.floor((new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+	return daysAgo === 0 ? 'today' : `${daysAgo} day${daysAgo === 1 ? '' : 's'} ago`
 }
 
 // Convert string to a slug

@@ -5,11 +5,11 @@
 		"paths": {
 			"~/*": ["./lib/*"]
 		},
-		"plugins": [{"name": "next"}],
+		"plugins": [{ "name": "next" }],
 		"types": ["bun-types", "web"]
 	},
 	"exclude": ["node_modules"],
-	"extends": "@rubriclab/typescript-config/nextjs.json",
+	"extends": "@rubriclab/config/tsconfig",
 	"include": [
 		"./app/**/*.ts",
 		"./app/**/*.tsx",

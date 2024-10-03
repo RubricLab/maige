@@ -1,9 +1,10 @@
+import { WeaviateStore } from '@langchain/community/vectorstores/weaviate'
+import { OpenAIEmbeddings } from '@langchain/openai'
 import { Document } from 'langchain/document'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
-import { WeaviateStore } from 'langchain/vectorstores/weaviate'
+import env from '~/env'
 import { getInstallationId, getInstallationToken } from '~/utils/github'
-import { type WeaviateConfig } from './db'
+import type { WeaviateConfig } from './db'
 import deleteFiles from './deleteFiles'
 import getFiles from './get'
 
@@ -20,6 +21,7 @@ export default async function updateRepo(
 	repoUrl: string,
 	commitId: string,
 	branch: string,
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	octokit: any
 ) {
 	const textSplitter = new RecursiveCharacterTextSplitter({
@@ -27,35 +29,30 @@ export default async function updateRepo(
 		chunkOverlap: 250
 	})
 
-	const repoPath = repoUrl.split('https://github.com/')[1].split('/')
-	const repoName = repoPath[1]
-	const repoOwner = repoPath[0]
+	const repoPath = repoUrl.split('https://github.com/')[1]?.split('/')
+	const repoName = repoPath?.[1]
+	const repoOwner = repoPath?.[0]
 
-	const installationToken = await getInstallationToken(
-		await getInstallationId(repoFullName)
-	)
+	const installationToken = await getInstallationToken(await getInstallationId(repoFullName))
 
 	try {
-		const data = await octokit.request(
-			'GET /repos/{owner}/{repo}/commits/{ref}',
-			{
-				owner: repoOwner,
-				repo: repoName,
-				ref: commitId,
-				headers: {
-					'X-GitHub-Api-Version': '2022-11-28'
-				}
+		const data = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
+			owner: repoOwner,
+			repo: repoName,
+			ref: commitId,
+			headers: {
+				'X-GitHub-Api-Version': '2022-11-28'
 			}
-		)
+		})
 
 		// Filter to files that were modified or deleted
 		const modifiedFiles = data.data.files.filter(
-			file => file.status !== 'added'
+			(file: { status: string }) => file.status !== 'added'
 		)
 
 		// Filter to files that were modified or added
 		const remainingFiles = data.data.files.filter(
-			file => file.status !== 'removed'
+			(file: { status: string }) => file.status !== 'removed'
 		)
 
 		// If any files were deleted, delete them from Weaviate
@@ -63,22 +60,15 @@ export default async function updateRepo(
 			await deleteFiles(
 				weaviateConfig,
 				repoUrl,
-				modifiedFiles.map(file => file.filename),
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				modifiedFiles.map((file: { filename: any }) => file.filename),
 				branch
 			)
 
-
 		// If no files were added or modified, return early
-		if (remainingFiles.length === 0)
-			return []
+		if (remainingFiles.length === 0) return []
 
-
-		const files = await getFiles(
-			remainingFiles,
-			repoUrl,
-			branch,
-			installationToken
-		)
+		const files = await getFiles(remainingFiles, repoUrl, branch, installationToken)
 
 		const documents = await Promise.all(
 			files.map(async (file: Promise<Document>) => {
@@ -95,7 +85,10 @@ export default async function updateRepo(
 			})
 		)
 
-		const snippets = await textSplitter.splitDocuments(documents)
+		const snippets = await textSplitter.splitDocuments(
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+			documents as Document<Record<string, any>>[]
+		)
 
 		const docs: WeaviateDocument[] = snippets.map(doc => ({
 			...doc,
@@ -107,12 +100,13 @@ export default async function updateRepo(
 		}))
 
 		const embeddings = new OpenAIEmbeddings({
-			openAIApiKey: process.env.OPENAI_API_KEY,
+			openAIApiKey: env.OPENAI_API_KEY,
 			modelName: 'text-embedding-3-small'
 		})
 
 		const store = await WeaviateStore.fromExistingIndex(embeddings, {
 			// "as any" is required for langchain
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			client: weaviateConfig.client as any,
 			indexName: weaviateConfig.indexName
 		})

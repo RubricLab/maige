@@ -1,11 +1,11 @@
-import Sandbox from '@e2b/sdk'
-import {DynamicStructuredTool} from '@langchain/core/tools'
-import {z} from 'zod'
+import type Sandbox from '@e2b/sdk'
+import { DynamicStructuredTool } from '@langchain/core/tools'
+import { z } from 'zod'
 
-export default function readFile({shell, dir}: {shell: Sandbox; dir: string}) {
+export default function readFile({ shell, dir }: { shell: Sandbox; dir: string }) {
 	return new DynamicStructuredTool({
 		description: '',
-		func: async ({path}) => {
+		func: async ({ path }) => {
 			return await shell.filesystem.read(`${dir}/${path}`)
 		},
 		name: 'readFile',

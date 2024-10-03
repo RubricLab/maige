@@ -1,6 +1,6 @@
-import {Document} from 'langchain/document'
-import {GithubRepoLoader} from 'langchain/document_loaders/web/github'
-import {isDev} from '../index'
+import { GithubRepoLoader } from '@langchain/community/document_loaders/web/github'
+import type { Document } from 'langchain/document'
+import { isDev } from '../index'
 
 export const ignoreFiles: RegExp[] = [
 	// File
@@ -64,7 +64,8 @@ const ignorePaths = [
 
 export async function cloneRepo(
 	repoUrl: string,
-	branchName: string = 'main',
+	branchName: string,
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	splitter: any,
 	accessToken?: string | ''
 ): Promise<Document[]> {

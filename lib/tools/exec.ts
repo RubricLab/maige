@@ -1,6 +1,6 @@
-import {Sandbox} from '@e2b/sdk'
-import {DynamicStructuredTool} from '@langchain/core/tools'
-import {z} from 'zod'
+import type { Sandbox } from '@e2b/sdk'
+import { DynamicStructuredTool } from '@langchain/core/tools'
+import { z } from 'zod'
 /**
  * Execute a shell command
  */
@@ -19,7 +19,7 @@ export default function exec({
 }) {
 	return new DynamicStructuredTool({
 		description,
-		func: async ({cmd}) => {
+		func: async ({ cmd }) => {
 			if (setupCmd)
 				await shell.process.startAndWait({
 					cmd: setupCmd
@@ -27,7 +27,7 @@ export default function exec({
 
 			const modifiedCmd = preCmdCallback(cmd)
 
-			const proc = await shell.process.start({cmd: modifiedCmd})
+			const proc = await shell.process.start({ cmd: modifiedCmd })
 
 			await proc.wait()
 

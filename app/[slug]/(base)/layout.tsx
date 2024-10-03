@@ -6,9 +6,9 @@ export default async function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<div className='space-y-4'>
+		<div className="space-y-4">
 			<TeamNav />
-			<div className='z-10 h-full w-full'>{children}</div>
+			<div className="z-10 h-full w-full">{children}</div>
 		</div>
 	)
 }

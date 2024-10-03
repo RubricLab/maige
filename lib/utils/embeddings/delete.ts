@@ -1,9 +1,6 @@
-import {type WeaviateConfig} from './db'
+import type { WeaviateConfig } from './db'
 
-export default async function deleteRepo(
-	weaviateConfig: WeaviateConfig,
-	repository: string
-) {
+export default async function deleteRepo(weaviateConfig: WeaviateConfig, repository: string) {
 	const res = await weaviateConfig.client.batch
 		.objectsBatchDeleter()
 		.withClassName(weaviateConfig.indexName)

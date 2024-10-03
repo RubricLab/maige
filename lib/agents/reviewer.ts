@@ -1,18 +1,17 @@
-import {ChatOpenAI} from '@langchain/openai'
-import {initializeAgentExecutorWithOptions} from 'langchain/agents'
-import parse, {Change, Chunk} from 'parse-diff'
-import env from '~/env.mjs'
+import { ChatOpenAI } from '@langchain/openai'
+import { initializeAgentExecutorWithOptions } from 'langchain/agents'
+import parse, { type Change } from 'parse-diff'
+import env from '~/env'
 import prisma from '~/prisma'
-import {codeComment} from '~/tools/codeComment'
-import {codebaseSearch} from '~/tools/codeSearch'
-import {prComment} from '~/tools/prComment'
-import {isDev} from '~/utils/index'
+import { codeComment } from '~/tools/codeComment'
+import { codebaseSearch } from '~/tools/codeSearch'
+import { prComment } from '~/tools/prComment'
+import { isDev } from '~/utils/index'
 
 export async function reviewer({
 	customerId,
 	task,
 	diff,
-	projectId,
 	octokit,
 	repoFullName,
 	pullNumber,
@@ -24,6 +23,7 @@ export async function reviewer({
 	task: string
 	diff: string
 	projectId: string
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	octokit: any
 	repoFullName: string
 	pullNumber: number
@@ -70,8 +70,7 @@ export async function reviewer({
 							promptTokens: data?.llmOutput?.tokenUsage?.promptTokens || 0,
 							completionTokens: data?.llmOutput?.tokenUsage?.completionTokens || 0,
 							totalTokens:
-								data?.llmOutput?.tokenUsage?.promptTokens +
-								data?.llmOutput?.tokenUsage?.completionTokens,
+								data?.llmOutput?.tokenUsage?.promptTokens + data?.llmOutput?.tokenUsage?.completionTokens,
 							finishedAt: new Date()
 						}
 					})
@@ -92,27 +91,30 @@ export async function reviewer({
 		.replaceAll('\n', ' ')
 		.replaceAll('\t', ' ')
 
-	let files = parse(diff)
+	const files = parse(diff)
 	let diffString = ''
 
 	// Group diff by file for ease of review
-	files.forEach((file: any) => {
+	for (const file of files) {
 		let changes = `File Path: ${file.from}\n\n`
 
-		file.chunks.forEach((chunk: Chunk) => {
-			chunk.changes.forEach((change: Change & {ln2?: string; ln?: string}) => {
+		for (const chunk of file.chunks) {
+			for (const change of chunk.changes as (Change & {
+				ln2?: string
+				ln?: string
+			})[]) {
 				changes += `${change.ln2 || change.ln} ${change.content}\n`
-			})
+			}
 
-			changes += '='.repeat(10) + '\n'
-		})
+			changes += `${'='.repeat(10)}\n`
+		}
 
-		diffString += changes + '='.repeat(20) + '\n\n'
-	})
+		diffString += `${changes + '='.repeat(20)}\n\n`
+	}
 
 	const tools = [
-		codebaseSearch({customerId, repoFullName}),
-		prComment({octokit, pullId}),
+		codebaseSearch({ customerId, repoFullName }),
+		prComment({ octokit, pullId: pullId as string }),
 		codeComment({
 			octokit,
 			repoFullName,
@@ -131,7 +133,7 @@ export async function reviewer({
 		}
 	})
 
-	const {output} = await executor.call({input: diffString})
+	const { output } = await executor.call({ input: diffString })
 
 	return output
 }

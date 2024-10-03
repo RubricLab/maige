@@ -1,5 +1,5 @@
-import {DynamicStructuredTool} from '@langchain/core/tools'
-import {z} from 'zod'
+import { DynamicStructuredTool } from '@langchain/core/tools'
+import { z } from 'zod'
 import desyncedAgentCall from '~/utils/desyncedAgentCall'
 
 /**
@@ -27,7 +27,7 @@ export default function dispatchEngineer({
 	return new DynamicStructuredTool({
 		description:
 			'Dispatch an engineer to work on an issue. Default to this when asked to solve an issue.',
-		func: async ({task, title}) => {
+		func: async ({ task, title }) => {
 			return await desyncedAgentCall({
 				route: 'api/agent/engineer',
 				body: {

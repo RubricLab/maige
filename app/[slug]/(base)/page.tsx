@@ -1,17 +1,19 @@
-import {Suspense} from 'react'
-import {ProjectsList} from '~/components/dashboard/Projects/ProjectsList'
-import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { Suspense } from "react";
+import { ProjectsList } from "~/components/dashboard/Projects/ProjectsList";
+import prisma from "~/prisma";
+import { getCurrentUser } from "~/utils/session";
 
-export default async function Dashboard({params}: {params: {slug: string}}) {
-	const user = await getCurrentUser()
+export default async function Dashboard({
+	params,
+}: { params: { slug: string } }) {
+	const user = await getCurrentUser();
 
 	const memberships = await prisma.membership.findFirst({
 		where: {
 			userId: user.id,
 			team: {
-				slug: params.slug
-			}
+				slug: params.slug,
+			},
 		},
 		select: {
 			team: {
@@ -19,28 +21,28 @@ export default async function Dashboard({params}: {params: {slug: string}}) {
 					Project: {
 						include: {
 							instructions: true,
-							organization: true
-						}
-					}
-				}
-			}
-		}
-	})
+							organization: true,
+						},
+					},
+				},
+			},
+		},
+	});
 
-	if (!memberships) return <p>Could not find team {params.slug}</p>
+	if (!memberships) return <p>Could not find team {params.slug}</p>;
 
-	const {team} = memberships
-	const {Project: projects} = team
+	const { team } = memberships;
+	const { Project: projects } = team;
 
 	return (
-		<div className='flex flex-col items-center'>
+		<div className="flex flex-col items-center">
 			<Suspense fallback={<p>Loading...</p>}>
 				<ProjectsList
-					username={user.userName}
+					username={user.userName as string}
 					teamSlug={params.slug}
 					projects={projects}
 				/>
 			</Suspense>
 		</div>
-	)
+	);
 }

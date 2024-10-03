@@ -1,8 +1,8 @@
-import {Project} from '@prisma/client'
-import {CommandIcon, Search as SearchIcon} from 'lucide-react'
-import {usePathname, useRouter} from 'next/navigation'
-import {useEffect, useState} from 'react'
-import {Button} from '~/components/ui/button'
+import type { Project } from '@prisma/client'
+import { CommandIcon, Search as SearchIcon } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { Button } from '~/components/ui/button'
 import {
 	CommandDialog,
 	CommandEmpty,
@@ -16,7 +16,7 @@ type Props = {
 	projects: Project[]
 }
 
-export function CommandMenu({projects}: Props) {
+export function CommandMenu({ projects }: Props) {
 	const [open, setOpen] = useState(false)
 	const router = useRouter()
 	const pathname = usePathname()
@@ -67,42 +67,40 @@ export function CommandMenu({projects}: Props) {
 		<>
 			<Button
 				asChild
-				variant='outline'
+				variant="outline"
 				onClick={() => setOpen(true)}
-				className='hover:bg-tertiary text-tertiary w-full pl-4 pr-2 hover:text-accent-foreground md:w-80'>
-				<div className='flex h-10 flex-row justify-between'>
-					<div className='flex flex-row gap-2'>
-						<SearchIcon className='my-auto h-4 w-4' />
+				className="w-full pr-2 pl-4 text-tertiary hover:bg-tertiary hover:text-accent-foreground md:w-80"
+			>
+				<div className="flex h-10 flex-row justify-between">
+					<div className="flex flex-row gap-2">
+						<SearchIcon className="my-auto h-4 w-4" />
 						Search...
 					</div>
-					<kbd className='hidden items-center gap-1 px-[0.2rem] py-[0.2rem] font-mono sm:inline-flex'>
-						<span className='bg-primary flex h-[25px] w-[25px] items-center justify-center rounded'>
+					<kbd className="hidden items-center gap-1 px-[0.2rem] py-[0.2rem] font-mono sm:inline-flex">
+						<span className="flex h-[25px] w-[25px] items-center justify-center rounded bg-primary">
 							<CommandIcon width={12} />
 						</span>{' '}
-						<span className='bg-primary flex h-[25px] w-[25px] items-center justify-center rounded text-sm'>
+						<span className="flex h-[25px] w-[25px] items-center justify-center rounded bg-primary text-sm">
 							{/* Attempts to center the K */}
-							<span className='mt-[0.05rem]'>K</span>
+							<span className="mt-[0.05rem]">K</span>
 						</span>
 					</kbd>
 				</div>
 			</Button>
-			<CommandDialog
-				open={open}
-				onOpenChange={setOpen}>
-				<CommandInput placeholder='Type a command or search...' />
+			<CommandDialog open={open} onOpenChange={setOpen}>
+				<CommandInput placeholder="Type a command or search..." />
 				<CommandList>
 					<CommandEmpty>No results found.</CommandEmpty>
-					{groups.map(({title, actions}) => (
-						<CommandGroup
-							heading={title}
-							key={title}>
-							{actions.map(({name, path}) => (
+					{groups.map(({ title, actions }) => (
+						<CommandGroup heading={title} key={title}>
+							{actions.map(({ name, path }) => (
 								<CommandItem
 									key={path}
 									onSelect={() => {
 										router.push(path)
 										setOpen(false)
-									}}>
+									}}
+								>
 									{name}
 								</CommandItem>
 							))}

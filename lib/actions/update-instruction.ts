@@ -1,15 +1,16 @@
 'use server'
 
-import {z} from 'zod'
+import { z } from 'zod'
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 const schema = z.object({
 	instructionId: z.string(),
 	content: z.string()
 })
 
-export async function updateInstruction(prevState: any, formData: FormData) {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export async function updateInstruction(_prevState: any, formData: FormData) {
 	const user = await getCurrentUser()
 	if (!user)
 		return {
@@ -24,13 +25,13 @@ export async function updateInstruction(prevState: any, formData: FormData) {
 
 	try {
 		await prisma.instruction.update({
-			where: {id: parsed.instructionId},
+			where: { id: parsed.instructionId },
 			data: {
 				content: parsed.content
 			}
 		})
 		return {
-			message: `Instruction updated`,
+			message: 'Instruction updated',
 			type: 'success'
 		}
 	} catch (err) {

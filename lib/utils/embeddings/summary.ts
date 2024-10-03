@@ -1,6 +1,6 @@
-import {PromptTemplate} from '@langchain/core/prompts'
-import {OpenAI} from '@langchain/openai'
-import {LLMChain} from 'langchain/chains'
+import { PromptTemplate } from '@langchain/core/prompts'
+import { OpenAI } from '@langchain/openai'
+import { LLMChain } from 'langchain/chains'
 
 const prompt = PromptTemplate.fromTemplate(
 	`You are AI that make desc of code snippet. Many keywords, straight to point, 1 line.
@@ -12,16 +12,12 @@ const prompt = PromptTemplate.fromTemplate(
     AI:`
 )
 
-export async function AISummary(
-	code: string,
-	modelName: string = 'gpt-3.5-turbo',
-	temperature: number = 0
-) {
-	const model = new OpenAI({temperature, modelName})
+export async function AISummary(code: string, modelName = 'gpt-3.5-turbo', temperature = 0) {
+	const model = new OpenAI({ temperature, modelName })
 	const codeChain = new LLMChain({
 		llm: model,
 		prompt
 	})
 
-	return await codeChain.call({code})
+	return await codeChain.call({ code })
 }

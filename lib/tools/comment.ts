@@ -1,7 +1,7 @@
-import {DynamicStructuredTool} from '@langchain/core/tools'
-import {z} from 'zod'
-import {COPY} from '~/constants'
-import {addComment} from '~/utils/github'
+import { DynamicStructuredTool } from '@langchain/core/tools'
+import { z } from 'zod'
+import { COPY } from '~/constants'
+import { addComment } from '~/utils/github'
 
 /**
  * Comment on an issue
@@ -10,12 +10,13 @@ export default function comment({
 	octokit,
 	issueId
 }: {
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	octokit: any
 	issueId: string
 }) {
 	return new DynamicStructuredTool({
 		description: 'Adds a comment to an issue',
-		func: async ({comment}) => {
+		func: async ({ comment }) => {
 			const res = await addComment({
 				octokit,
 				issueId,

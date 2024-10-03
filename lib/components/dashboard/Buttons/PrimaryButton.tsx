@@ -1,9 +1,9 @@
 'use client'
 
-import {motion} from 'framer-motion'
-import {ReactNode} from 'react'
-import {SpinnerLoader} from '~/components/dashboard/Loader'
-import {cn} from '~/utils'
+import { motion } from 'framer-motion'
+import type { ReactNode } from 'react'
+import { SpinnerLoader } from '~/components/dashboard/Loader'
+import { cn } from '~/utils'
 
 export function PrimaryButton({
 	onClick,
@@ -17,9 +17,7 @@ export function PrimaryButton({
 	className: string
 }) {
 	return (
-		<motion.button
-			className={cn(className)}
-			onClick={onClick}>
+		<motion.button className={cn(className)} onClick={onClick}>
 			{loading && <SpinnerLoader />}
 			{!loading && <p>{children}</p>}
 		</motion.button>

@@ -1,7 +1,7 @@
 'use client'
 
-import {copyToClipboard} from '~/utils'
-import {Button} from './button'
+import { copyToClipboard } from '~/utils'
+import { Button } from './button'
 
 export const CopyTextButton = ({
 	text,
@@ -13,10 +13,7 @@ export const CopyTextButton = ({
 	className?: string
 }) => {
 	return (
-		<Button
-			variant={'outline'}
-			className={className}
-			onClick={() => copyToClipboard(text)}>
+		<Button variant={'outline'} className={className} onClick={() => copyToClipboard(text)}>
 			{label || 'Copy'}
 		</Button>
 	)

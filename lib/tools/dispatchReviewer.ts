@@ -1,6 +1,6 @@
-import {DynamicStructuredTool} from '@langchain/core/tools'
-import {z} from 'zod'
-import {reviewer} from '~/agents/reviewer'
+import { DynamicStructuredTool } from '@langchain/core/tools'
+import { z } from 'zod'
+import { reviewer } from '~/agents/reviewer'
 
 /**
  * Dispatch a reviewer agent
@@ -17,22 +17,24 @@ export default function dispatchReviewer({
 	pullUrl: string
 	customerId: string
 	projectId: string
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	octokit: any
 	runId: string
 }) {
 	return new DynamicStructuredTool({
 		description: 'Dispatch a developer to review code.',
-		func: async ({task}) => {
+		func: async ({ task }) => {
 			console.log(`Dispatching reviewer for ${repoFullName}`)
 
 			const prRes = (await fetch(pullUrl)) as Response
 			if (!prRes.ok) return 'Could not fetch PR'
 
 			const {
-				head: {sha: commitId},
+				head: { sha: commitId },
 				number: pullNumber,
 				node_id: pullId,
 				diff_url: diffUrl
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			} = (await prRes.json()) as any
 
 			const diffRes = (await fetch(diffUrl)) as Response

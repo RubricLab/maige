@@ -1,14 +1,14 @@
 'use client'
 
-import {Instruction} from '@prisma/client'
-import {Dialog, DialogTrigger} from '@radix-ui/react-dialog'
-import {DropdownMenuPortal} from '@radix-ui/react-dropdown-menu'
-import {MoreVerticalIcon} from 'lucide-react'
-import {useRouter} from 'next/navigation'
-import {useState} from 'react'
-import {toast} from 'sonner'
+import type { Instruction } from '@prisma/client'
+import { Dialog, DialogTrigger } from '@radix-ui/react-dialog'
+import { DropdownMenuPortal } from '@radix-ui/react-dropdown-menu'
+import { MoreVerticalIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { toast } from 'sonner'
 import deleteInstruction from '~/actions/delete-instruction'
-import {buttonVariants} from '~/components/ui/button'
+import { buttonVariants } from '~/components/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -36,37 +36,29 @@ export default function InstructionCard({
 		}
 	}
 	return (
-		<div className='border-border flex min-h-36 flex-col justify-between gap-3 rounded-sm border p-3'>
+		<div className="flex min-h-36 flex-col justify-between gap-3 rounded-sm border border-border p-3">
 			<div>
 				<p>{instruction.content}</p>
 			</div>
-			<div className='flex items-center justify-between'>
-				<span className='text-tertiary text-sm'>
-					Created by @{instruction.creatorUsername}
-				</span>
-				<Dialog
-					open={dialogOpen}
-					onOpenChange={() => setDialogOpen(prev => !prev)}>
+			<div className="flex items-center justify-between">
+				<span className="text-sm text-tertiary">Created by @{instruction.creatorUsername}</span>
+				<Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(prev => !prev)}>
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							className={`border-none focus-visible:outline-none ${buttonVariants({variant: 'outline', size: 'icon'})}`}>
-							<MoreVerticalIcon className='h-4 w-4' />
+							className={`border-none focus-visible:outline-none ${buttonVariants({ variant: 'outline', size: 'icon' })}`}
+						>
+							<MoreVerticalIcon className="h-4 w-4" />
 						</DropdownMenuTrigger>
 						<DropdownMenuPortal>
-							<DropdownMenuContent className='w-fit -translate-x-[40%]'>
-								<DialogTrigger className='w-full'>
+							<DropdownMenuContent className="-translate-x-[40%] w-fit">
+								<DialogTrigger className="w-full">
 									<DropdownMenuItem>Edit</DropdownMenuItem>
 								</DialogTrigger>
-								<DropdownMenuItem onClick={() => handleDelete(instruction.id)}>
-									Delete
-								</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => handleDelete(instruction.id)}>Delete</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenuPortal>
 					</DropdownMenu>
-					<UpdateInstruction
-						instruction={instruction}
-						setDialogOpen={setDialogOpen}
-					/>
+					<UpdateInstruction instruction={instruction} setDialogOpen={setDialogOpen} />
 				</Dialog>
 			</div>
 		</div>

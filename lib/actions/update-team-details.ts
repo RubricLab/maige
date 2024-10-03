@@ -1,15 +1,16 @@
 'use server'
 
-import {z} from 'zod'
+import { z } from 'zod'
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 const schema = z.object({
 	name: z.string(),
 	teamId: z.string()
 })
 
-export async function updateTeamDetails(prevState: any, formData: FormData) {
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export async function updateTeamDetails(_prevState: any, formData: FormData) {
 	const user = await getCurrentUser()
 	if (!user)
 		return {
@@ -24,7 +25,7 @@ export async function updateTeamDetails(prevState: any, formData: FormData) {
 
 	// Check if user making request is part of the team
 	const membership = await prisma.membership.findFirst({
-		where: {teamId: parsed.teamId, userId: user.id}
+		where: { teamId: parsed.teamId, userId: user.id }
 	})
 	if (!membership)
 		return {
@@ -34,11 +35,11 @@ export async function updateTeamDetails(prevState: any, formData: FormData) {
 
 	try {
 		await prisma.team.update({
-			where: {id: parsed.teamId},
-			data: {name: parsed.name}
+			where: { id: parsed.teamId },
+			data: { name: parsed.name }
 		})
 		return {
-			message: `Details updated`,
+			message: 'Details updated',
 			type: 'success'
 		}
 	} catch (err) {

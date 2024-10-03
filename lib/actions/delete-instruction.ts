@@ -1,7 +1,7 @@
 'use server'
 
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 // Delete an instruction
 export default async function deleteInstruction(instructionId: string) {
@@ -18,7 +18,7 @@ export default async function deleteInstruction(instructionId: string) {
 	const instruction = await prisma.instruction.findFirst({
 		where: {
 			id: instructionId,
-			project: {team: {memberships: {some: {userId: user.id}}}}
+			project: { team: { memberships: { some: { userId: user.id } } } }
 		}
 	})
 	if (!instruction)

@@ -1,7 +1,7 @@
 'use server'
 
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 // Delete invitation to join a team
 export default async function deleteMember(membershipId: string) {
@@ -14,8 +14,8 @@ export default async function deleteMember(membershipId: string) {
 
 	// Get the membership record that needs to be deleted
 	const targetMembership = await prisma.membership.findUnique({
-		where: {id: membershipId},
-		include: {user: {select: {id: true, email: true, userName: true}}}
+		where: { id: membershipId },
+		include: { user: { select: { id: true, email: true, userName: true } } }
 	})
 
 	if (!targetMembership)
@@ -26,7 +26,7 @@ export default async function deleteMember(membershipId: string) {
 
 	// Check membership of user triggering delete
 	const userMembership = await prisma.membership.findFirst({
-		where: {AND: [{teamId: targetMembership.teamId, userId: user.id}]}
+		where: { AND: [{ teamId: targetMembership.teamId, userId: user.id }] }
 	})
 
 	// 1. user making request is not in the team

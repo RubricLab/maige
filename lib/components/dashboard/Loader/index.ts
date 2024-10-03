@@ -1,2 +1,2 @@
-export {PanelSkeletons} from './PanelSkeletons'
-export {SpinnerLoader} from './SpinnerLoader'
+export { PanelSkeletons } from './PanelSkeletons'
+export { SpinnerLoader } from './SpinnerLoader'

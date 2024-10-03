@@ -1,6 +1,6 @@
-import {SerpAPI} from '@langchain/community/tools/serpapi'
-import {expect, test} from 'bun:test'
-import {z} from 'zod'
+import { SerpAPI } from '@langchain/community/tools/serpapi'
+import { expect, test } from 'bun:test'
+import { z } from 'zod'
 
 test('Bun test runner', () => {
 	// This is arbitrary. Could just return true.
@@ -32,7 +32,5 @@ test('Zod parser', () => {
 })
 
 test.todo('E2E', () => {
-	console.log(
-		'It should pass a sample issue to engineer() and have it appropriately labelled'
-	)
+	console.log('It should pass a sample issue to engineer() and have it appropriately labelled')
 })

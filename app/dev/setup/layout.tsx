@@ -1,4 +1,4 @@
-import {Header} from '~/components/Header'
+import { Header } from '~/components/Header'
 
 export default async function InviteLayout({
 	children
@@ -6,9 +6,9 @@ export default async function InviteLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<div className='relative min-h-screen w-full'>
+		<div className="relative min-h-screen w-full">
 			<Header />
-			<div className='absolute left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%]'>
+			<div className="-translate-x-[50%] -translate-y-[50%] absolute top-[50%] left-[50%]">
 				{children}
 			</div>
 		</div>

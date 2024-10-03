@@ -1,13 +1,10 @@
 'use server'
 
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 // Delete invitation to join a team
-export default async function deleteInvitation(
-	inviteId: string,
-	email: string
-) {
+export default async function deleteInvitation(inviteId: string, email: string) {
 	// Check for session
 	const user = await getCurrentUser()
 	if (!user)
@@ -17,8 +14,8 @@ export default async function deleteInvitation(
 		}
 
 	const invite = await prisma.invite.findUnique({
-		where: {id: inviteId},
-		include: {team: {include: {memberships: {where: {userId: user.id}}}}}
+		where: { id: inviteId },
+		include: { team: { include: { memberships: { where: { userId: user.id } } } } }
 	})
 
 	// Invite does not exist

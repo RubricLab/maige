@@ -1,4 +1,4 @@
-import {Plus_Jakarta_Sans, Roboto} from 'next/font/google'
+import { Plus_Jakarta_Sans, Roboto } from 'next/font/google'
 import localFont from 'next/font/local'
 
 // Applied using variable name

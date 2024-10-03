@@ -1,5 +1,5 @@
-import {Instruction} from '@prisma/client'
-import {Comment, Issue, Label, Repository} from '~/types'
+import type { Instruction } from '@prisma/client'
+import type { Comment, Issue, Label, Repository } from '~/types'
 
 export function getPrompt({
 	repo,
@@ -17,8 +17,7 @@ export function getPrompt({
 	const combinedInstructions = instructions?.map(i => i.content).join('. ') || ''
 	const combinedLabels = labels
 		?.map(
-			({name, description}) =>
-				`${name}${description ? `: ${description.replaceAll(';', ',')}` : ''}`
+			({ name, description }) => `${name}${description ? `: ${description.replaceAll(';', ',')}` : ''}`
 		)
 		.join('; ')
 

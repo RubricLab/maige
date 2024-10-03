@@ -1,6 +1,6 @@
 'use client'
 
-import {useRouter} from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import {
 	Select,
 	SelectContent,
@@ -21,7 +21,7 @@ type Props = {
 	proj: string | undefined
 }
 
-export default function ProjectFilter({proj, projects, teamSlug}: Props) {
+export default function ProjectFilter({ proj, projects, teamSlug }: Props) {
 	const router = useRouter()
 
 	const handleProjectChange = (value: string) => {
@@ -30,24 +30,17 @@ export default function ProjectFilter({proj, projects, teamSlug}: Props) {
 	}
 
 	return (
-		<Select
-			defaultValue={proj || 'all'}
-			onValueChange={value => handleProjectChange(value)}>
-			<SelectTrigger className='w-[180px]'>
-				<SelectValue placeholder='Select a project' />
+		<Select defaultValue={proj || 'all'} onValueChange={value => handleProjectChange(value)}>
+			<SelectTrigger className="w-[180px]">
+				<SelectValue placeholder="Select a project" />
 			</SelectTrigger>
-			<SelectContent className='bg-primary'>
+			<SelectContent className="bg-primary">
 				<SelectGroup>
-					<SelectItem
-						className='hover:cursor-pointer'
-						value='all'>
+					<SelectItem className="hover:cursor-pointer" value="all">
 						All Projects
 					</SelectItem>
 					{projects.map(project => (
-						<SelectItem
-							className='hover:cursor-pointer'
-							key={project.id}
-							value={project.id}>
+						<SelectItem className="hover:cursor-pointer" key={project.id} value={project.id}>
 							{project.name}
 						</SelectItem>
 					))}

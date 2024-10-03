@@ -1,14 +1,15 @@
 'use server'
 
-import {z} from 'zod'
+import { z } from 'zod'
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 const schema = z.object({
 	teamSlug: z.string()
 })
 
 export default async function createProjectIntent(
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	_prevState: any,
 	formData: FormData
 ) {
@@ -39,7 +40,7 @@ export default async function createProjectIntent(
 			}
 		})
 		return {
-			message: `Successfully created request to add project`,
+			message: 'Successfully created request to add project',
 			type: 'success'
 		}
 	} catch (err) {

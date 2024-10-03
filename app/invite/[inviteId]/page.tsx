@@ -1,18 +1,18 @@
 import AcceptInvite from '~/components/dashboard/Team/AcceptInvite'
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 export const revalidate = 100
 
-export default async function Invite({params}: {params: {inviteId: string}}) {
+export default async function Invite({ params }: { params: { inviteId: string } }) {
 	const user = await getCurrentUser()
 	const invite = await prisma.invite.findUnique({
-		where: {id: params.inviteId},
-		include: {team: {select: {name: true, slug: true}}}
+		where: { id: params.inviteId },
+		include: { team: { select: { name: true, slug: true } } }
 	})
 
 	return (
-		<div className='flex flex-col items-center justify-center gap-4 text-center'>
+		<div className="flex flex-col items-center justify-center gap-4 text-center">
 			{!invite && (
 				<>
 					<h1>Oops</h1>
@@ -24,13 +24,9 @@ export default async function Invite({params}: {params: {inviteId: string}}) {
 					<h1>Welcome</h1>
 					<h3>
 						You have been invited to join:{' '}
-						<span className='italic'>{invite.team.name ?? invite.team.slug}</span>
+						<span className="italic">{invite.team.name ?? invite.team.slug}</span>
 					</h3>
-					<AcceptInvite
-						user={user}
-						teamSlug={invite.team.slug}
-						inviteId={params.inviteId}
-					/>
+					<AcceptInvite user={user} teamSlug={invite.team.slug} inviteId={params.inviteId} />
 				</>
 			)}
 		</div>

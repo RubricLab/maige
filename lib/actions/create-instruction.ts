@@ -1,7 +1,7 @@
 'use server'
-import {z} from 'zod'
+import { z } from 'zod'
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 const schema = z.object({
 	projectId: z.string(),
@@ -9,6 +9,7 @@ const schema = z.object({
 })
 
 export default async function createInstruction(
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	_prevState: any,
 	formData: FormData
 ) {
@@ -36,7 +37,7 @@ export default async function createInstruction(
 
 		if (instruction)
 			return {
-				message: `Instruction created`,
+				message: 'Instruction created',
 				type: 'success'
 			}
 	} catch (err) {
@@ -50,4 +51,5 @@ export default async function createInstruction(
 			type: 'error'
 		}
 	}
+	return
 }

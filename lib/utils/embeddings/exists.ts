@@ -1,9 +1,6 @@
-import {type WeaviateClient} from './db'
+import type { WeaviateClient } from './db'
 
-export async function checkIndexExists(
-	client: WeaviateClient,
-	indexName: string
-) {
+export async function checkIndexExists(client: WeaviateClient, indexName: string) {
 	const exists = await client.schema.exists(indexName)
 	if (!exists)
 		console.warn(

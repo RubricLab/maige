@@ -1,13 +1,13 @@
 'use server'
 
-import {Role} from '@prisma/client'
-import {headers} from 'next/headers'
-import {z} from 'zod'
-import {EMAIL} from '~/constants'
-import {InviteMember} from '~/emails/invite-member'
+import { Role } from '@prisma/client'
+import { headers } from 'next/headers'
+import { z } from 'zod'
+import { EMAIL } from '~/constants'
+import { InviteMember } from '~/emails/invite-member'
 import prisma from '~/prisma'
-import {resend} from '~/resend'
-import {getCurrentUser} from '~/utils/session'
+import { resend } from '~/resend'
+import { getCurrentUser } from '~/utils/session'
 
 const schema = z.object({
 	email: z.string(),
@@ -17,7 +17,8 @@ const schema = z.object({
 
 // Create invitation to join a team
 export default async function createInvitation(
-	prevState: any,
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	_prevState: any,
 	formData: FormData
 ) {
 	const headersList = headers()
@@ -37,8 +38,8 @@ export default async function createInvitation(
 	})
 
 	const membership = await prisma.membership.findFirst({
-		where: {teamId: parsed.teamId, userId: user.id},
-		include: {team: {select: {name: true}}}
+		where: { teamId: parsed.teamId, userId: user.id },
+		include: { team: { select: { name: true } } }
 	})
 	if (!membership)
 		return {
@@ -56,15 +57,15 @@ export default async function createInvitation(
 			}
 		})
 
-		const {data, error} = await resend.emails.send({
+		const { error } = await resend.emails.send({
 			from: EMAIL.FROM,
 			to: [parsed.email],
 			subject: `${user.name ?? user.userName} invited you to join ${membership.team.name} on Maige`,
 			react: InviteMember({
 				user: user,
 				inviteId: response.id,
-				teamName: membership.team.name,
-				domain: domain
+				teamName: membership.team.name as string,
+				domain: domain as string
 			})
 		})
 

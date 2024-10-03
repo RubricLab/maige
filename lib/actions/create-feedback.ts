@@ -1,14 +1,15 @@
 'use server'
-import {z} from 'zod'
+import { z } from 'zod'
 import prisma from '~/prisma'
-import {getCurrentUser} from '~/utils/session'
+import { getCurrentUser } from '~/utils/session'
 
 const schema = z.object({
 	content: z.string()
 })
 
 export default async function createFeedback(
-	prevState: any,
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	_prevState: any,
 	formData: FormData
 ) {
 	const user = await getCurrentUser()
@@ -23,14 +24,14 @@ export default async function createFeedback(
 	})
 
 	try {
-		const response = await prisma.feedback.create({
+		await prisma.feedback.create({
 			data: {
 				content: parsed.content,
 				createdBy: user.id
 			}
 		})
 		return {
-			message: `Thank you for your feedback`,
+			message: 'Thank you for your feedback',
 			type: 'success'
 		}
 	} catch (err) {

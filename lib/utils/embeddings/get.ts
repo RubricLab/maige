@@ -1,17 +1,19 @@
-import {Document} from 'langchain/document'
+import { Document } from 'langchain/document'
 
 export default async function getFiles(
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	files: any,
 	repoUrl: string,
 	branch: string,
 	accessToken?: string
 ) {
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const filePromises: Promise<Document>[] = files.map((file: any) =>
 		fetch(file.contents_url, {
 			method: 'GET',
 			headers: {
 				Authorization: accessToken ? `token ${accessToken}` : undefined
-			}
+			} as HeadersInit
 		})
 			.then(res => res.json())
 			.then(data => fetch(data.download_url))
