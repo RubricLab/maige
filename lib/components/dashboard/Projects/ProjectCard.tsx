@@ -1,16 +1,16 @@
-import { ExternalLinkIcon } from "lucide-react";
-import Link from "next/link";
-import type { ProjectWithInstructions } from "~/types/prisma";
-import { timeAgo } from "~/utils";
+import { ExternalLinkIcon } from 'lucide-react'
+import Link from 'next/link'
+import type { ProjectWithInstructions } from '~/types/prisma'
+import { timeAgo } from '~/utils'
 
 export default function ProjectCard({
 	username,
 	teamSlug,
-	project,
+	project
 }: {
-	username: string;
-	teamSlug: string;
-	project: ProjectWithInstructions;
+	username: string
+	teamSlug: string
+	project: ProjectWithInstructions
 }) {
 	return (
 		<div className="relative flex h-36 w-full cursor-pointer rounded-sm border border-tertiary transition-all hover:border-secondary">
@@ -38,14 +38,10 @@ export default function ProjectCard({
 					</div>
 				</div>
 				<div className="flex flex-col gap-1">
-					<span className="font-medium">
-						{project.instructions?.length} Custom Instructions
-					</span>
-					<span className="text-gray-500 text-sm">
-						Added {timeAgo(project.createdAt)}
-					</span>
+					<span className="font-medium">{project.instructions?.length} Custom Instructions</span>
+					<span className="text-gray-500 text-sm">Added {timeAgo(project.createdAt)}</span>
 				</div>
 			</Link>
 		</div>
-	);
+	)
 }

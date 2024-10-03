@@ -1,8 +1,8 @@
-import { headers } from "next/headers";
-import type Stripe from "stripe";
-import env from "~/env";
-import prisma from "~/prisma";
-import { stripe } from "~/stripe";
+import { headers } from 'next/headers'
+import type Stripe from 'stripe'
+import env from '~/env'
+import prisma from '~/prisma'
+import { stripe } from '~/stripe'
 
 /**
  * POST /api/webhook/stripe
@@ -10,61 +10,56 @@ import { stripe } from "~/stripe";
  * Stripe webhook handler
  */
 export const POST = async (req: Request) => {
-	const payload = await req.text();
+	const payload = await req.text()
 
-	const headersList = headers();
-	const signature = headersList.get("stripe-signature") || "";
+	const headersList = headers()
+	const signature = headersList.get('stripe-signature') || ''
 
-	if (!signature)
-		return Response.json({ message: "No signature" }, { status: 400 });
+	if (!signature) return Response.json({ message: 'No signature' }, { status: 400 })
 
-	let event: Stripe.Event;
+	let event: Stripe.Event
 
 	try {
-		event = stripe.webhooks.constructEvent(
-			payload,
-			signature,
-			env.STRIPE_WEBHOOK_SECRET || "",
-		);
+		event = stripe.webhooks.constructEvent(payload, signature, env.STRIPE_WEBHOOK_SECRET || '')
 	} catch (error) {
-		console.error("Bad Stripe webhook secret");
+		console.error('Bad Stripe webhook secret')
 		return Response.json(
 			{
-				message: "Stripe webhook secret error",
+				message: 'Stripe webhook secret error'
 			},
-			{ status: 400 },
-		);
+			{ status: 400 }
+		)
 	}
 
 	const {
 		type: eventType,
-		data: { object },
-	} = event;
+		data: { object }
+	} = event
 
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const { customer } = object as any;
+	const { customer } = object as any
 
-	if (eventType === "checkout.session.completed") {
+	if (eventType === 'checkout.session.completed') {
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		const { client_reference_id: customerId, subscription } = object as any;
+		const { client_reference_id: customerId, subscription } = object as any
 
 		if (!customerId)
 			return Response.json(
-				{ message: "Stripe checkout session missing customer ID in webhook" },
-				{ status: 400 },
-			);
+				{ message: 'Stripe checkout session missing customer ID in webhook' },
+				{ status: 400 }
+			)
 
 		await prisma.user.update({
 			where: {
-				id: customerId,
+				id: customerId
 			},
 			data: {
 				stripeCustomerId: customer,
 				stripeSubscriptionId: subscription || null,
-				usageLimit: 1000,
-			},
-		});
-	} else if (eventType === "customer.subscription.created") {
+				usageLimit: 1000
+			}
+		})
+	} else if (eventType === 'customer.subscription.created') {
 		/**
 		 * Customer created
 		 */
@@ -72,47 +67,47 @@ export const POST = async (req: Request) => {
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		const subscriptionItem = (object as any).items.data.find(
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			(item: any) => item.object === "subscription_item",
-		);
+			(item: any) => item.object === 'subscription_item'
+		)
 
 		if (!subscriptionItem)
 			return Response.json(
 				{
-					message: "Could not find Stripe subscription item",
+					message: 'Could not find Stripe subscription item'
 				},
-				{ status: 400 },
-			);
+				{ status: 400 }
+			)
 
 		try {
 			await prisma.user.update({
 				where: {
-					stripeCustomerId: customer,
+					stripeCustomerId: customer
 				},
 				data: {
-					stripeSubscriptionId: subscriptionItem.id,
-				},
-			});
+					stripeSubscriptionId: subscriptionItem.id
+				}
+			})
 		} catch (error) {
 			return Response.json({
-				message: "No customer to connect in DB",
-			});
+				message: 'No customer to connect in DB'
+			})
 		}
-	} else if (eventType === "customer.subscription.deleted")
+	} else if (eventType === 'customer.subscription.deleted')
 		/**
 		 * Customer deleted
 		 */
 		try {
 			await prisma.user.delete({
 				where: {
-					stripeCustomerId: customer,
-				},
-			});
+					stripeCustomerId: customer
+				}
+			})
 		} catch {
 			return Response.json({
-				message: "No customer to delete in DB",
-			});
+				message: 'No customer to delete in DB'
+			})
 		}
-	else if (eventType === "customer.subscription.updated") {
+	else if (eventType === 'customer.subscription.updated') {
 		/**
 		 * Customer updated
 		 */
@@ -120,34 +115,34 @@ export const POST = async (req: Request) => {
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		const subscriptionItem = (object as any).items.data.find(
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			(item: any) => item.object === "subscription_item",
-		);
+			(item: any) => item.object === 'subscription_item'
+		)
 
 		if (!subscriptionItem)
 			return Response.json(
 				{
-					message: "Could not find Stripe subscription item",
+					message: 'Could not find Stripe subscription item'
 				},
-				{ status: 400 },
-			);
+				{ status: 400 }
+			)
 
 		try {
 			await prisma.user.update({
 				where: {
-					stripeCustomerId: customer,
+					stripeCustomerId: customer
 				},
 				data: {
-					stripeSubscriptionId: subscriptionItem.id,
-				},
-			});
+					stripeSubscriptionId: subscriptionItem.id
+				}
+			})
 		} catch (error) {
 			return Response.json({
-				message: "No customer to update in DB",
-			});
+				message: 'No customer to update in DB'
+			})
 		}
-	} else console.log(`Unhandled Stripe webhook event type: ${eventType}`);
+	} else console.log(`Unhandled Stripe webhook event type: ${eventType}`)
 
 	return Response.json({
-		message: "Stripe webhook received",
-	});
-};
+		message: 'Stripe webhook received'
+	})
+}

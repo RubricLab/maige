@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { ArrowRightIcon } from "@radix-ui/react-icons";
-import type React from "react";
-import { Button } from "~/components/ui/button";
+import { ArrowRightIcon } from '@radix-ui/react-icons'
+import type React from 'react'
+import { Button } from '~/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
-} from "~/components/ui/dialog";
+	DialogTrigger
+} from '~/components/ui/dialog'
 
 type Props = {
-	children: React.ReactNode;
-	runId: string;
-	title: string;
-};
+	children: React.ReactNode
+	runId: string
+	title: string
+}
 
 export default function DialogWrapper({ children, title }: Props) {
 	return (
@@ -33,5 +33,5 @@ export default function DialogWrapper({ children, title }: Props) {
 				{children}
 			</DialogContent>
 		</Dialog>
-	);
+	)
 }

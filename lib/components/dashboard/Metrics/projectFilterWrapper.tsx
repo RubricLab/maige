@@ -1,31 +1,27 @@
-import prisma from "~/prisma";
-import ProjectFilter from "./projectFilter";
+import prisma from '~/prisma'
+import ProjectFilter from './projectFilter'
 
 type Props = {
-	teamId: string;
-	teamSlug: string;
-	proj: string | undefined;
-};
+	teamId: string
+	teamSlug: string
+	proj: string | undefined
+}
 
-export default async function ProjectFilterWrapper({
-	teamId,
-	teamSlug,
-	proj,
-}: Props) {
+export default async function ProjectFilterWrapper({ teamId, teamSlug, proj }: Props) {
 	const projects = await prisma.project.findMany({
 		where: {
-			teamId: teamId,
+			teamId: teamId
 		},
 		select: {
 			id: true,
-			name: true,
-		},
-	});
+			name: true
+		}
+	})
 	return (
 		<ProjectFilter
 			proj={proj}
 			teamSlug={teamSlug}
 			projects={projects as { id: string; name: string }[]}
 		/>
-	);
+	)
 }

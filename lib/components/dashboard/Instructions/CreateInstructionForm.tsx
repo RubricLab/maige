@@ -1,52 +1,52 @@
-"use client";
-import { useRouter } from "next/navigation";
-import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
-import { toast } from "sonner";
-import createInstruction from "~/actions/create-instruction";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
-import InstructionTemplates from "./InstructionTemplates";
+'use client'
+import { useRouter } from 'next/navigation'
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react'
+import { useFormState, useFormStatus } from 'react-dom'
+import { toast } from 'sonner'
+import createInstruction from '~/actions/create-instruction'
+import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
+import { Textarea } from '~/components/ui/textarea'
+import InstructionTemplates from './InstructionTemplates'
 
 const initialState = {
-	type: "",
-	message: "",
-};
+	type: '',
+	message: ''
+}
 
 function SubmitButton() {
-	const { pending } = useFormStatus();
+	const { pending } = useFormStatus()
 	return (
 		<div className="flex w-full items-center justify-end gap-4">
 			<Button type="submit" className="w-fit" disabled={pending}>
 				Add
 			</Button>
 		</div>
-	);
+	)
 }
 
 export default function CreateInstructionForm({
 	projectId,
-	setDialogOpen,
+	setDialogOpen
 }: {
-	projectId: string;
-	setDialogOpen: Dispatch<SetStateAction<boolean>>;
+	projectId: string
+	setDialogOpen: Dispatch<SetStateAction<boolean>>
 }) {
-	const router = useRouter();
-	const [state, formAction] = useFormState(createInstruction, initialState);
-	const [content, setContent] = useState("");
+	const router = useRouter()
+	const [state, formAction] = useFormState(createInstruction, initialState)
+	const [content, setContent] = useState('')
 
 	// Trigger toast when state changes
 	useEffect(() => {
-		if (state?.type === "success") {
-			toast.success(state?.message);
-			setDialogOpen(false);
-			router.refresh();
-		} else if (state?.type === "error") {
-			toast.error(state?.message);
-			console.error(state?.message);
+		if (state?.type === 'success') {
+			toast.success(state?.message)
+			setDialogOpen(false)
+			router.refresh()
+		} else if (state?.type === 'error') {
+			toast.error(state?.message)
+			console.error(state?.message)
 		}
-	}, [router, setDialogOpen, state]);
+	}, [router, setDialogOpen, state])
 
 	return (
 		<>
@@ -56,7 +56,7 @@ export default function CreateInstructionForm({
 				<Textarea
 					name="content"
 					value={content}
-					onChange={(e) => setContent(e.target.value)}
+					onChange={e => setContent(e.target.value)}
 					contentEditable
 					maxLength={300}
 					minLength={10}
@@ -67,5 +67,5 @@ export default function CreateInstructionForm({
 			</form>
 			<InstructionTemplates setContent={setContent} />
 		</>
-	);
+	)
 }

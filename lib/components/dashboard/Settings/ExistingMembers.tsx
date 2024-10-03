@@ -1,37 +1,37 @@
-"use client";
+'use client'
 
-import type { Role } from "@prisma/client";
-import { MoreVerticalIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import deleteMember from "~/actions/delete-member";
-import { buttonVariants } from "~/components/ui/button";
+import type { Role } from '@prisma/client'
+import { MoreVerticalIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import deleteMember from '~/actions/delete-member'
+import { buttonVariants } from '~/components/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuPortal,
-	DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { convertToTitleCase, parseDate } from "~/utils";
+	DropdownMenuTrigger
+} from '~/components/ui/dropdown-menu'
+import { convertToTitleCase, parseDate } from '~/utils'
 
 type Member = {
-	id: string;
-	role: Role;
-	user: { id: string; email: string | null; createdAt: Date };
-};
+	id: string
+	role: Role
+	user: { id: string; email: string | null; createdAt: Date }
+}
 
 export default function ExistingMembers({ members }: { members: Member[] }) {
-	const router = useRouter();
+	const router = useRouter()
 
 	async function removeMember(membershipId: string) {
-		const state = await deleteMember(membershipId);
-		if (state?.type === "success") {
-			toast.success(state?.message);
-			router.refresh();
-		} else if (state?.type === "error") {
-			toast.error(state?.message);
-			console.error(state?.message);
+		const state = await deleteMember(membershipId)
+		if (state?.type === 'success') {
+			toast.success(state?.message)
+			router.refresh()
+		} else if (state?.type === 'error') {
+			toast.error(state?.message)
+			console.error(state?.message)
 		}
 	}
 	return (
@@ -47,7 +47,7 @@ export default function ExistingMembers({ members }: { members: Member[] }) {
 				{members.map((member, index) => (
 					<div
 						key={member.user.email}
-						className={`grid grid-cols-6 items-center rounded-sm border-border text-secondary ${index !== members.length - 1 && "border-b"} p-4`}
+						className={`grid grid-cols-6 items-center rounded-sm border-border text-secondary ${index !== members.length - 1 && 'border-b'} p-4`}
 					>
 						<p className="col-span-3">{member.user.email}</p>
 						<p>{convertToTitleCase(member.role)}</p>
@@ -55,15 +55,13 @@ export default function ExistingMembers({ members }: { members: Member[] }) {
 						<div className="flex justify-center">
 							<DropdownMenu>
 								<DropdownMenuTrigger
-									className={`border-none focus-visible:outline-none ${buttonVariants({ variant: "outline", size: "icon" })}`}
+									className={`border-none focus-visible:outline-none ${buttonVariants({ variant: 'outline', size: 'icon' })}`}
 								>
 									<MoreVerticalIcon className="h-4 w-4" />
 								</DropdownMenuTrigger>
 								<DropdownMenuPortal>
 									<DropdownMenuContent className="-translate-x-[40%] w-fit">
-										<DropdownMenuItem onClick={() => removeMember(member.id)}>
-											Remove member
-										</DropdownMenuItem>
+										<DropdownMenuItem onClick={() => removeMember(member.id)}>Remove member</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenuPortal>
 							</DropdownMenu>
@@ -72,5 +70,5 @@ export default function ExistingMembers({ members }: { members: Member[] }) {
 				))}
 			</div>
 		</div>
-	);
+	)
 }

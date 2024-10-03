@@ -1,27 +1,26 @@
-import { notFound } from "next/navigation";
-import z from "zod";
-import { ChartsLinks, UsageCharts } from "~/components/dashboard/Metrics";
+import { notFound } from 'next/navigation'
+import z from 'zod'
+import { ChartsLinks, UsageCharts } from '~/components/dashboard/Metrics'
 
-const paramsSchema = z.enum(["runs", "tokens"]);
+const paramsSchema = z.enum(['runs', 'tokens'])
 
 export default async function RootLayout({
 	children,
-	params,
+	params
 }: {
-	children: React.ReactNode;
+	children: React.ReactNode
 	params: {
-		slug: string;
-		metric: string[] | undefined;
-	};
+		slug: string
+		metric: string[] | undefined
+	}
 }) {
 	if (
 		params.metric &&
-		(params.metric.length > 1 ||
-			!paramsSchema.safeParse(params?.metric[0]).success)
+		(params.metric.length > 1 || !paramsSchema.safeParse(params?.metric[0]).success)
 	)
-		return notFound();
+		return notFound()
 
-	const route = params.metric ? params.metric[0] : "";
+	const route = params.metric ? params.metric[0] : ''
 
 	return (
 		<div className="space-y-2">
@@ -31,5 +30,5 @@ export default async function RootLayout({
 				{children}
 			</div>
 		</div>
-	);
+	)
 }

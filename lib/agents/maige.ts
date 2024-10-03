@@ -1,16 +1,16 @@
-import { ChatOpenAI } from "@langchain/openai";
-import { initializeAgentExecutorWithOptions } from "langchain/agents";
-import env from "~/env";
-import prisma from "~/prisma";
-import { codebaseSearch } from "~/tools/codeSearch";
-import commentTool from "~/tools/comment";
-import dispatchEngineer from "~/tools/dispatchEngineer";
-import dispatchReviewer from "~/tools/dispatchReviewer";
-import { githubTool } from "~/tools/github";
-import { labelTool } from "~/tools/label";
-import updateInstructionsTool from "~/tools/updateInstructions";
-import type { Comment } from "~/types";
-import { isDev } from "~/utils/index";
+import { ChatOpenAI } from '@langchain/openai'
+import { initializeAgentExecutorWithOptions } from 'langchain/agents'
+import env from '~/env'
+import prisma from '~/prisma'
+import { codebaseSearch } from '~/tools/codeSearch'
+import commentTool from '~/tools/comment'
+import dispatchEngineer from '~/tools/dispatchEngineer'
+import dispatchReviewer from '~/tools/dispatchReviewer'
+import { githubTool } from '~/tools/github'
+import { labelTool } from '~/tools/label'
+import updateInstructionsTool from '~/tools/updateInstructions'
+import type { Comment } from '~/types'
+import { isDev } from '~/utils/index'
 
 export async function maige({
 	input,
@@ -26,29 +26,29 @@ export async function maige({
 	allLabels,
 	comment,
 	beta,
-	teamSlug,
+	teamSlug
 }: {
-	input: string;
+	input: string
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	octokit: any;
-	runId: string;
-	customerId: string;
-	projectId: string;
-	defaultBranch: string;
-	repoFullName: string;
-	issueNumber?: number;
-	issueId?: string;
-	pullUrl?: string;
+	octokit: any
+	runId: string
+	customerId: string
+	projectId: string
+	defaultBranch: string
+	repoFullName: string
+	issueNumber?: number
+	issueId?: string
+	pullUrl?: string
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	allLabels: any[];
-	comment: Comment;
-	beta?: boolean;
-	teamSlug?: string;
+	allLabels: any[]
+	comment: Comment
+	beta?: boolean
+	teamSlug?: string
 }) {
-	let logId: string;
+	let logId: string
 
 	const model = new ChatOpenAI({
-		modelName: "gpt-4o",
+		modelName: 'gpt-4o',
 		openAIApiKey: env.OPENAI_API_KEY,
 		temperature: 0,
 		streaming: false,
@@ -58,44 +58,42 @@ export async function maige({
 					const result = await prisma.log.create({
 						data: {
 							runId: runId,
-							action: "Coming Soon",
-							agent: "labeler",
-							model: "gpt_4_turbo_preview",
-						},
-					});
-					logId = result.id;
+							action: 'Coming Soon',
+							agent: 'labeler',
+							model: 'gpt_4_turbo_preview'
+						}
+					})
+					logId = result.id
 				},
 				async handleLLMError() {
 					await prisma.log.update({
 						where: {
-							id: logId,
+							id: logId
 						},
 						data: {
-							status: "failed",
-							finishedAt: new Date(),
-						},
-					});
+							status: 'failed',
+							finishedAt: new Date()
+						}
+					})
 				},
 				async handleLLMEnd(data) {
 					await prisma.log.update({
 						where: {
-							id: logId,
+							id: logId
 						},
 						data: {
-							status: "completed",
+							status: 'completed',
 							promptTokens: data?.llmOutput?.tokenUsage?.promptTokens || 0,
-							completionTokens:
-								data?.llmOutput?.tokenUsage?.completionTokens || 0,
+							completionTokens: data?.llmOutput?.tokenUsage?.completionTokens || 0,
 							totalTokens:
-								data?.llmOutput?.tokenUsage?.promptTokens +
-								data?.llmOutput?.tokenUsage?.completionTokens,
-							finishedAt: new Date(),
-						},
-					});
-				},
-			},
-		],
-	});
+								data?.llmOutput?.tokenUsage?.promptTokens + data?.llmOutput?.tokenUsage?.completionTokens,
+							finishedAt: new Date()
+						}
+					})
+				}
+			}
+		]
+	})
 
 	const tools = [
 		labelTool({ octokit, allLabels, issueId: issueId as string }),
@@ -106,7 +104,7 @@ export async function maige({
 			issueId: issueId as string,
 			repoFullName,
 			instructionCreator: comment?.name,
-			instructionCommentLink: comment?.html_url,
+			instructionCommentLink: comment?.html_url
 		}),
 		githubTool({ octokit }),
 		...(customerId ? [codebaseSearch({ customerId, repoFullName })] : []),
@@ -121,8 +119,8 @@ export async function maige({
 						defaultBranch,
 						customerId,
 						projectId,
-						teamSlug: teamSlug as string,
-					}),
+						teamSlug: teamSlug as string
+					})
 				]
 			: []),
 		...(pullUrl && beta && customerId
@@ -133,41 +131,40 @@ export async function maige({
 						pullUrl,
 						repoFullName,
 						customerId,
-						projectId,
-					}),
+						projectId
+					})
 				]
-			: []),
-	];
+			: [])
+	]
 
 	const prefix = `
 You are a project manager that is tagged when new issues and PRs come into GitHub.
 ${
 	pullUrl
-		? ""
-		: "You are responsible for labelling issues using the GitHub API. Make sure to only use few labels and to apply them only when necessary."
+		? ''
+		: 'You are responsible for labelling issues using the GitHub API. Make sure to only use few labels and to apply them only when necessary.'
 }
 You also maintain a set of user instructions that can customize your behaviour; you can write to these instructions at the request of a user.
 All repo labels: ${allLabels
 		.map(
-			({ name, description }) =>
-				`${name}${description ? `: ${description.replaceAll(";", ",")}` : ""}`,
+			({ name, description }) => `${name}${description ? `: ${description.replaceAll(';', ',')}` : ''}`
 		)
-		.join("; ")}.
+		.join('; ')}.
 `
-		.replaceAll("\n", " ")
-		.replaceAll("\t", " ");
+		.replaceAll('\n', ' ')
+		.replaceAll('\t', ' ')
 
 	const executor = await initializeAgentExecutorWithOptions(tools, model, {
-		agentType: "openai-functions",
+		agentType: 'openai-functions',
 		returnIntermediateSteps: isDev,
 		handleParsingErrors: true,
 		// verbose: true,
 		agentArgs: {
-			prefix,
-		},
-	});
+			prefix
+		}
+	})
 
-	const { output } = await executor.call({ input });
+	const { output } = await executor.call({ input })
 
-	return output;
+	return output
 }

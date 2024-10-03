@@ -1,16 +1,10 @@
-import { redirect } from "next/navigation";
-import {
-	ExistingMembers,
-	InviteDialog,
-	PendingInvitations,
-} from "~/components/dashboard/Settings";
-import prisma from "~/prisma";
-import { getCurrentUser } from "~/utils/session";
+import { redirect } from 'next/navigation'
+import { ExistingMembers, InviteDialog, PendingInvitations } from '~/components/dashboard/Settings'
+import prisma from '~/prisma'
+import { getCurrentUser } from '~/utils/session'
 
-export default async function Members({
-	params,
-}: { params: { slug: string } }) {
-	const user = await getCurrentUser();
+export default async function Members({ params }: { params: { slug: string } }) {
+	const user = await getCurrentUser()
 	const team = await prisma.team.findFirst({
 		where: { slug: params.slug, memberships: { some: { userId: user.id } } },
 		select: {
@@ -19,16 +13,16 @@ export default async function Members({
 				select: {
 					id: true,
 					role: true,
-					user: { select: { id: true, email: true, createdAt: true } },
-				},
+					user: { select: { id: true, email: true, createdAt: true } }
+				}
 			},
 			invites: {
 				where: { acceptedBy: null },
-				select: { id: true, email: true, role: true, createdAt: true },
-			},
-		},
-	});
-	if (!team) redirect("/");
+				select: { id: true, email: true, role: true, createdAt: true }
+			}
+		}
+	})
+	if (!team) redirect('/')
 
 	return (
 		<div className="flex flex-col gap-6 py-0.5">
@@ -39,5 +33,5 @@ export default async function Members({
 			<ExistingMembers members={team.memberships} />
 			{team.invites.length > 0 && <PendingInvitations invites={team.invites} />}
 		</div>
-	);
+	)
 }

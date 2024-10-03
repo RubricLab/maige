@@ -1,18 +1,18 @@
-import { OpenAIEmbeddings } from "@langchain/openai";
-import env from "~/env";
-import type { WeaviateConfig } from "./db";
+import { OpenAIEmbeddings } from '@langchain/openai'
+import env from '~/env'
+import type { WeaviateConfig } from './db'
 
 const keys = [
-	"source",
-	"text",
-	"ext",
-	"summary",
-	"repository",
-	"branch",
-	"userId",
-	"loc_lines_from",
-	"loc_lines_to",
-];
+	'source',
+	'text',
+	'ext',
+	'summary',
+	'repository',
+	'branch',
+	'userId',
+	'loc_lines_from',
+	'loc_lines_to'
+]
 
 export default async function search(
 	weaviateConfig: WeaviateConfig,
@@ -20,55 +20,55 @@ export default async function search(
 	maxResults: number,
 	repository: string,
 	filePath?: string,
-	branch?: string,
+	branch?: string
 ) {
 	const operands = [
 		{
-			path: ["userId"],
-			operator: "Equal" as const,
-			valueText: weaviateConfig.userId,
+			path: ['userId'],
+			operator: 'Equal' as const,
+			valueText: weaviateConfig.userId
 		},
 		{
-			path: ["repository"],
-			operator: "ContainsAny" as const,
-			valueStringArray: [repository],
+			path: ['repository'],
+			operator: 'ContainsAny' as const,
+			valueStringArray: [repository]
 		},
 		...(filePath
 			? [
 					{
-						path: ["source"],
-						operator: "Equal" as const,
-						valueText: filePath,
-					},
+						path: ['source'],
+						operator: 'Equal' as const,
+						valueText: filePath
+					}
 				]
 			: []),
 		...(branch
 			? [
 					{
-						path: ["branch"],
-						operator: "Equal" as const,
-						valueText: branch,
-					},
+						path: ['branch'],
+						operator: 'Equal' as const,
+						valueText: branch
+					}
 				]
-			: []),
-	];
+			: [])
+	]
 
 	const query = await weaviateConfig.client.graphql
 		.get()
 		.withClassName(weaviateConfig.indexName)
-		.withFields(`${keys.join(" ")} _additional { score }`)
+		.withFields(`${keys.join(' ')} _additional { score }`)
 		.withWhere({
-			operator: "And",
-			operands,
+			operator: 'And',
+			operands
 		})
 		.withNearVector({
 			vector: await new OpenAIEmbeddings({
 				openAIApiKey: env.OPENAI_API_KEY,
-				modelName: "text-embedding-3-small",
-			}).embedQuery(question),
+				modelName: 'text-embedding-3-small'
+			}).embedQuery(question)
 		})
 		.withLimit(maxResults)
-		.do();
+		.do()
 
-	return query.data.Get[weaviateConfig.indexName];
+	return query.data.Get[weaviateConfig.indexName]
 }
