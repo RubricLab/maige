@@ -29,22 +29,22 @@ export async function UsageCharts({
 
 	const groupUsage: UsageDay[] = await prisma.$queryRaw`
 		SELECT
-			L.createdAt AS usageDay,
+			L."createdAt" AS "usageDay",
 			COUNT(DISTINCT L.id) AS logs,
-			SUM(L.totalTokens) AS tokens,
+			SUM(L."totalTokens") AS tokens,
 			COUNT(DISTINCT R.id) AS runs
 		FROM
 			Log L
-			INNER JOIN Run R ON L.runId = R.id
-			INNER JOIN Project P ON R.projectId = P.id
+			INNER JOIN "Run" R ON L."runId" = R.id
+			INNER JOIN "Project" P ON R."projectId" = P.id
 		WHERE
-			L.createdAt >= CURDATE() - INTERVAL 14 DAY
-			AND L.createdAt < CURDATE() + INTERVAL 1 DAY
-			AND P.teamId = ${team?.id}
+			L."createdAt" >= CURDATE() - INTERVAL 14 DAY
+			AND L."createdAt" < CURDATE() + INTERVAL 1 DAY
+			AND P."teamId" = ${team?.id}
 		GROUP BY
-			usageDay
+			"usageDay"
 		ORDER BY
-			usageDay;
+			"usageDay";
 	`
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	function mapAndAggregateUsage(usageArray: any, key: string) {
