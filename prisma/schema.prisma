@@ -1,12 +1,10 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -88,7 +86,7 @@ model AddProject {
   teamId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  completedAt DateTime? @db.DateTime()
+  completedAt DateTime?
 
   user User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
@@ -133,7 +131,7 @@ enum Agent {
 
 model Run {
   id         String    @id @default(cuid())
-  issueNum   Int       @db.Int
+  issueNum   Int
   issueUrl   String    @db.Text
   projectId  String
   createdAt  DateTime  @default(now())

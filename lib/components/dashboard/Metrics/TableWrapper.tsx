@@ -9,7 +9,7 @@ import { CustomTable } from '.'
 import ProjectFilterWrapper from './projectFilterWrapper'
 
 type RunProject = {
-	name: string
+	name: string | null
 	id: string
 }
 
@@ -33,7 +33,7 @@ export type RunRow = {
 	issueUrl: string
 	projectId: string
 	createdAt: Date
-	finishedAt?: Date
+	finishedAt?: Date | null
 	status: string
 	project: RunProject
 	logs?: RunLog[]
@@ -91,7 +91,7 @@ export async function UsageTable({
 		}
 	})
 
-	const runs: RunRow[] = (await prisma.run.findMany({
+	const runs: RunRow[] = await prisma.run.findMany({
 		where: {
 			teamId: team.id,
 			projectId: usageQuery.data.proj as string
@@ -108,7 +108,7 @@ export async function UsageTable({
 				}
 			}
 		}
-	})) as RunRow[]
+	})
 
 	const end = performance.now()
 	const timeTaken = Math.floor(end - start)
