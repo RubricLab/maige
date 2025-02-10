@@ -41,6 +41,8 @@ export const POST = async (req: Request) => {
 			})
 		})
 
+	await new Promise(resolve => setTimeout(resolve, 5000))
+
 	return new Response('Webhook received', { status: 203 })
 }
 
