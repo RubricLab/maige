@@ -24,6 +24,8 @@ export default async function handleIssues({
 		action
 	} = payload
 
+	console.log(`${action} ${issue.number} ${repository.id}`)
+
 	if (!installation?.id) throw 'no installation'
 
 	const { id: instanceId } = installation
