@@ -21,6 +21,7 @@ export default async function Icon() {
 				width: '100%'
 			}}
 		>
+			{/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
 			<svg
 				viewBox="0 0 500 500"
 				fill="none"
@@ -30,7 +31,6 @@ export default async function Icon() {
 				}}
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				<title>Maige Icon</title>
 				<path d="M100 400H200V500H100V400Z" fill={orange} />
 				<path d="M300 400H400V500H300V400Z" fill={orange} />
 				<path d="M200 200H300V300H200V200Z" fill={orange} />
