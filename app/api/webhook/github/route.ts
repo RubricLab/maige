@@ -41,6 +41,8 @@ export const POST = async (req: Request) => {
 			})
 		})
 
+	console.log('Webhook event received:', hdrs.get('x-github-event'))
+
 	await new Promise(resolve => setTimeout(resolve, 5000))
 
 	return new Response('Webhook received', { status: 203 })
