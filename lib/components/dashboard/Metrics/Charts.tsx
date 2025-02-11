@@ -34,7 +34,7 @@ export async function UsageCharts({
 			SUM(L."totalTokens") AS tokens,
 			COUNT(DISTINCT R.id) AS runs
 		FROM
-			Log L
+			"Log" L
 			INNER JOIN "Run" R ON L."runId" = R.id
 			INNER JOIN "Project" P ON R."projectId" = P.id
 		WHERE
