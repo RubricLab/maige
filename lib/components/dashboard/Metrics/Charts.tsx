@@ -38,8 +38,8 @@ export async function UsageCharts({
 			INNER JOIN "Run" R ON L."runId" = R.id
 			INNER JOIN "Project" P ON R."projectId" = P.id
 		WHERE
-			L."createdAt" >= CURDATE() - INTERVAL 14 DAY
-			AND L."createdAt" < CURDATE() + INTERVAL 1 DAY
+			L."createdAt" >= CURRENT_DATE - INTERVAL '14 days'
+			AND L."createdAt" < CURRENT_DATE + INTERVAL '1 day'
 			AND P."teamId" = ${team?.id}
 		GROUP BY
 			"usageDay"
