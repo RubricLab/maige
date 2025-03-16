@@ -2,7 +2,7 @@
 
 import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '~/components/ui/dialog'
 import CreateInstructionForm from './CreateInstructionForm'
 
 type Props = {
@@ -19,6 +19,7 @@ export default function CreateInstruction({ projectId }: Props) {
 				Add instruction
 			</DialogTrigger>
 			<DialogContent>
+				<DialogTitle className="sr-only">Create New Instruction</DialogTitle>
 				<CreateInstructionForm projectId={projectId} setDialogOpen={setOpen} />
 			</DialogContent>
 		</Dialog>
