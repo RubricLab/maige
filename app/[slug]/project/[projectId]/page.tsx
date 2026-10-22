@@ -1,5 +1,7 @@
 import { ArrowUp } from 'lucide-react'
+import { notFound } from 'next/navigation'
 import prisma from '~/prisma'
+import { getCurrentUser } from '~/utils/session'
 
 const EmptyState = () => (
 	<div className="space-y-2 text-sm">
@@ -11,10 +13,17 @@ const EmptyState = () => (
 	</div>
 )
 
-export default async function Page({ params }: { params: { projectId: string } }) {
-	const project = await prisma.project.findUnique({
-		where: { id: params.projectId }
+export default async function Page({ params }: { params: { projectId: string; slug: string } }) {
+	const user = await getCurrentUser()
+	if (!user) return notFound()
+
+	const project = await prisma.project.findFirst({
+		where: {
+			id: params.projectId,
+			team: { slug: params.slug, memberships: { some: { userId: user.id } } }
+		}
 	})
+	if (!project) return notFound()
 	return (
 		<div className="flex flex-col gap-4">
 			<h3>{project?.name}</h3>

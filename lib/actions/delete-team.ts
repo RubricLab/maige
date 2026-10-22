@@ -23,7 +23,17 @@ export default async function deleteTeam(_prevState: any, formData: FormData) {
 	})
 
 	try {
-		await prisma.team.delete({ where: { slug: parsed.slug } })
+		const { count } = await prisma.team.deleteMany({
+			where: {
+				slug: parsed.slug,
+				memberships: { some: { userId: user.id, role: 'ADMIN' } }
+			}
+		})
+		if (!count)
+			return {
+				message: 'Team not found or not allowed to delete',
+				type: 'error'
+			}
 		return {
 			message: `Successfully deleted ${parsed.name}`,
 			type: 'success'

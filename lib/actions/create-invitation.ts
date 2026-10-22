@@ -41,9 +41,9 @@ export default async function createInvitation(
 		where: { teamId: parsed.teamId, userId: user.id },
 		include: { team: { select: { name: true } } }
 	})
-	if (!membership)
+	if (membership?.role !== Role.ADMIN)
 		return {
-			message: 'Unauthorized, not a part of the team',
+			message: 'Unauthorized, administrator role required',
 			type: 'error'
 		}
 

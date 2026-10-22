@@ -28,10 +28,15 @@ export default async function createInstruction(
 	try {
 		const instruction = await prisma.instruction.create({
 			data: {
-				projectId: parsed.projectId,
+				project: {
+					connect: {
+						id: parsed.projectId,
+						team: { memberships: { some: { userId: user.id } } }
+					}
+				},
 				content: parsed.content,
 				creatorUsername: user.userName,
-				createdBy: user.id
+				user: { connect: { id: user.id } }
 			}
 		})
 
