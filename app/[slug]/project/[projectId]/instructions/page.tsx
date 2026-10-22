@@ -16,7 +16,7 @@ export default async function Page({
 						Write rules for what Maige should do when an issue, PR, or comment comes in.
 					</p>
 				</div>
-				<Instructions projectId={params.projectId} />
+				<Instructions projectId={params.projectId} teamSlug={params.slug} />
 			</div>
 		</Suspense>
 	)

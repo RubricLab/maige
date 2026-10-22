@@ -25,7 +25,10 @@ export async function updateInstruction(_prevState: any, formData: FormData) {
 
 	try {
 		await prisma.instruction.update({
-			where: { id: parsed.instructionId },
+			where: {
+				id: parsed.instructionId,
+				project: { team: { memberships: { some: { userId: user.id } } } }
+			},
 			data: {
 				content: parsed.content
 			}
