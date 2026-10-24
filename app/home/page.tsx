@@ -11,29 +11,6 @@ import { Header } from '~/components/Header'
 import { LabelFlow } from '~/components/assets/LabelFlow'
 import { Logos } from '~/components/logos/Logos'
 
-const loomConfig = {
-	hide_owner: 'true',
-	hideEmbedTopBar: 'true',
-	hide_share: 'true',
-	hide_title: 'true',
-	default_speed: '1.2',
-	skip_embed_eovn: 'true'
-}
-const loomQueryParams = new URLSearchParams(loomConfig).toString()
-
-const DemoVideo = () => (
-	<div className="z-10 w-full">
-		<div className="mx-4 sm:mx-12">
-			<iframe
-				title="demo video"
-				src={`https://www.loom.com/embed/1f8fc747459d44659dc508460cf44208?sid=5820036c-e4fc-4343-b9ad-7f350af10dee?${loomQueryParams}`}
-				allowFullScreen
-				className="relative my-auto block aspect-[7/4] h-auto w-full overflow-hidden rounded-xl border-4 border-secondary"
-			/>
-		</div>
-	</div>
-)
-
 export const Homepage = () => {
 	const todayString = new Date().toISOString().split('T')[0]?.replaceAll('-', '/')
 	return (
@@ -53,7 +30,6 @@ export const Homepage = () => {
 					</h2>
 				</div>
 				<Auth />
-				<DemoVideo />
 				<div className="-left-10 absolute top-2/3 w-10 break-words text-center">
 					<div className="-z-10 absolute top-1/3 h-56 w-full bg-sunset" />
 					<span className="font-monocraft text-4xl text-tertiary">version one: {todayString}</span>

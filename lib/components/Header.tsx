@@ -4,16 +4,30 @@ import { Maige } from './logos'
 
 export const Header = () => {
 	return (
-		<header className="fixed top-0 z-20 flex w-screen items-center justify-start bg-primary p-4">
-			<Link href="/" className="group flex flex-col text-primary">
-				<div className="flex items-end gap-2 opacity-80 transition-all hover:text-orange-200 hover:opacity-100 dark:text-orange-100">
-					<Maige className="h-8" />
-					<div className="-mb-1 !tracking-tighter font-bold font-monocraft text-3xl">maige</div>
-					<span className="-mb-0.5 rounded-sm bg-tertiary px-1 text-sm text-tertiary">alpha</span>
-				</div>
-			</Link>
-			<div className="grow">{/* Divider */}</div>
-			<Sun />
+		<header className="fixed top-0 z-20 w-screen bg-primary">
+			<p className="bg-black px-4 py-3 text-center text-sm text-white leading-snug dark:bg-white dark:text-black">
+				Maige has been sunset and will remain open-source on{' '}
+				<Link
+					href="https://github.com/RubricLab/maige"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+				>
+					GitHub
+				</Link>{' '}
+				as a public archive.
+			</p>
+			<div className="flex items-center justify-start p-4">
+				<Link href="/" className="group flex flex-col text-primary">
+					<div className="flex items-end gap-2 opacity-80 transition-all hover:text-orange-200 hover:opacity-100 dark:text-orange-100">
+						<Maige className="h-8" />
+						<div className="-mb-1 !tracking-tighter font-bold font-monocraft text-3xl">maige</div>
+						<span className="-mb-0.5 rounded-sm bg-tertiary px-1 text-sm text-tertiary">alpha</span>
+					</div>
+				</Link>
+				<div className="grow">{/* Divider */}</div>
+				<Sun />
+			</div>
 		</header>
 	)
 }
