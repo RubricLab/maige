@@ -8,13 +8,10 @@ const prismaAdapter = PrismaAdapter(prisma)
 
 // @ts-ignore
 prismaAdapter.createUser = data => {
-	return prisma.user.upsert({
-		// migration flow
+	// Keep legacy account migration without creating new users.
+	return prisma.user.update({
 		where: { userName: data.userName as string },
-		update: data,
-
-		// default flow
-		create: data
+		data
 	})
 }
 
@@ -38,6 +35,21 @@ export const authOptions: AuthOptions = {
 		})
 	],
 	callbacks: {
+		signIn: async ({ user, account }) => {
+			if (account?.provider !== 'github') return '/signups-closed'
+
+			const existingAccount = await prismaAdapter.getUserByAccount?.({
+				provider: account.provider,
+				providerAccountId: account.providerAccountId
+			})
+			if (existingAccount) return true
+			if (!user.userName) return '/signups-closed'
+
+			const existingUser = await prisma.user.findUnique({
+				where: { userName: user.userName }
+			})
+			return existingUser ? true : '/signups-closed'
+		},
 		session: async ({ session, user }) => {
 			session.user.id = user.id
 			session.user.userName = user.userName

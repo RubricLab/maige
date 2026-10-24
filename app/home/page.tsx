@@ -183,8 +183,7 @@ export const Homepage = () => {
 								<p>+ Code generation</p>
 							</div>
 						</div>
-						<Auth text="Start for free" />
-						<p className="mt-1 text-sm text-tertiary">No credit card required</p>
+						<Auth />
 					</div>
 					<div className="w-full space-y-3 rounded-sm border border-tertiary p-4 text-tertiary sm:w-96 sm:p-10">
 						<h2 className="font-jakarta">Enterprise</h2>
